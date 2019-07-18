@@ -26,7 +26,7 @@ namespace DX12
 		, m_ScissorRect(0, 0, 1, 1)
 		, m_VSByteCode(nullptr)
 		, m_PSByteCode(nullptr)
-		, m_TextureBuffer(nullptr)
+		, m_Texture(nullptr)
 		, m_VertexBuffer(nullptr)
 		, m_VertexBufferView{}
 	{
@@ -52,19 +52,17 @@ namespace DX12
 	{
 		InitializeGraphics();
 		InitializeAssets();
-
-		WaitForGpu();
 	}
 
 	void Dx12Sample::OnResize()
 	{
-		WindowResized();
+		Resize();
 	}
 
 	void Dx12Sample::OnUpdate()
 	{
 		// 更新参数数据
-		UpdateParameter();
+		Update();
 	}
 
 	void Dx12Sample::OnRender()
@@ -114,14 +112,14 @@ namespace DX12
 
 		CreateDescriptorHeap();
 
-		CreateRootSignature();		// 需根据实际情况重载
+		CreateRootSignature();
 
 		CreateCommandObjects();
 		CreateSwapChain();
 
 		CreateSynchObjects();
 
-		CreateFrameResources();
+		CreateRenderTargetsResources();
 		CreateDepthStencilResources();
 
 		CreateViewportAndScissorRect();
@@ -137,28 +135,11 @@ namespace DX12
 	void Dx12Sample::InitializeAssets()
 	{
 		// 重置命令列表以便初始化
-		//ThrowIfFailed(m_CommandList->Reset(m_CommandAllocator[m_frameIndex].Get(), m_PipelineState.Get()));
-		//{
-		//	BuildByteCode();
-		//	BuildVertexBufferAndView();
-		//	BuildIndexBufferAndView();
-		//	BuildTextureBufferAndView();
-		//	BuildInputElementDescrips();
-		//	BuildConstantBufferAndView();
-		//	BuildPipelineStateObject();
-		//}
-		//ThrowIfFailed(m_CommandList->Close());
 		ThrowIfFailed(m_CommandList->Reset(m_CommandAllocator[m_frameIndex].Get(), m_PipelineState.Get()));
 		{
-			BuildByteCode();
-			BuildInputElementDescrips();
+			BuildShadersAndInputLayout();
 			BuildPipelineStateObject();
-
-			ThrowIfFailed(m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT,
-				m_CommandAllocator[m_frameIndex].Get(), m_PipelineState.Get(), IID_PPV_ARGS(&m_CommandList)));
-
-			BuildVertexBufferAndView();
-			BuildIndexBufferAndView();
+			BuildMeshData();
 			BuildConstantBufferAndView();
 			BuildTextureBufferAndView();
 		}
@@ -166,10 +147,12 @@ namespace DX12
 
 		ID3D12CommandList* ppCommandLists[] = { m_CommandList.Get() };
 		m_CommandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
+
+		return;
 	}
 
 	// 窗口大小改变
-	void Dx12Sample::WindowResized()
+	void Dx12Sample::Resize()
 	{
 		/// PI = 3.1415926F
 		/// OPI = PI; QPI = PI/4; HPI = PI/2
@@ -185,13 +168,13 @@ namespace DX12
 		return;
 	}
 
-	// UpdateParameter
-	void Dx12Sample::UpdateParameter()
+	// Update
+	void Dx12Sample::Update()
 	{
 
 	}
 
-	// PopulateCommandList, 处理命令列表
+	// 处理命令列表
 	void Dx12Sample::PopulateCommandList()
 	{
 		// Reset 之前要先 Close()
@@ -203,18 +186,22 @@ namespace DX12
 		// However, when ExecuteCommandList() is called on a particular command 
 		// list, that command list can then be reset at any time and must be before re-recording.
 		//ThrowIfFailed(m_CommandList->Reset(m_CommandAllocator.Get(), m_PipelineState.Get()));
-		ThrowIfFailed(m_CommandList->Reset(m_CommandAllocator[m_frameIndex].Get(), nullptr));	// pso
+		ThrowIfFailed(m_CommandList->Reset(m_CommandAllocator[m_frameIndex].Get(), m_PipelineState.Get()));
 
-		// Indicate that the back buffer will be used as a render target.
-		m_CommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_RenderTargets[m_frameIndex].Get(), D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
+		// 视图和剪切矩形
+		m_CommandList->RSSetViewports(1, &m_Viewport);
+		m_CommandList->RSSetScissorRects(1, &m_ScissorRect);
+
+		// 按照资源用途指示其状态的转变，此处将资源从呈现状态转换为渲染状态
+		m_CommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_RenderTargets[m_frameIndex].Get(),
+			D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
 		{
-			CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_rtvHeap->GetCPUDescriptorHandleForHeapStart(), m_frameIndex, m_rtvDescriptorSize);
-
-			const float clearColor[] = { 0.0f, 0.2f, 0.4f, 1.0f };
-			m_CommandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+			// 记录命令列表
+			ReccorCommand();
 		}
-		// Indicate that the back buffer will now be used to present.
-		m_CommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_RenderTargets[m_frameIndex].Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
+		// 按照资源用途指示其状态的转变，此处将资源从渲染状态转换为呈现状态
+		m_CommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_RenderTargets[m_frameIndex].Get(),
+			D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
 
 		ThrowIfFailed(m_CommandList->Close());
 
@@ -310,7 +297,7 @@ namespace DX12
 		D3D12_DESCRIPTOR_HEAP_DESC dsvHeapDesc = {};
 		dsvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
 		dsvHeapDesc.NumDescriptors = 1;
-		dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+		dsvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;	// D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE
 		dsvHeapDesc.NodeMask = 0;
 		ThrowIfFailed(m_device->CreateDescriptorHeap(&dsvHeapDesc, IID_PPV_ARGS(&m_dsvHeap)));
 
@@ -342,7 +329,9 @@ namespace DX12
 	// 根签名（根据实际情况重载）
 	void Dx12Sample::CreateRootSignature()
 	{
-		// 这里创建一个空的根签名(Flags 修改为 D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT)
+		/* Example:
+
+		// 这里创建一个空的根签名
 		CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;
 		rootSignatureDesc.Init(
 			0,									// UINT numParameters
@@ -362,6 +351,7 @@ namespace DX12
 			IID_PPV_ARGS(&m_RootSignature)));
 
 		return;
+		*/
 	}
 
 	// 命令对象（需要根签名）
@@ -385,7 +375,7 @@ namespace DX12
 				IID_PPV_ARGS(&m_CommandAllocator[i])));
 		}
 
-		//  Command List（PSO）
+		//  Command List
 		{
 			ThrowIfFailed(m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT,
 				m_CommandAllocator[m_frameIndex].Get(),	// 此时 m_frameIndex = 0
@@ -504,7 +494,7 @@ namespace DX12
 	}
 
 	// 帧资源
-	void Dx12Sample::CreateFrameResources()
+	void Dx12Sample::CreateRenderTargetsResources()
 	{
 		// 取得描述符堆中的描述符句柄
 		CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_rtvHeap->GetCPUDescriptorHandleForHeapStart());
@@ -565,11 +555,9 @@ namespace DX12
 		//memcpy(m_pDsvDataBegin, m_DepthStencil, sizeof(??));
 		//m_ConstantBuffer->Unmap(0, nullptr);
 
-		CD3DX12_CPU_DESCRIPTOR_HANDLE dsvHandle(m_dsvHeap->GetCPUDescriptorHandleForHeapStart());
-		//CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_rtvHeap->GetCPUDescriptorHandleForHeapStart());
+		//CD3DX12_CPU_DESCRIPTOR_HANDLE dsvHandle(m_dsvHeap->GetCPUDescriptorHandleForHeapStart());
 
-		// Describe and create a constant buffer view.
-		D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
+		//D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
 		//dsvDesc.BufferLocation = m_ConstantBuffer->GetGPUVirtualAddress();
 		//cbvDesc.SizeInBytes = (sizeof(m_ConstantBuffer) + 255) & ~255;
 		//m_device->CreateDepthStencilView(m_DepthStencil.Get(), &dsvDesc, dsvHandle);
@@ -659,45 +647,29 @@ namespace DX12
 #pragma endregion
 
 
-
 #pragma region InitializeAssets() 调用
 
-	// 构建着色器字节码（顶点着色器、像素着色器）
-	void Dx12Sample::BuildByteCode()
+	// 构建着色器（顶点着色器、像素着色器）和输入布局
+	void Dx12Sample::BuildShadersAndInputLayout()
 	{
 		/* Example:
-		//ComPtr<ID3DBlob> m_VSByteCode;
-		//ComPtr<ID3DBlob> m_PSByteCode;
-
-		UINT compileFlags = DXUtil::GetCompileFlags();
 
 		_tstring path = KApplication::GetApp()->Startup();
 		_tstring file = _T("Asserts\\Triangle.hlsl");
 		_tstring filePath = path + file;
 
-		ThrowIfFailed(D3DCompileFromFile(filePath.c_str(), nullptr, nullptr,
-			"VSMain", "vs_5_0", compileFlags, 0, &m_VSByteCode, nullptr));
+		m_VSByteCode = DXUtil::CompileShader(filePath, nullptr, "VSMain", "vs_5_0");
+		m_PSByteCode = DXUtil::CompileShader(filePath, nullptr, "PSMain", "ps_5_0");
 
-		ThrowIfFailed(D3DCompileFromFile(filePath.c_str(), nullptr, nullptr,
-			"PSMain", "ps_5_0", compileFlags, 0, &m_PSByteCode, nullptr));
-		return;
 
-		*/
-	}
-
-	// 根据顶点结构建造输入元素描述
-	void Dx12Sample::BuildInputElementDescrips()
-	{
-		/* Example:
-
-		m_InputElementDescs.clear();	// std::vector<D3D12_INPUT_ELEMENT_DESC>
-		m_InputElementDescs = 
+		UINT offsetPos = 0;
+		UINT offsetClr = sizeof(Vertex::position);
+		m_InputElementDescs.clear();
+		m_InputElementDescs =
 		{
-			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
-			{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
+			D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetPos, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+			D3D12_INPUT_ELEMENT_DESC{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, offsetClr, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		};
-
-		D3D12_INPUT_LAYOUT_DESC InputLayout = InputLayout();
 
 		*/
 	}
@@ -707,25 +679,26 @@ namespace DX12
 	{
 		/* Example:
 
-		D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = { NULL };
+		D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDesc = { };
 		psoDesc.pRootSignature = m_RootSignature.Get();								// 根签名
+		psoDesc.InputLayout = InputLayout();										// 输入布局
 		psoDesc.VS = CD3DX12_SHADER_BYTECODE(m_VSByteCode.Get());					// vertexShader		(顶点着色器)
 		psoDesc.PS = CD3DX12_SHADER_BYTECODE(m_PSByteCode.Get());					// pixelShader		(像素着色器)
 		psoDesc.DS = CD3DX12_SHADER_BYTECODE(m_DSByteCode.Get());					// domainShader		(域着色器)
 		psoDesc.HS = CD3DX12_SHADER_BYTECODE(m_HSByteCode.Get());					// hullShader		(壳着色器)
 		psoDesc.GS = CD3DX12_SHADER_BYTECODE(m_GSByteCode.Get());					// geometryShader	(几何着色器)
-		psoDesc.StreamOutput = {};
 		psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);						// 混合状态
-		psoDesc.SampleMask = UINT_MAX;												// 采样掩模
 		psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);			// 栅格化状态
 		psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);		// 深度模板状态
-		psoDesc.InputLayout = nputLayout();											// 输入布局
 		psoDesc.IBStripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED;		// ？
 		psoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;		// 图元拓扑类型
 		psoDesc.NumRenderTargets = 1;												// 渲染目标数量
 		psoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;							// 渲染目标格式n
 		psoDesc.DSVFormat = DXGI_FORMAT_UNKNOWN;									// 深度模板格式
+		psoDesc.SampleMask = UINT_MAX;												// 采样掩模
 		psoDesc.SampleDesc = DXGI_SAMPLE_DESC{ 1,0 };								// 采样描述
+
+		psoDesc.StreamOutput = {};													// 流输出
 		psoDesc.NodeMask = 0;														// 节点掩模
 		psoDesc.CachedPSO = D3D12_CACHED_PIPELINE_STATE();							// PSO Cached
 		psoDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;								// 标记(?)
@@ -737,25 +710,20 @@ namespace DX12
 		*/
 	}
 
-	// 顶点缓冲区和视图
-	void Dx12Sample::BuildVertexBufferAndView()
+	// 构造网格数据
+	void Dx12Sample::BuildMeshData()
 	{
 		//ComPtr<ID3D12Resource> m_VertexBuffer;
 		//D3D12_VERTEX_BUFFER_VIEW m_VertexBufferView;
-	}
+		// 1.1 顶点数据
+		// 1.2 顶点缓冲区
+		// 1.3 顶点缓冲区视图
 
-	// 索引缓冲区和视图
-	void Dx12Sample::BuildIndexBufferAndView()
-	{
 		//ComPtr<ID3D12Resource> m_IndexBuffer;
 		//D3D12_INDEX_BUFFER_VIEW m_IndexBufferView;
-	}
-
-	// 纹理缓冲区和视图
-	void Dx12Sample::BuildTextureBufferAndView()
-	{
-		//ComPtr<ID3D12Resource> m_TextureBuffer;
-		//ComPtr<ID3D12Resource> m_TextureBufferUpload;
+		// 2.1 索引数据
+		// 2.2 索引缓冲区
+		// 2.3 索引缓冲区视图
 	}
 
 	// 常量缓冲区和视图
@@ -765,7 +733,48 @@ namespace DX12
 		//ComPtr<ID3D12Resource> m_ConstantBufferUpload;
 	}
 
+
+	// 纹理缓冲区和视图
+	void Dx12Sample::BuildTextureBufferAndView()
+	{
+		//ComPtr<ID3D12Resource> m_Texture;
+		//ComPtr<ID3D12Resource> m_TextureUpload;
+	}
+
 #pragma endregion
+
+
+#pragma region OnRender() 调用
+
+	void Dx12Sample::ReccorCommand()
+	{
+		/* Example:
+		CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_rtvHeap->GetCPUDescriptorHandleForHeapStart(), m_frameIndex, m_rtvDescriptorSize);
+		const float clearColor[] = { 0.0f, 0.2f, 0.4f, 1.0f };
+		m_CommandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+		*/
+	}
+
+#pragma endregion
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

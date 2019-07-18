@@ -17,7 +17,7 @@ KUtil::~KUtil()
 
 
 //static
-_tstring KUtil::ToString(HRESULT hr)
+_tstring KUtil::HR2String(HRESULT hr)
 {
 	_com_error err(hr);
 	_tstring errMsg(err.ErrorMessage());

@@ -20,7 +20,7 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{CD48D3E9-0867-4557-B639-52475ED35306}</ProjectGuid>
+    <ProjectGuid>{41F00686-0D98-4FD6-AAF5-EA612A73F4F3}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>AlibCore</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
@@ -70,12 +70,12 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)Lib\$(PlatformTarget)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)Tempout\$(PlatformTarget)\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)Lib\$(PlatformTarget)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)Tempout\$(PlatformTarget)\$(ProjectName)\$(Configuration)\</IntDir>
@@ -90,13 +90,13 @@
     <OutDir>$(SolutionDir)Lib\$(PlatformTarget)\$(Configuration)\</OutDir>
     <IntDir>$(SolutionDir)Tempout\$(PlatformTarget)\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;ALIBCORE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;ALIBCORE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Include;$(SolutionDir)$(ProjectName);$(SolutionDir)$(ProjectName)\src</AdditionalIncludeDirectories>
     </ClCompile>
@@ -106,13 +106,13 @@
       <AdditionalLibraryDirectories>$(SolutionDir)Lib\$(PlatformTarget)\$(Configuration)\</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;ALIBCORE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;ALIBCORE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>$(SolutionDir)Include;$(SolutionDir)$(ProjectName);$(SolutionDir)$(ProjectName)\src</AdditionalIncludeDirectories>
     </ClCompile>
@@ -163,49 +163,29 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="resource.h" />
-    <ClInclude Include="src\KApplication.h" />
     <ClInclude Include="src\KClock.h" />
-    <ClInclude Include="src\KDocument.h" />
-    <ClInclude Include="src\KEventArgs.h" />
     <ClInclude Include="src\KException.h" />
-    <ClInclude Include="src\KMouseEventArgs.h" />
-    <ClInclude Include="src\KMouseListener.h" />
     <ClInclude Include="src\KObject.h" />
-    <ClInclude Include="src\KSample.h" />
     <ClInclude Include="src\KSmartPointer.h" />
     <ClInclude Include="src\KString.h" />
     <ClInclude Include="src\KUtil.h" />
-    <ClInclude Include="src\KWindow.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="src\KApplication.cpp" />
     <ClCompile Include="src\KClock.cpp" />
-    <ClCompile Include="src\KDocument.cpp" />
-    <ClCompile Include="src\KEventArgs.cpp" />
     <ClCompile Include="src\KException.cpp" />
-    <ClCompile Include="src\KMouseEventArgs.cpp" />
-    <ClCompile Include="src\KMouseListener.cpp" />
     <ClCompile Include="src\KObject.cpp" />
-    <ClCompile Include="src\KSample.cpp" />
     <ClCompile Include="src\KString.cpp" />
     <ClCompile Include="src\KUtil.cpp" />
-    <ClCompile Include="src\KWindow.cpp" />
+    <ClCompile Include="src\KSmartPointer.cpp" />
     <ClCompile Include="stdafx.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Readme.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="AlibCore.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

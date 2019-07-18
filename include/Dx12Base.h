@@ -10,6 +10,7 @@
 #include "MathHelper.h"
 #include "UploadBuffer.h"
 
+#include "MeshFactory.h"
 #include "MeshGeometry.h"
 
 #include "DDSTextureLoader.h" 

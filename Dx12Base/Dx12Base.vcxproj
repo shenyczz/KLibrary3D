@@ -99,7 +99,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;DX12BASE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include;$(SolutionDir)$(ProjectName);$(SolutionDir)$(ProjectName)\src;$(SolutionDir)AlibCore\src;$(SolutionDir)AlibGeos\src;$(SolutionDir)AlibMaths\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include;$(SolutionDir)$(ProjectName);$(SolutionDir)$(ProjectName)\src;$(SolutionDir)AlibCore\src;$(SolutionDir)AlibCoreMaths\src;$(SolutionDir)AlibFramework\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -115,7 +115,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;DX12BASE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include;$(SolutionDir)$(ProjectName);$(SolutionDir)$(ProjectName)\src;$(SolutionDir)AlibCore\src;$(SolutionDir)AlibGeos\src;$(SolutionDir)AlibMaths\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include;$(SolutionDir)$(ProjectName);$(SolutionDir)$(ProjectName)\src;$(SolutionDir)AlibCore\src;$(SolutionDir)AlibCoreMaths\src;$(SolutionDir)AlibFramework\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -133,7 +133,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;DX12BASE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include;$(SolutionDir)$(ProjectName);$(SolutionDir)$(ProjectName)\src;$(SolutionDir)AlibCore\src;$(SolutionDir)AlibGeos\src;$(SolutionDir)AlibMaths\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include;$(SolutionDir)$(ProjectName);$(SolutionDir)$(ProjectName)\src;$(SolutionDir)AlibCore\src;$(SolutionDir)AlibCoreMaths\src;$(SolutionDir)AlibFramework\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -153,7 +153,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;DX12BASE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include;$(SolutionDir)$(ProjectName);$(SolutionDir)$(ProjectName)\src;$(SolutionDir)AlibCore\src;$(SolutionDir)AlibGeos\src;$(SolutionDir)AlibMaths\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include;$(SolutionDir)$(ProjectName);$(SolutionDir)$(ProjectName)\src;$(SolutionDir)AlibCore\src;$(SolutionDir)AlibCoreMaths\src;$(SolutionDir)AlibFramework\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -166,7 +166,9 @@
   <ItemGroup>
     <ClInclude Include="src\DDSTextureLoader.h" />
     <ClInclude Include="src\DXColors.h" />
+    <ClInclude Include="src\MeshFactory.h" />
     <ClInclude Include="src\MathHelper.h" />
+    <ClInclude Include="src\TVertex.h" />
     <ClInclude Include="src\UploadBuffer.h" />
     <ClInclude Include="src\DXUtil.h" />
     <ClInclude Include="src\MeshGeometry.h" />
@@ -177,9 +179,11 @@
     <ClCompile Include="dllmain.cpp" />
     <ClCompile Include="src\DDSTextureLoader.cpp" />
     <ClCompile Include="src\DXColors.cpp" />
+    <ClCompile Include="src\MeshFactory.cpp" />
     <ClCompile Include="src\MathHelper.cpp" />
     <ClCompile Include="src\DXUtil.cpp" />
     <ClCompile Include="src\MeshGeometry.cpp" />
+    <ClCompile Include="src\TVertex.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

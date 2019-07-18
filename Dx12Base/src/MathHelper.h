@@ -45,11 +45,11 @@ namespace DX12
 			// Inverse-transpose is just applied to normals.  So zero out 
 			// translation row so that it doesn't get into our inverse-transpose
 			// calculation--we don't want the inverse-transpose of the translation.
-			DirectX::XMMATRIX A = M;
-			A.r[3] = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+			DirectX::XMMATRIX _Ty = M;
+			_Ty.r[3] = DirectX::XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
 
-			DirectX::XMVECTOR det = DirectX::XMMatrixDeterminant(A);
-			return DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(&det, A));
+			DirectX::XMVECTOR det = DirectX::XMMatrixDeterminant(_Ty);
+			return DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(&det, _Ty));
 		}
 
 		// 4x4µ•Œª’Û
@@ -64,8 +64,8 @@ namespace DX12
 			return I;
 		}
 
-		// Returns the polar angle of the point (x,y) in [0, 2*PI).
-		static float AngleFromXY(float x, float y);
+		// Returns the polar angle of the point (X,Y) in [0, 2*PI).
+		static float AngleFromXY(float X, float Y);
 
 		// ?
 		static DirectX::XMVECTOR RandUnitVec3();

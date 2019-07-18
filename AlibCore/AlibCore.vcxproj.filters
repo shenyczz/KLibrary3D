@@ -21,16 +21,7 @@
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\KSample.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="src\KUtil.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="src\KWindow.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="src\KApplication.h">
+    <ClInclude Include="src\KObject.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\KClock.h">
@@ -39,28 +30,13 @@
     <ClInclude Include="src\KException.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\KDocument.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="src\KMouseListener.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="src\KObject.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="src\KEventArgs.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="src\KMouseEventArgs.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="resource.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="src\KSmartPointer.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\KString.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\KUtil.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -71,16 +47,7 @@
     <ClCompile Include="dllmain.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\KSample.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="src\KUtil.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="src\KWindow.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="src\KApplication.cpp">
+    <ClCompile Include="src\KObject.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\KClock.cpp">
@@ -89,31 +56,14 @@
     <ClCompile Include="src\KException.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\KDocument.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="src\KMouseListener.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="src\KObject.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="src\KEventArgs.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="src\KMouseEventArgs.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="src\KString.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Readme.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="AlibCore.rc">
-      <Filter>资源文件</Filter>
-    </ResourceCompile>
+    <ClCompile Include="src\KUtil.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\KSmartPointer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

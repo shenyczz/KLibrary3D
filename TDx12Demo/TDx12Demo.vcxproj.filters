@@ -33,18 +33,6 @@
     <ClInclude Include="sfxDemo\Ademo.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="sfxDemo\ex01_Triangle.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="sfxDemo\ex04_Cube.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="sfxDemo\ex03_ConstBuffers.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="sfxDemo\ex02_Texture.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -54,18 +42,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="sfxDemo\Ademo.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="sfxDemo\ex01_Triangle.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="sfxDemo\ex04_Cube.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="sfxDemo\ex02_Texture.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="sfxDemo\ex03_ConstBuffers.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -83,21 +59,30 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="Asserts\Triangle.hlsl">
+    <CustomBuild Include="Asserts\_Color.hlsl">
       <Filter>Assets\Shaders</Filter>
     </CustomBuild>
-    <CustomBuild Include="Asserts\ConstBuffers.hlsl">
+    <CustomBuild Include="Asserts\_ConstBuffers.hlsl">
       <Filter>Assets\Shaders</Filter>
     </CustomBuild>
-    <CustomBuild Include="Asserts\Texture.hlsl">
+    <CustomBuild Include="Asserts\_Texture.hlsl">
       <Filter>Assets\Shaders</Filter>
     </CustomBuild>
-    <CustomBuild Include="Asserts\Color.hlsl">
+    <CustomBuild Include="Asserts\_Triangle.hlsl">
+      <Filter>Assets\Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Asserts\ATriangle.hlsl">
+      <Filter>Assets\Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Asserts\ATriangleCB.hlsl">
+      <Filter>Assets\Shaders</Filter>
+    </CustomBuild>
+    <CustomBuild Include="Asserts\ATriangleUV.hlsl">
       <Filter>Assets\Shaders</Filter>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Asserts\_HLSLConfig.txt">
+    <Text Include="Asserts\_AhlslConfig.txt">
       <Filter>Assets\Shaders</Filter>
     </Text>
   </ItemGroup>

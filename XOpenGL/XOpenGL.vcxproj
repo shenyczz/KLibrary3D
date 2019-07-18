@@ -98,7 +98,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include;$(SolutionDir)AlibCore\src;$(SolutionDir)AlibGeos\src;$(SolutionDir)AlibMaths\src;D:\sfxApis\GL\glut\Include;$(ProjectDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);D:\sfxApis\GL\glut\Include;$(SolutionDir)Include;$(SolutionDir)AlibCore\src;$(SolutionDir)AlibCoreDataModel\src;$(SolutionDir)AlibCoreMaths\src;$(SolutionDir)AlibData\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -114,7 +114,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include;$(SolutionDir)AlibCore\src;$(SolutionDir)AlibGeos\src;$(SolutionDir)AlibMaths\src;D:\sfxApis\GL\glut\Include;$(ProjectDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);D:\sfxApis\GL\glut\Include;$(SolutionDir)Include;$(SolutionDir)AlibCore\src;$(SolutionDir)AlibCoreDataModel\src;$(SolutionDir)AlibCoreMaths\src;$(SolutionDir)AlibData\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -132,7 +132,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include;$(SolutionDir)AlibCore\src;$(SolutionDir)AlibGeos\src;$(SolutionDir)AlibMaths\src;D:\sfxApis\GL\glut\Include;$(ProjectDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);D:\sfxApis\GL\glut\Include;$(SolutionDir)Include;$(SolutionDir)AlibCore\src;$(SolutionDir)AlibCoreDataModel\src;$(SolutionDir)AlibCoreMaths\src;$(SolutionDir)AlibData\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -152,7 +152,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include;$(SolutionDir)AlibCore\src;$(SolutionDir)AlibGeos\src;$(SolutionDir)AlibMaths\src;D:\sfxApis\GL\glut\Include;$(ProjectDir)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);D:\sfxApis\GL\glut\Include;$(SolutionDir)Include;$(SolutionDir)AlibCore\src;$(SolutionDir)AlibCoreDataModel\src;$(SolutionDir)AlibCoreMaths\src;$(SolutionDir)AlibData\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -163,10 +163,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="MC.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="MainGL.cpp" />
+    <ClCompile Include="MC.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -174,17 +177,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="XOpenGL.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\AlibCore\AlibCore.vcxproj">
-      <Project>{cd48d3e9-0867-4557-b639-52475ed35306}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\AlibGeos\AlibGeos.vcxproj">
-      <Project>{84b16ab3-affb-45f5-aa2a-332e941928e9}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\AlibMaths\AlibMaths.vcxproj">
-      <Project>{fbbee9f9-2493-42fa-ae96-f996dbffc018}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

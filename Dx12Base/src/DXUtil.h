@@ -14,7 +14,6 @@
 *
 ******************************************************************************/
 #pragma once
-#include <fstream>
 
 namespace DX12
 {
@@ -24,31 +23,24 @@ namespace DX12
 		static UINT GetCompileFlags();
 
 		// CB size is required to be 256-byte aligned.
-		static UINT CalcConstantBufferByteSize(UINT byteSize);
-		static UINT CalcConstantBufferByteSize(ComPtr<ID3D12Resource> ConstantBuffer);
+		static UINT CalcConstantBufferByteSize(UINT nSizeOfCBStruct);
 
 		static ComPtr<ID3DBlob> CompileShader(
-			_tstring& filename,
+			_tstring filename,
 			const D3D_SHADER_MACRO* defines,
 			const std::string& entrypoint,
 			const std::string& target);
 
 		static ComPtr<ID3DBlob> LoadBinary(LPCTSTR filename);
-		//{
-		//	std::ifstream fin(filename, std::ios::binary);
 
-		//	fin.seekg(0, std::ios_base::end);
-		//	std::ifstream::pos_type size = (int)fin.tellg();
-		//	fin.seekg(0, std::ios_base::beg);
 
-		//	ComPtr<ID3DBlob> blob;
-		//	ThrowIfFailed(D3DCreateBlob((SIZE_T)size, blob.GetAddressOf()));
+		static ComPtr<ID3D12Resource> CreateDefaultBuffer(
+			ID3D12Device* device,
+			ID3D12GraphicsCommandList* cmdList,
+			const void* initData,
+			LONG_PTR byteSize,
+			ComPtr<ID3D12Resource>& uploadBuffer);
 
-		//	fin.read((char*)blob->GetBufferPointer(), size);
-		//	fin.close();
-
-		//	return blob;
-		//}
 
 	private:
 		DXUtil();

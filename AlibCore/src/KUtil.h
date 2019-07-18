@@ -16,10 +16,9 @@
 #pragma once
 
 #ifndef ReleaseCom
-#define ReleaseCom(x) { if(x){ (x)->Release(); (x) = 0; } }
+#define ReleaseCom(X) { if(X){ (X)->Release(); (X) = 0; } }
 #endif
 
-//class KWindow;
 
 class ALIBCORE_EXPORTS_CLASS KUtil
 {
@@ -27,7 +26,7 @@ class ALIBCORE_EXPORTS_CLASS KUtil
 	~KUtil();
 
 public:
-	static _tstring ToString(HRESULT hr);
+	static _tstring HR2String(HRESULT hr);
 	static void Trace(LPCTSTR lpszInfo);
 
 

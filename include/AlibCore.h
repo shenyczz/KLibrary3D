@@ -10,17 +10,6 @@
 #include "KString.h"
 #include "KException.h"
 
-#include "KEventArgs.h"
-#include "KMouseEventArgs.h"
-
-
-#include "KApplication.h"
-#include "KDocument.h"
-#include "KWindow.h"
-#include "KSample.h"
-
-#include "KMouseListener.h"
-
 #include "KClock.h"
 
 #include "KUtil.h"

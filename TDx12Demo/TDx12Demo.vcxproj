@@ -98,7 +98,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions);__DX12APP__</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include;$(SolutionDir)AlibCore\src;$(SolutionDir)AlibGeos\src;$(SolutionDir)AlibMaths\src;$(SolutionDir)Dx12Base\src;$(SolutionDir)Dx12Core\src;$(ProjectDir);$(ProjectDir)sfxDemo;$(ProjectDir)Tutorial</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)sfxDemo;$(ProjectDir)Tutorial;$(SolutionDir)Include;$(SolutionDir)AlibCore\src;$(SolutionDir)AlibCoreDataModel\src;$(SolutionDir)AlibCoreMaths\src;$(SolutionDir)AlibData\src;$(SolutionDir)AlibFramework\src;$(SolutionDir)Dx12Base\src;$(SolutionDir)Dx12Core\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -114,7 +114,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions);__DX12APP__</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include;$(SolutionDir)AlibCore\src;$(SolutionDir)AlibGeos\src;$(SolutionDir)AlibMaths\src;$(SolutionDir)Dx12Base\src;$(SolutionDir)Dx12Core\src;$(ProjectDir);$(ProjectDir)sfxDemo;$(ProjectDir)Tutorial</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)sfxDemo;$(ProjectDir)Tutorial;$(SolutionDir)Include;$(SolutionDir)AlibCore\src;$(SolutionDir)AlibCoreDataModel\src;$(SolutionDir)AlibCoreMaths\src;$(SolutionDir)AlibData\src;$(SolutionDir)AlibFramework\src;$(SolutionDir)Dx12Base\src;$(SolutionDir)Dx12Core\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -132,7 +132,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions);__DX12APP__</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include;$(SolutionDir)AlibCore\src;$(SolutionDir)AlibGeos\src;$(SolutionDir)AlibMaths\src;$(SolutionDir)Dx12Base\src;$(SolutionDir)Dx12Core\src;$(ProjectDir);$(ProjectDir)sfxDemo;$(ProjectDir)Tutorial</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)sfxDemo;$(ProjectDir)Tutorial;$(SolutionDir)Include;$(SolutionDir)AlibCore\src;$(SolutionDir)AlibCoreDataModel\src;$(SolutionDir)AlibCoreMaths\src;$(SolutionDir)AlibData\src;$(SolutionDir)AlibFramework\src;$(SolutionDir)Dx12Base\src;$(SolutionDir)Dx12Core\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -152,7 +152,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions);__DX12APP__</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include;$(SolutionDir)AlibCore\src;$(SolutionDir)AlibGeos\src;$(SolutionDir)AlibMaths\src;$(SolutionDir)Dx12Base\src;$(SolutionDir)Dx12Core\src;$(ProjectDir);$(ProjectDir)sfxDemo;$(ProjectDir)Tutorial</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)sfxDemo;$(ProjectDir)Tutorial;$(SolutionDir)Include;$(SolutionDir)AlibCore\src;$(SolutionDir)AlibCoreDataModel\src;$(SolutionDir)AlibCoreMaths\src;$(SolutionDir)AlibData\src;$(SolutionDir)AlibFramework\src;$(SolutionDir)Dx12Base\src;$(SolutionDir)Dx12Core\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -165,19 +165,11 @@
   <ItemGroup>
     <ClInclude Include="Resource.h" />
     <ClInclude Include="sfxDemo\Ademo.h" />
-    <ClInclude Include="sfxDemo\ex03_ConstBuffers.h" />
-    <ClInclude Include="sfxDemo\ex04_Cube.h" />
-    <ClInclude Include="sfxDemo\ex01_Triangle.h" />
-    <ClInclude Include="sfxDemo\ex02_Texture.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="sfxDemo\Ademo.cpp" />
-    <ClCompile Include="sfxDemo\ex03_ConstBuffers.cpp" />
-    <ClCompile Include="sfxDemo\ex04_Cube.cpp" />
-    <ClCompile Include="sfxDemo\ex01_Triangle.cpp" />
-    <ClCompile Include="sfxDemo\ex02_Texture.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -194,7 +186,7 @@
     <Image Include="TDx12Demo.ico" />
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="Asserts\ConstBuffers.hlsl">
+    <CustomBuild Include="Asserts\_ConstBuffers.hlsl">
       <DeploymentContent>false</DeploymentContent>
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy %(Identity) $(OutDir)\%(RelativeDir) &gt; NUL</Command>
@@ -208,7 +200,7 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="Asserts\Triangle.hlsl">
+    <CustomBuild Include="Asserts\_Triangle.hlsl">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy %(Identity) $(OutDir)\%(RelativeDir) &gt; NUL</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy %(Identity) $(OutDir)\%(RelativeDir) &gt; NUL</Command>
@@ -221,7 +213,7 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="Asserts\Texture.hlsl">
+    <CustomBuild Include="Asserts\_Texture.hlsl">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy %(Identity) $(OutDir)\%(RelativeDir) &gt; NUL</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy %(Identity) $(OutDir)\%(RelativeDir) &gt; NUL</Command>
@@ -242,7 +234,7 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="Asserts\Color.hlsl">
+    <CustomBuild Include="Asserts\_Color.hlsl">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy %(Identity) $(OutDir)\%(RelativeDir) &gt; NUL</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)\%(Identity)</Outputs>
@@ -255,7 +247,58 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="Asserts\_HLSLConfig.txt" />
+    <CustomBuild Include="Asserts\ATriangle.hlsl">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy %(Identity) $(OutDir)\%(RelativeDir) &gt; NUL</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy %(Identity) $(OutDir)\%(RelativeDir) &gt; NUL</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy %(Identity) $(OutDir)\%(RelativeDir) &gt; NUL</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy %(Identity) $(OutDir)\%(RelativeDir) &gt; NUL</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)\%(Identity)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)\%(Identity)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)\%(Identity)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)\%(Identity)</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Performing Custom Build Tools - %(Identity)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Performing Custom Build Tools - %(Identity)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Performing Custom Build Tools - %(Identity)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Performing Custom Build Tools - %(Identity)</Message>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Asserts\_AhlslConfig.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Asserts\ATriangleCB.hlsl">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy %(Identity) $(OutDir)\%(RelativeDir) &gt; NUL</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy %(Identity) $(OutDir)\%(RelativeDir) &gt; NUL</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy %(Identity) $(OutDir)\%(RelativeDir) &gt; NUL</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy %(Identity) $(OutDir)\%(RelativeDir) &gt; NUL</Command>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)\%(Identity)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)\%(Identity)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)\%(Identity)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)\%(Identity)</Outputs>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Performing Custom Build Tools - %(Identity)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Performing Custom Build Tools - %(Identity)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Performing Custom Build Tools - %(Identity)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Performing Custom Build Tools - %(Identity)</Message>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="Asserts\ATriangleUV.hlsl">
+      <FileType>Document</FileType>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy %(Identity) $(OutDir)\%(RelativeDir) &gt; NUL</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy %(Identity) $(OutDir)\%(RelativeDir) &gt; NUL</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">copy %(Identity) $(OutDir)\%(RelativeDir) &gt; NUL</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">copy %(Identity) $(OutDir)\%(RelativeDir) &gt; NUL</Command>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Performing Custom Build Tools - %(Identity)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Performing Custom Build Tools - %(Identity)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Performing Custom Build Tools - %(Identity)</Message>
+      <Message Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Performing Custom Build Tools - %(Identity)</Message>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(OutDir)\%(Identity)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(OutDir)\%(Identity)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(OutDir)\%(Identity)</Outputs>
+      <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(OutDir)\%(Identity)</Outputs>
+    </CustomBuild>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

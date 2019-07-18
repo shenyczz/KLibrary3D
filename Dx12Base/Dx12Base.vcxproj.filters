@@ -39,6 +39,12 @@
     <ClInclude Include="src\DXColors.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="src\MeshFactory.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\TVertex.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -60,6 +66,12 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\DXColors.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MeshFactory.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\TVertex.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

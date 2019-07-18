@@ -15,7 +15,7 @@ namespace DX12
 		, VertexByteStride(0)
 		, VertexBufferByteSize(0)
 		, IndexBufferByteSize(0)
-		, IndexFormat(DXGI_FORMAT_R16_UINT)	// R16
+		, IndexFormat(DXGI_FORMAT_R16_UINT)
 	{
 	}
 

@@ -45,21 +45,16 @@
 //
 #include <algorithm>
 #include <array>
+#include <fstream>
+#include <iostream>
+#include <list>
 #include <map>
 #include <memory>
-#include <list>
 #include <string>
-#include <vector>
 #include <unordered_map>
+#include <vector>
 
 //using namespace std;
-
-/*
-#include <cstdint>
-#include <fstream>
-#include <sstream>
-#include <cassert>
-*/
 
 // COM
 #include <comdef.h>
@@ -126,6 +121,7 @@
 	TOSTRING(lib_ext)
 
 //---------------------------------------------------------
+#include "Api.inl"
 #include "tchar.inl"
 //---------------------------------------------------------
 

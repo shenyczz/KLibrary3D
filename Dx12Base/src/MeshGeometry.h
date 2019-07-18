@@ -15,33 +15,17 @@
 ******************************************************************************/
 #pragma once
 
-//#include <windows.h>
-//#include <wrl.h>
-//#include <dxgi1_4.h>
-//#include <d3d12.h>
-//#include <D3Dcompiler.h>
-//#include <DirectXMath.h>
-//#include <DirectXPackedVector.h>
-//#include <DirectXColors.h>
-//#include <DirectXCollision.h>
-//#include <string>
-//#include <memory>
-//#include <algorithm>
-//#include <vector>
-//#include <array>
-//#include <cstdint>
-//#include <fstream>
-//#include <sstream>
-//#include <cassert>
-//#include "d3dx12.h"
-//#include <unordered_map>
-
 namespace DX12
 {
-	struct DX12BASE_EXPORTS_CLASS SubmeshGeometry
+	struct SubmeshGeometry
 	{
+		// 索引数量
 		UINT IndexCount = 0;
+
+		// 索引开始位置
 		UINT StartIndexLocation = 0;
+
+		// 基础顶点位置
 		INT BaseVertexLocation = 0;
 
 		DirectX::BoundingBox Bounds;
@@ -53,7 +37,7 @@ namespace DX12
 
 namespace DX12
 {
-	struct DX12BASE_EXPORTS_CLASS MeshGeometry
+	class DX12BASE_EXPORTS_CLASS MeshGeometry
 	{
 		MeshGeometry();
 		~MeshGeometry();
@@ -75,22 +59,23 @@ namespace DX12
 
 		// 与缓冲区相关的数据
 
-		// 顶点字节跨度
-		UINT VertexByteStride;
-
-		// 顶点缓冲区字节大小
+		// 顶点缓冲区字节大小 VBSizeInBytes
 		UINT VertexBufferByteSize;
 
-		// 索引缓冲区字节大小
-		UINT IndexBufferByteSize;
+		// 顶点字节跨度 VBStrideInBytes
+		UINT VertexByteStride;
 
-		// 索引格式
+		// 索引格式(DXGI_FORMAT_R16_UINT) => UINT16
 		DXGI_FORMAT IndexFormat;
+
+		// 索引缓冲区字节大小 IBSizeInBytes
+		UINT IndexBufferByteSize;
 
 		// 一个 MeshGeometry 结构体能够存储一组顶点/索引缓冲区中的多个几何体
 		// 若利用下列容器来定义子网格几何体，就能单独绘制出其中的子网格（单个几何体）
-		//map<_tstring, SubmeshGeometry> DrawArgs;
 		std::unordered_map<_tstring, SubmeshGeometry> DrawArgs;
+
+
 
 		// 顶点缓冲区视图
 		D3D12_VERTEX_BUFFER_VIEW VertexBufferView() const;

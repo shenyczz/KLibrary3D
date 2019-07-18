@@ -18,22 +18,19 @@
 * [02]修改构造函数为参数构造函数，因为基类 Dx12Sample 默认构造函数被删除
 * [03]参数构造函数要运行基类的参数构造函数
 * [04]重载以下函数
-*	virtual void InitializeGraphics();			// OnInit()调用
-*	virtual void InitializeAssets();			// OnInit()调用
 *
-*	virtual void WindowResized();				// OnResize() 调用,重载
-*	virtual void UpdateParameter();				// OnUpdate() 调用,重载
-*	virtual void PopulateCommandList();			// OnRender() 调用,重载
-
+*	virtual void Resize();						// OnResize() 调用,重载
+*	virtual void Update();						// OnUpdate() 调用,重载
+*
 *	virtual void CreateRootSignature();			// InitializeGraphics()调用,重载
 *
-*	virtual void BuildByteCode();				// InitializeAssets()调用,重载
-*	virtual void BuildInputElementDescrips();	// InitializeAssets()调用,重载
+*	virtual void BuildShadersAndInputLayout();	// InitializeAssets()调用,重载
 *	virtual void BuildPipelineStateObject();	// InitializeAssets()调用,重载
-*	virtual void BuildVertexBufferAndView();	// InitializeAssets()调用,重载
-*	virtual void BuildIndexBufferAndView();		// InitializeAssets()调用,重载
-*	virtual void BuildTextureBufferAndView();	// InitializeAssets()调用,重载
+*	virtual void BuildMeshData();				// InitializeAssets()调用,重载
 *	virtual void BuildConstantBufferAndView();	// InitializeAssets()调用,重载
+*	virtual void BuildTextureBufferAndView();	// InitializeAssets()调用,重载
+*
+*	virtual void ReccorCommand();				// PopulateCommandList()调用,重载
 *
 ******************************************************************************/
 
@@ -84,25 +81,26 @@ namespace DX12
 		virtual void CreateCommandObjects();			// InitializeGraphics()调用
 		virtual void CreateSwapChain();					// InitializeGraphics()调用
 		virtual void CreateSynchObjects();				// InitializeGraphics()调用
-		virtual void CreateFrameResources();			// InitializeGraphics()调用
+		virtual void CreateRenderTargetsResources();	// InitializeGraphics()调用
 		virtual void CreateDepthStencilResources();		// InitializeGraphics()调用
 		virtual void CreateViewportAndScissorRect();	// InitializeGraphics()调用
 
-
-		virtual void BuildByteCode();					// InitializeAssets()调用,重载
-		virtual void BuildInputElementDescrips();		// InitializeAssets()调用,重载
+		virtual void BuildShadersAndInputLayout();		// InitializeAssets()调用,重载
 		virtual void BuildPipelineStateObject();		// InitializeAssets()调用,重载
-		virtual void BuildVertexBufferAndView();		// InitializeAssets()调用,重载
-		virtual void BuildIndexBufferAndView();			// InitializeAssets()调用,重载
-		virtual void BuildTextureBufferAndView();		// InitializeAssets()调用,重载
+
+		virtual void BuildMeshData();					// InitializeAssets()调用,重载
 		virtual void BuildConstantBufferAndView();		// InitializeAssets()调用,重载
+		virtual void BuildTextureBufferAndView();		// InitializeAssets()调用,重载
+
+		virtual void ReccorCommand();				// PopulateCommandList()调用,重载
 
 #pragma endregion
 
 	protected:
-		virtual void WindowResized();					// OnResize() 调用,重载
-		virtual void UpdateParameter();					// OnUpdate() 调用,重载
 		virtual void PopulateCommandList();				// OnRender() 调用,重载
+
+		virtual void Resize();							// OnResize() 调用,重载
+		virtual void Update();							// OnUpdate() 调用,重载
 		virtual void MoveToNextFrame();					// OnRender() 调用
 		virtual void WaitForGpu();						// OnInit、OnDestroy()、CreateSynchObjects(？) 调用
 
@@ -185,8 +183,8 @@ namespace DX12
 
 		ComPtr<ID3D12Resource> m_DepthStencil;
 
-		ComPtr<ID3D12Resource> m_TextureBuffer;
-		ComPtr<ID3D12Resource> m_TextureBufferUpload;
+		ComPtr<ID3D12Resource> m_Texture;
+		ComPtr<ID3D12Resource> m_TextureUpload;
 
 		ComPtr<ID3D12Resource> m_ConstantBuffer;
 		ComPtr<ID3D12Resource> m_ConstantBufferUpload;

@@ -7,6 +7,7 @@ namespace DX12 { DXUtil::DXUtil() {}	DXUtil::~DXUtil() {} }
 namespace DX12
 {
 
+	// static
 	UINT DXUtil::GetCompileFlags()
 	{
 		UINT compileFlags = 0;
@@ -19,8 +20,8 @@ namespace DX12
 		return compileFlags;
 	}
 
-	// ComPtr<ID3D12Resource> m_ConstantBuffer
-	UINT DXUtil::CalcConstantBufferByteSize(UINT byteSize)
+	// static
+	UINT DXUtil::CalcConstantBufferByteSize(UINT nSizeOfCBStruct)
 	{
 		// 常量缓冲区必须是最小硬件分配大小（通常为256字节）的倍数。
 		// 因此四舍五入到最接近256的倍数。
@@ -36,30 +37,12 @@ namespace DX12
 		// 0x022B & 0xff00
 		// 0x0200
 		// 512
-		return (byteSize + 255) & ~255;
-	}
-	UINT DXUtil::CalcConstantBufferByteSize(ComPtr<ID3D12Resource> ConstantBuffer)
-	{
-		return (sizeof(ConstantBuffer) + 255) & ~255;
+		return (nSizeOfCBStruct + 255) & ~255;
 	}
 
-
-	/*
-	
-	HRESULT WINAPI
-	D3DCompileFromFile(_In_ LPCWSTR pFileName,
-	_In_reads_opt_(_Inexpressible_(pDefines->Name != NULL)) CONST D3D_SHADER_MACRO* pDefines,
-	_In_opt_ ID3DInclude* pInclude,
-	_In_ LPCSTR pEntrypoint,
-	_In_ LPCSTR pTarget,
-	_In_ UINT Flags1,
-	_In_ UINT Flags2,
-	_Out_ ID3DBlob** ppCode,
-	_Always_(_Outptr_opt_result_maybenull_) ID3DBlob** ppErrorMsgs);
-
-	*/
+	// static
 	ComPtr<ID3DBlob> DXUtil::CompileShader(
-		_tstring& filename,
+		_tstring filename,
 		const D3D_SHADER_MACRO* defines,	// 宏定义, 可空
 		const std::string& entrypoint,		// 入口：比如 "VS"
 		const std::string& target)			// 版本：比如 "vs_5_0"
@@ -70,26 +53,29 @@ namespace DX12
 		ComPtr<ID3DBlob> errors = nullptr;
 		ComPtr<ID3DBlob> byteCode = nullptr;
 
+		// 把文件名变成 UNICODE
 		std::wstring ws = KUtil::WString(filename.c_str());
 		LPCWSTR lpszwFilename = ws.c_str();
-		hr = D3DCompileFromFile(lpszwFilename,
-			defines, D3D_COMPILE_STANDARD_FILE_INCLUDE,
-			entrypoint.c_str(),
-			target.c_str(),
-			compileFlags, 0, &byteCode, &errors);
 
-		//ThrowIfFailed(D3DCompileFromFile(filePath.c_str(), nullptr, nullptr,
-		//	"VSMain", "vs_5_0", compileFlags, 0, &m_VSByteCode, nullptr));
+		hr = D3DCompileFromFile(lpszwFilename,	// hlsl 文件名
+			defines,							// nullptr
+			D3D_COMPILE_STANDARD_FILE_INCLUDE,	// ? 1
+			entrypoint.c_str(),					// "VSMain"
+			target.c_str(),						// "vs_5_0"
+			compileFlags,						// _In_ UINT Flags1
+			0,									// _In_ UINT Flags2
+			&byteCode,
+			&errors);
 
 		if (errors != nullptr)
+		{
 			OutputDebugStringA((char*)errors->GetBufferPointer());
+		}
 
 		ThrowIfFailed(hr);
 
 		return byteCode;
 	}
-
-
 
 	//static
 	ComPtr<ID3DBlob> DXUtil::LoadBinary(LPCTSTR filename)
@@ -108,6 +94,66 @@ namespace DX12
 
 		return blob;
 	}
+
+	// static
+	ComPtr<ID3D12Resource> DXUtil::CreateDefaultBuffer(
+		ID3D12Device* device,
+		ID3D12GraphicsCommandList* cmdList,
+		const void* initData,
+		LONG_PTR byteSize,
+		ComPtr<ID3D12Resource>& uploadBuffer)
+	{
+		ComPtr<ID3D12Resource> defaultBuffer;
+		 
+		// Create the actual default buffer resource.
+		ThrowIfFailed(device->CreateCommittedResource(
+			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT),	// 默认堆
+			D3D12_HEAP_FLAG_NONE,
+			&CD3DX12_RESOURCE_DESC::Buffer(byteSize),
+			D3D12_RESOURCE_STATE_COMMON,
+			nullptr,
+			IID_PPV_ARGS(defaultBuffer.GetAddressOf())));
+
+		// In order to copy CPU memory data into our default buffer, we need to create
+		// an intermediate upload heap. 
+		ThrowIfFailed(device->CreateCommittedResource(
+			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+			D3D12_HEAP_FLAG_NONE,
+			&CD3DX12_RESOURCE_DESC::Buffer(byteSize),
+			D3D12_RESOURCE_STATE_GENERIC_READ,
+			nullptr,
+			IID_PPV_ARGS(uploadBuffer.GetAddressOf())));
+
+
+		// Describe the data we want to copy into the default buffer.
+		D3D12_SUBRESOURCE_DATA subResourceData = {};
+		subResourceData.pData = initData;
+		subResourceData.RowPitch = byteSize;
+		subResourceData.SlicePitch = subResourceData.RowPitch;
+
+		// Schedule to copy the data to the default buffer resource.  At a high level, the helper function UpdateSubresources
+		// will copy the CPU memory into the intermediate upload heap.  Then, using ID3D12CommandList::CopySubresourceRegion,
+		// the intermediate upload heap data will be copied to mBuffer.
+		cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(defaultBuffer.Get(),
+			D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST));
+		{
+			UpdateSubresources<1>(cmdList, defaultBuffer.Get(), uploadBuffer.Get(), 0, 0, 1, &subResourceData);
+		}
+		cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(defaultBuffer.Get(),
+			D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_GENERIC_READ));
+
+		// Note: uploadBuffer has to be kept alive after the above function calls because
+		// the command list has not been executed yet that performs the actual copy.
+		// The caller can Release the uploadBuffer after it knows the copy has been executed.
+
+		return defaultBuffer;
+	}
+
+
+
+
+
+
 
 
 

@@ -74,25 +74,6 @@ namespace DX12
 			memcpy(&m_MappedData[elementIndex*m_ElementByteSize], &data, sizeof(T));
 		}
 
-		//UINT CalcConstantBufferByteSize(UINT byteSize)
-		//{
-		//	// 常量缓冲区必须是最小硬件分配大小（通常为256字节）的倍数。
-		//	// 因此四舍五入到最接近256的倍数。
-		//	// 我们通过添加255来执行此操作，然后掩蔽存储所有位<256的较低2个字节。
-		//	// Constant buffers must be a multiple of the minimum hardware
-		//	// allocation size (usually 256 bytes).  So round up to nearest
-		//	// multiple of 256.  We do this by adding 255 and then masking off
-		//	// the lower 2 bytes which store all bits < 256.
-		//	// Example: Suppose byteSize = 300.
-		//	// (300 + 255) & ~255
-		//	// 555 & ~255
-		//	// 0x022B & ~0x00ff
-		//	// 0x022B & 0xff00
-		//	// 0x0200
-		//	// 512
-		//	return (byteSize + 255) & ~255;
-		//}
-
 	private:
 		ComPtr<ID3D12Resource> m_UploadBuffer;
 		BYTE* m_MappedData;

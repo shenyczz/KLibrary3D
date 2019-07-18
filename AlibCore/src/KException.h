@@ -15,6 +15,8 @@
 ******************************************************************************/
 #pragma once
 
+#include "KUtil.h"
+
 class ALIBCORE_EXPORTS_CLASS KException
 {
 public:
@@ -37,6 +39,7 @@ inline void ThrowIfFailed(HRESULT hr)
 {
 	if (FAILED(hr))
 	{
+		_tstring s = KUtil::HR2String(hr);
 		throw KException();
 	}
 }

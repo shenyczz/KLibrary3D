@@ -30,7 +30,19 @@
     <ClInclude Include="Resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="sfxDemo\Ademo.h">
+    <ClInclude Include="Common\MC.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Box.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\AbookDemo.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\FrameResource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Shapes.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -38,10 +50,19 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Main.cpp">
+    <ClCompile Include="Common\MC.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="sfxDemo\Ademo.cpp">
+    <ClCompile Include="src\Box.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MainDemo.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\AbookDemo.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Shapes.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -59,25 +80,10 @@
     </Image>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="Asserts\_Color.hlsl">
+    <CustomBuild Include="Asserts\bookBox.hlsl">
       <Filter>Assets\Shaders</Filter>
     </CustomBuild>
-    <CustomBuild Include="Asserts\_ConstBuffers.hlsl">
-      <Filter>Assets\Shaders</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Asserts\_Texture.hlsl">
-      <Filter>Assets\Shaders</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Asserts\_Triangle.hlsl">
-      <Filter>Assets\Shaders</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Asserts\ATriangle.hlsl">
-      <Filter>Assets\Shaders</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Asserts\ATriangleCB.hlsl">
-      <Filter>Assets\Shaders</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Asserts\ATriangleUV.hlsl">
+    <CustomBuild Include="Asserts\bookShapes.hlsl">
       <Filter>Assets\Shaders</Filter>
     </CustomBuild>
   </ItemGroup>
@@ -85,5 +91,6 @@
     <Text Include="Asserts\_AhlslConfig.txt">
       <Filter>Assets\Shaders</Filter>
     </Text>
+    <Text Include="Readme.txt" />
   </ItemGroup>
 </Project>

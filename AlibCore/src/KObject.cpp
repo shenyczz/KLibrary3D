@@ -6,7 +6,6 @@ KObject::KObject()
 	: m_pOwner(NULL)
 	, m_szName(_T(""))
 {
-	//m_szName = typeid(*this).name;
 }
 
 

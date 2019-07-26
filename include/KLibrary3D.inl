@@ -60,10 +60,15 @@
 #include <comdef.h>
 
 //---------------------------------------------------------
+
+#define _astring std::string
+#define _wstring std::wstring
+
+
 #ifdef UNICODE
-	#define _tstring std::wstring
+	#define _tstring _wstring
 #else
-	#define _tstring std::string
+	#define _tstring _astring
 #endif
 //---------------------------------------------------------
 #define _delete(p) { if(p) {delete p; p = 0;} }
@@ -122,6 +127,7 @@
 
 //---------------------------------------------------------
 #include "Api.inl"
+#include "std.inl"
 #include "tchar.inl"
 //---------------------------------------------------------
 

@@ -4,14 +4,17 @@
 //-----------------------------------------------------------------------------
 #include "Dx12Base.inl"
 //-----------------------------------------------------------------------------
+#include "TUploadBuffer.h"
+
 #include "DXColors.h"
 #include "DXUtil.h"
 
-#include "MathHelper.h"
-#include "UploadBuffer.h"
 
+#include "Vertex.h"
+#include "MeshData.h"
 #include "MeshFactory.h"
 #include "MeshGeometry.h"
+
 
 #include "DDSTextureLoader.h" 
 //-----------------------------------------------------------------------------

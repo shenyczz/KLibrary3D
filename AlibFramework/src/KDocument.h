@@ -21,7 +21,5 @@ public:
 	KDocument();
 	~KDocument();
 
-//public:
-//	_tstring AppTitle;
 };
 

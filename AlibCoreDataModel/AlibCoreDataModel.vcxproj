@@ -168,6 +168,7 @@
     <ClInclude Include="src\KMarchingCubesTriangleCases.h" />
     <ClInclude Include="src\KVector3.h" />
     <ClInclude Include="src\TTuple.h" />
+    <ClInclude Include="src\TVector3.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -178,6 +179,7 @@
     <ClCompile Include="src\KMarchingCubesTriangleCases.cpp" />
     <ClCompile Include="src\KVector3.cpp" />
     <ClCompile Include="src\TTuple.cpp" />
+    <ClCompile Include="src\TVector3.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

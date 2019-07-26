@@ -6,7 +6,6 @@ KDocument::KDocument()
 
 }
 
-
 KDocument::~KDocument()
 {
 }

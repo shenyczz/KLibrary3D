@@ -2,8 +2,8 @@
 
 using namespace std;
 
-#define _VAR_TYPE_CHAR_
-//#define _VAR_TYPE_WORD_
+//#define _VAR_TYPE_CHAR_
+#define _VAR_TYPE_WORD_
 
 #if defined(_VAR_TYPE_CHAR_)
 typedef UCHAR	VarType;
@@ -12,28 +12,6 @@ typedef WORD	VarType;
 #else
 typedef UCHAR	VarType;
 #endif
-
-
-
-// CT 切片
-template<typename _Ty>
-struct TSlice
-{
-	TSlice() = delete;
-	TSlice(int width, int height)
-		: Width(width), Height(height) {}
-
-	_Ty GetValue(int x, int y)
-	{
-		return ElementArray.at(y * Width + x);
-	}
-
-	int Width;
-	int Height;
-
-	std::vector<_Ty> ElementArray;
-
-};
 
 
 
@@ -47,6 +25,12 @@ struct MCP
 	float cubeWidth;	// 小正方体宽度
 	float cubeHeight;	// 小正方体高度
 	float cubeDepth;	// 小正方体深度
+
+	float BigCubeWidth() { return cubeWidth * cubeCountX; }
+	float BigCubeHeight() { return cubeCountY * cubeHeight; }
+	float BigCubeDepth() { return cubeCountZ * cubeDepth; }
+
+	//@EndOf(MCP)
 };
 
 
@@ -59,8 +43,10 @@ public:
 	~MC();
 
 	bool LoadCTSlicerFromFiles(string fileNamePrefix, string fileNameSubfix, int sliceStartIndex, int sliceEndIndex, int pixelWidth, int pixelHeight);
+	bool LoadCTSlicerFromFiles16(string filePrefix, int indexBeg, int indexEnd, int width, int height);
 
-	void Reconstruct(const MCP& mcInfo);
+	void Reconstruct(const MCP& mcp);
+	void Reconstruct16(MCP& mcp);
 
 	void GetMesh(std::vector<Vector3>& output);
 
@@ -68,8 +54,8 @@ public:
 
 //private:
 
-	std::vector<TSlice<VarType>>	m_CTSlices;
-	std::vector<Vector3>	m_MeshOutput;
+	std::vector<TSlice<VarType>>	m_Slices;
+	std::vector<Vector3>			m_MeshOutput;
 
 };
 

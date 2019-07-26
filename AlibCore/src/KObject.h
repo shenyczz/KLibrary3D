@@ -23,14 +23,16 @@ public:
 	~KObject();
 
 public:
-	LPVOID GetOwner() { return m_pOwner; }
+	LPVOID GetOwner() const { return m_pOwner; }
+	void SetOwner(LPVOID pOwner) { m_pOwner = pOwner; }
 
-	LPCTSTR GetName() { return m_szName.c_str(); }
-	void SetName(LPCTSTR lpszName) { m_szName = (lpszName) ? lpszName : _T(""); }
+	LPCTSTR GetName() const { return m_szName.c_str(); }
+	void SetName(LPCTSTR lpszName) { m_szName = (lpszName != NULL) ? lpszName : _T(""); }
 
 protected:
 	LPVOID m_pOwner;
 	_tstring m_szName;
+
 
 };
 

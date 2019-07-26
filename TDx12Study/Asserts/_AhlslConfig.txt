@@ -1,0 +1,2 @@
+ÃüÁîĞĞ£ºcopy %(Identity) $(OutDir)\%(RelativeDir) > NUL
+Êä³ö£º$(OutDir)\%(Identity)

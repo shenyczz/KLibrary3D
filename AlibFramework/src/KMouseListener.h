@@ -21,13 +21,14 @@
 class ALIBFRAMEWORK_EXPORTS_CLASS KMouseListener : KObject
 {
 public:
+	KMouseListener();
 	KMouseListener(LPVOID pOwner);
 	KMouseListener(const KMouseListener&) = delete;
 	~KMouseListener();
 
 public:
 	// Êó±ê°´ÏÂ
-	void MouseDown(KObject* pSender, KEventArgs e) {}
+	void MouseDown(LPVOID pSender, KEventArgs e) {}
 
 
 

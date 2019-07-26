@@ -44,6 +44,8 @@ class ALIBFRAMEWORK_EXPORTS_CLASS KApplication
 {
 public:
 	KApplication();
+	KApplication(const KApplication& rhs) = delete;
+	KApplication& operator=(const KApplication& rhs) = delete;
 	~KApplication();
 
 public:
@@ -58,16 +60,17 @@ public:
 
 	KDocument* GetDocument() const { return m_pDocument; }
 	KWindow* GetWindow() const { return m_pWindow; }
-	KSample* GetSample() const { return m_pSample; }
 	KClock* GetClock() const { return m_pClock; }
+
+	KSample* GetSample() const { return m_pSample; }
 
 private:
 	void BuildStartup(HINSTANCE hInstance);
 
 protected:
-	HINSTANCE m_hInstance;
-	int m_nCmdShow;
-	_tstring m_Startup;	// 启动路径
+	HINSTANCE m_hInstance;	// 应用程序实例句柄
+	int m_nCmdShow;			// 启动显示
+	_tstring m_Startup;		// 启动路径
 
 
 	KDocument* m_pDocument;	// 文档

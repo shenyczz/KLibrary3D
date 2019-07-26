@@ -39,6 +39,9 @@
     <ClInclude Include="src\KUtil.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="src\TSlice.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -65,5 +68,14 @@
     <ClCompile Include="src\KSmartPointer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="src\TSlice.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Readme.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\..\sfxDocs\ThreeD\dx12\dx12.99-学习笔记.docx" />
   </ItemGroup>
 </Project>

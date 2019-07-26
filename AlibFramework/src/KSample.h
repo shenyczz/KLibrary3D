@@ -19,13 +19,17 @@
 class KDocument;
 class KWindow;
 
-class ALIBFRAMEWORK_EXPORTS_CLASS KSample
+class ALIBFRAMEWORK_EXPORTS_CLASS KSample : public KObject
 {
+
 #pragma region --Constructor
+
+private:
+	KSample(const KSample&) = delete;
+	KSample& operator=(const KSample& rhs) = delete;
 
 protected:
 	KSample();
-	KSample(const KSample&) = delete;
 
 public:
 	~KSample() = default;
@@ -52,19 +56,33 @@ protected:
 #pragma endregion
 
 
-#pragma region --纵横比
+#pragma region --鼠标消息
 
 public:
-	float GetAspectRatio() { return m_fAspectRatio; }
+	void MouseDown(WPARAM wParam, LPARAM lParam);
+	void MouseUp(WPARAM wParam, LPARAM lParam);
+	void MouseMove(WPARAM wParam, LPARAM lParam);
+	void MouseWheel(WPARAM wParam, LPARAM lParam);
+	
 
 protected:
-	float m_fAspectRatio;
+	// WPARAM wParam => UINT_PTR nType
+	virtual void OnMouseDown(WPARAM wParam, int x, int y) = 0;
+	virtual void OnMouseUp(WPARAM wParam, int x, int y) = 0;
+	virtual void OnMouseMove(WPARAM wParam, int x, int y) = 0;
+	virtual void OnMouseWheel(WPARAM wParam, LPARAM lParam) = 0;
+
 
 #pragma endregion
 
+
 protected:
-	KDocument * m_pDocument;
-	KWindow * m_pWindow;
+	float AspectRatio();
+
+
+protected:
+	KDocument* m_pDocument;
+	KWindow* m_pWindow;
 
 
 	//@EndOf(KSample)

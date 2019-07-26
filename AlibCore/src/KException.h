@@ -35,7 +35,7 @@ private:
 	_tstring CustomMessage;
 };
 
-inline void ThrowIfFailed(HRESULT hr)
+inline void ThrowIfFailed_22(HRESULT hr)
 {
 	if (FAILED(hr))
 	{
@@ -43,3 +43,25 @@ inline void ThrowIfFailed(HRESULT hr)
 		throw KException();
 	}
 }
+
+#ifndef ThrowIfFailed
+#define ThrowIfFailed(x)	\
+{							\
+	ThrowIfFailed_22(x);	\
+}
+#endif
+
+
+//#ifndef ThrowIfFailed
+//#define ThrowIfFailed(x)											\
+//{																	\
+//    HRESULT hr__ = (x);                                             \
+//	_tstring s = KUtil::HR2String(hr);								\
+//    _tstring fn = (__TFILE__);										\
+//    if(FAILED(hr__)) { throw KException(hr__, #x, fn, __LINE__); }	\
+//}
+//#endif
+//
+//#ifndef ReleaseCom
+//#define ReleaseCom(x) { if(x){ x->Release(); x = 0; } }
+//#endif

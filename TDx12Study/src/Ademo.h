@@ -7,20 +7,26 @@ enum class AdemoType
 	QUAD,
 	TRICB,
 	TRIUV,
+	BOX,
 };
 
 class Ademo : public Dx12Sample
 {
 public:
 	Ademo();
-	~Ademo();
+	~Ademo() {}
 
 protected:
-	void Resize() override;
-	void Update() override;
+	void OnResize() override;
+	void OnUpdate() override;
 
+	void OnMouseDown(WPARAM wParam, int x, int y) override;
+	void OnMouseUp(WPARAM wParam, int x, int y) override;
+	void OnMouseMove(WPARAM wParam, int x, int y) override;
+	void OnMouseWheel(WPARAM wParam, LPARAM lParam) override;
 
-	void CreateRootSignature() override;
+protected:
+	void BuildRootSignature() override;
 
 	void BuildShadersAndInputLayout() override;
 	void BuildPipelineStateObject() override;
@@ -32,45 +38,59 @@ protected:
 
 	void ReccorCommand() override;
 
+
 private:
+	struct _CB_TRI
+	{
+		XMFLOAT4 offset;
+	};
+	struct _CB_BOX
+	{
+		XMFLOAT4 offset;
+		XMFLOAT4X4 wvp = DXUtil::Identity4x4;
+	};
+
+	//typedef _CB_TRI TCB;
+	typedef _CB_BOX TCB;
+
+
+
+
 	AdemoType m_demoType;
 
 	MeshData m_mesh;
+
+	TCB m_cbData;
+	UINT8* m_pCbvDataBegin;	// ´«ËÍÖ¸Õë
+
+	float m_Radius = 5.0f;
+	float m_Theta = 1.5f*XM_PI;
+	float m_Phi = XM_PIDIV4;
+
+	POINT m_LastMousePos;
+
+
+
+	//void RadarMesh(MeshData* pMesh);
 
 
 	// DEFAULT
 	void CreateRootSignatureDefault();
 	void BuildPipelineStateObjectDefault();
+	void InitVbIb(MeshData* pMesh);
 	void BuildShadersAndInputLayoutFromFile(LPCTSTR lpszFileName);
+	void BuildConstantBufferAndViewDefault();
+	void ReccorCommandDefault();
 
 	// TRI
-	void CreateRootSignature_tri();				// default
-	void BuildShadersAndInputLayout_tri();
-	void BuildPipelineStateObject_tri();		// default
 	void BuildMeshData_tri();
-	void ReccorCommand_tri();
 
 	// QUAD
-	void CreateRootSignature_quad();			// default
-	void BuildShadersAndInputLayout_quad();
-	void BuildPipelineStateObject_quad();		// default
 	void BuildMeshData_quad();
-	void ReccorCommand_quad();
 
 	// TRICB
-	struct TCB
-	{
-		XMFLOAT4 offset;
-	};
-
-	TCB m_cbData;
-	UINT8* m_pCbvDataBegin;
-
 	void CreateRootSignature_tricb();
-	void BuildShadersAndInputLayout_tricb();
-	void BuildPipelineStateObject_tricb();		// default
 	void BuildMeshData_tricb();
-	void BuildConstantBufferAndView_tricb();
 	void ReccorCommand_tricb();
 	void Update_tricb();
 
@@ -82,13 +102,15 @@ private:
 	std::vector<UINT8> GenerateTextureData();
 
 	void CreateRootSignature_triuv();
-	void BuildShadersAndInputLayout_triuv();
-	void BuildPipelineStateObject_triuv();		// default
 	void BuildMeshData_triuv();
 	void BuildTextureBufferAndView_triuv();
 	void ReccorCommand_triuv();
 
-
+	// BOX
+	void CreateRootSignature_box();
+	void BuildMeshData_box();
+	void ReccorCommand_box();
+	void Update_box();
 
 
 };

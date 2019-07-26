@@ -13,51 +13,85 @@
 * PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
 *
 ******************************************************************************/
+/*
+// All triangles are generated "outward" facing.  If you want "inward"
+// facing triangles (for example, if you want to place the camera inside
+// a sphere to simulate a sky), you will need to:
+//   1. Change the Direct3D cull mode or manually reverse the winding order.
+//   2. Invert the normal.
+//   3. Update the texture coordinates and tangent vectors.
+*/
 #pragma once
 
-#include "TVertex.h"
 
-typedef TVertex<float> Vertex;
+#include "MeshData.h"
 
-struct MeshData
+namespace DX12
 {
-	const void* VBInitData() const { return this->Vertices.data(); }
-	const UINT VBSizeInBytes() const { return sizeof(Vertex) * Vertices.size(); }
-	const UINT VBStrideInBytes() const { return sizeof(Vertex); }
+	class DX12BASE_EXPORTS_CLASS MeshFactory
+	{
+	private:
+		MeshFactory() = delete;
+		~MeshFactory() = delete;
 
-	const void* IBInitData() const { return this->Indices.data(); }
-	const UINT IBSizeInBytes() const { return Indices.size() * sizeof(std::uint32_t); }
-	//const UINT IBStrideInBytes() const { return sizeof(std::uint32_t); }
+	public:
+		///<summary>
+		/// 创建一个三角形
+		///</summary>
+		static void CreateTriangle(const float side, MeshData* pMeshData);
 
-	const UINT IndexCount() const { return Indices.size(); }
-
-
-	std::vector<Vertex>	Vertices;
-	std::vector<std::uint32_t> Indices;
-	static const DXGI_FORMAT IBVFormat = DXGI_FORMAT_R32_UINT;
-
-	//IndexFormat
-};
-
-class DX12BASE_EXPORTS_CLASS MeshFactory
-{
-	MeshFactory() = delete;
-	~MeshFactory() = delete;
-
-public:
-	// 创建一个三角形
-	static void CreateTriangle(const float side, MeshData* pMesh);
-
-	// 创建一个长方形
-	static void CreateQuad(float width, float height, MeshData* pMesh);
-
-	//创建一个立方体：指定宽(X方向)、高(Y方向)、深(Z方向)
-	static void CreateBox(float width, float height, float depth, MeshData* pMesh);
+		//<summary> CreateGridxz
+		// 在 xz-plane 创建 m * n 的网格（m行n列），
+		// 居中于指定宽度和深度的原点
+		//</summary>
+		// width - 宽度(X)
+		// depth - 深度(Z)
+		// m - 行
+		// n - 列
+		static void CreateGrid(float width, float depth, uint32 m, uint32 n, MeshData* pMeshData);
 
 
+		///<summary>
+		/// Creates a box centered at the origin with the given dimensions, where each
+		/// face has m rows and n columns of vertices.
+		///</summary>
+		static void CreateBox(float width, float height, float depth, uint32 numSubdivisions, MeshData* pMeshData);
+
+		///<summary>
+		/// Creates a sphere centered at the origin with the given radius.  The
+		/// slices and stacks parameters control the degree of tessellation.
+		/// sliceCount - 面片数量（东西）
+		/// stackCount - 堆叠层数（南北）
+		///</summary>
+		static void CreateSphere(float radius, uint32 sliceCount, uint32 stackCount, MeshData* pMeshData);
+
+		///<summary>
+		/// Creates a geosphere centered at the origin with the given radius.  The
+		/// depth controls the level of tessellation.
+		///</summary>
+		static void CreateGeosphere(float radius, uint32 numSubdivisions, MeshData* pMeshData);
+
+		///<summary>
+		/// Creates a quad aligned with the screen.  This is useful for postprocessing and screen effects.
+		///</summary>
+		static void CreateQuad(float x, float y, float w, float h, float depth, MeshData* pMeshData);
+
+		///<summary>
+		/// Creates a cylinder parallel to the y-axis, and centered about the origin.  
+		/// The bottom and top radius can vary to form various cone shapes rather than true
+		/// cylinders.  The slices and stacks parameters control the degree of tessellation.
+		///</summary>
+		static void CreateCylinder(float btmRadius, float topRadius, float height,
+			uint32 sliceCount, uint32 stackCount, MeshData* pMeshData);
+
+	private:
+		static void Subdivide(MeshData& meshData);
+		static Vertex MidPoint(const Vertex& v0, const Vertex& v1);
+		static void BuildCylinderTopCap(float bottomRadius, float topRadius, float height, uint32 sliceCount, uint32 stackCount, MeshData& meshData);
+		static void BuildCylinderBottomCap(float bottomRadius, float topRadius, float height, uint32 sliceCount, uint32 stackCount, MeshData& meshData);
 
 
-	//static void CreateSphere(float radius, UINT sliceCount, UINT stackCount, MeshData& meshData) {}
-
-};
+		//@EndOf(MeshFactory)
+	};
+}
 

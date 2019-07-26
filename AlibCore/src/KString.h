@@ -15,10 +15,45 @@
 ******************************************************************************/
 #pragma once
 
+
 class ALIBCORE_EXPORTS_CLASS KString
 {
 public:
 	KString();
+	KString(const KString& rhs);
+	KString(LPCTSTR pcsz);
 	~KString();
+
+public:
+
+
+public:
+
+	// ²Ù×÷·ûÖØÔØ []
+	TCHAR operator[](int iChar) const;
+
+	// un_explicit
+	operator LPCTSTR();
+
+public:
+	static _astring AString(LPCSTR str);
+	static _astring AString(LPCWSTR str);
+
+
+	static _wstring WString(LPCSTR str);
+	static _wstring WString(LPCWSTR str);
+
+	static _tstring TString(LPCSTR lpsz);
+	static _tstring TString(LPCWSTR lpsz);
+
+	static KString& Format(LPCTSTR pszFormat, ...);
+
+
+private:
+	_tstring m_string;
+
+	static KString s_string;
+
+	//@EndOf(KString)
 };
 

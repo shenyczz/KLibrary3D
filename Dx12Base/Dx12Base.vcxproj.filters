@@ -24,12 +24,6 @@
     <ClInclude Include="src\MeshGeometry.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\MathHelper.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="src\UploadBuffer.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="src\DXUtil.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -39,10 +33,16 @@
     <ClInclude Include="src\DXColors.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\MeshFactory.h">
+    <ClInclude Include="src\MeshData.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\TVertex.h">
+    <ClInclude Include="src\TUploadBuffer.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Vertex.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\MeshFactory.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -56,9 +56,6 @@
     <ClCompile Include="src\MeshGeometry.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\MathHelper.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="src\DXUtil.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -68,10 +65,16 @@
     <ClCompile Include="src\DXColors.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\MeshFactory.cpp">
+    <ClCompile Include="src\MeshData.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\TVertex.cpp">
+    <ClCompile Include="src\TUploadBuffer.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Vertex.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MeshFactory.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

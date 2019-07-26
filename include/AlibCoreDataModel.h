@@ -5,6 +5,7 @@
 #include "AlibCoreDataModel.inl"
 //-----------------------------------------------------------------------------
 #include "TTuple.h"		// template
+#include "TVector3.h"	// template
 
 #include "KCell.h"
 #include "KVector3.h"

@@ -2,11 +2,15 @@
 #include "KMouseListener.h"
 
 
+KMouseListener::KMouseListener()
+{
+
+}
+
 KMouseListener::KMouseListener(LPVOID pOwner)
 {
 	m_pOwner = pOwner;
 }
-
 
 KMouseListener::~KMouseListener()
 {

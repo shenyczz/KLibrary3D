@@ -27,6 +27,9 @@
     <ClInclude Include="src\Dx12Sample.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="src\Dx12Book.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp">
@@ -36,6 +39,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\Dx12Sample.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Dx12Book.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

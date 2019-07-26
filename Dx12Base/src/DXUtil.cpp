@@ -1,13 +1,20 @@
 #include "stdafx.h"
 #include "DXUtil.h"
 
-namespace DX12 { DXUtil::DXUtil() {}	DXUtil::~DXUtil() {} }
-
-
 namespace DX12
 {
+	//static
+	const XMFLOAT4X4 DXUtil::Identity4x4 = 
+	{
+		1.0f, 0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f, 0.0f,
+		0.0f, 0.0f, 1.0f, 0.0f,
+		0.0f, 0.0f, 0.0f, 1.0f,
+	};
 
-	// static
+
+
+	//static
 	UINT DXUtil::GetCompileFlags()
 	{
 		UINT compileFlags = 0;
@@ -20,24 +27,52 @@ namespace DX12
 		return compileFlags;
 	}
 
-	// static
-	UINT DXUtil::CalcConstantBufferByteSize(UINT nSizeOfCBStruct)
+	//static
+	void DXUtil::GetHardwareAdapter(_In_ IDXGIFactory2* pFactory,
+		_Outptr_result_maybenull_ IDXGIAdapter1** ppAdapter)
 	{
-		// 常量缓冲区必须是最小硬件分配大小（通常为256字节）的倍数。
-		// 因此四舍五入到最接近256的倍数。
-		// 我们通过添加255来执行此操作，然后掩蔽存储所有位<256的较低2个字节。
-		// Constant buffers must be a multiple of the minimum hardware
-		// allocation size (usually 256 bytes).  So round up to nearest
-		// multiple of 256.  We do this by adding 255 and then masking off
-		// the lower 2 bytes which store all bits < 256.
-		// Example: Suppose byteSize = 300.
-		// (300 + 255) & ~255
-		// 555 & ~255
-		// 0x022B & ~0x00ff
-		// 0x022B & 0xff00
-		// 0x0200
-		// 512
-		return (nSizeOfCBStruct + 255) & ~255;
+		ComPtr<IDXGIAdapter1> adapter;
+		*ppAdapter = nullptr;
+
+		for (UINT adapterIndex = 0; DXGI_ERROR_NOT_FOUND != pFactory->EnumAdapters1(adapterIndex, &adapter); ++adapterIndex)
+		{
+			DXGI_ADAPTER_DESC1 desc;
+			adapter->GetDesc1(&desc);
+
+			if (desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)
+			{
+				// Don't select the Basic Render Driver adapter.
+				// If you want a software adapter, pass in "/warp" on the command line.
+				continue;
+			}
+
+			// Check to see if the adapter supports Direct3D 12, but don't create the
+			// actual device yet.
+			if (SUCCEEDED(D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_11_0, _uuidof(ID3D12Device), nullptr)))
+			{
+				break;
+			}
+		}
+
+		*ppAdapter = adapter.Detach();
+	}
+
+	//static
+	ComPtr<ID3DBlob> DXUtil::LoadBinary(LPCTSTR filename)
+	{
+		std::ifstream fin(filename, std::ios::binary);
+
+		fin.seekg(0, std::ios_base::end);
+		std::ifstream::pos_type size = (int)fin.tellg();	// 文件长度
+		fin.seekg(0, std::ios_base::beg);
+
+		ComPtr<ID3DBlob> blob;
+		ThrowIfFailed(D3DCreateBlob((SIZE_T)size, blob.GetAddressOf()));
+
+		fin.read((char*)blob->GetBufferPointer(), size);
+		fin.close();
+
+		return blob;
 	}
 
 	// static
@@ -54,7 +89,7 @@ namespace DX12
 		ComPtr<ID3DBlob> byteCode = nullptr;
 
 		// 把文件名变成 UNICODE
-		std::wstring ws = KUtil::WString(filename.c_str());
+		std::wstring ws = KString::WString(filename.c_str());
 		LPCWSTR lpszwFilename = ws.c_str();
 
 		hr = D3DCompileFromFile(lpszwFilename,	// hlsl 文件名
@@ -78,24 +113,6 @@ namespace DX12
 	}
 
 	//static
-	ComPtr<ID3DBlob> DXUtil::LoadBinary(LPCTSTR filename)
-	{
-		std::ifstream fin(filename, std::ios::binary);
-
-		fin.seekg(0, std::ios_base::end);
-		std::ifstream::pos_type size = (int)fin.tellg();
-		fin.seekg(0, std::ios_base::beg);
-
-		ComPtr<ID3DBlob> blob;
-		ThrowIfFailed(D3DCreateBlob((SIZE_T)size, blob.GetAddressOf()));
-
-		fin.read((char*)blob->GetBufferPointer(), size);
-		fin.close();
-
-		return blob;
-	}
-
-	// static
 	ComPtr<ID3D12Resource> DXUtil::CreateDefaultBuffer(
 		ID3D12Device* device,
 		ID3D12GraphicsCommandList* cmdList,
@@ -103,7 +120,8 @@ namespace DX12
 		LONG_PTR byteSize,
 		ComPtr<ID3D12Resource>& uploadBuffer)
 	{
-		ComPtr<ID3D12Resource> defaultBuffer;
+		// 默认缓冲区
+		ComPtr<ID3D12Resource> defaultBuffer;	// GPU?
 		 
 		// Create the actual default buffer resource.
 		ThrowIfFailed(device->CreateCommittedResource(
@@ -112,12 +130,12 @@ namespace DX12
 			&CD3DX12_RESOURCE_DESC::Buffer(byteSize),
 			D3D12_RESOURCE_STATE_COMMON,
 			nullptr,
-			IID_PPV_ARGS(defaultBuffer.GetAddressOf())));
+			IID_PPV_ARGS(&defaultBuffer)));
 
 		// In order to copy CPU memory data into our default buffer, we need to create
 		// an intermediate upload heap. 
 		ThrowIfFailed(device->CreateCommittedResource(
-			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
+			&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),	// 上传堆
 			D3D12_HEAP_FLAG_NONE,
 			&CD3DX12_RESOURCE_DESC::Buffer(byteSize),
 			D3D12_RESOURCE_STATE_GENERIC_READ,
@@ -144,13 +162,137 @@ namespace DX12
 
 		// Note: uploadBuffer has to be kept alive after the above function calls because
 		// the command list has not been executed yet that performs the actual copy.
+
 		// The caller can Release the uploadBuffer after it knows the copy has been executed.
 
 		return defaultBuffer;
 	}
 
 
+	//static
+	UINT DXUtil::CalculateConstantBufferByteSize(UINT nSizeOfCBStruct)
+	{
+		// 常量缓冲区必须是最小硬件分配大小（通常为256字节）的倍数。
+		// 因此四舍五入到最接近256的倍数。
+		// 我们通过添加255来执行此操作，然后掩蔽存储所有位<256的较低2个字节。
+		// Constant buffers must be a multiple of the minimum hardware
+		// allocation size (usually 256 bytes).  So round up to nearest
+		// multiple of 256.  We do this by adding 255 and then masking off
+		// the lower 2 bytes which store all bits < 256.
+		// Example: Suppose byteSize = 300.
+		// (300 + 255) & ~255
+		// 555 & ~255
+		// 0x022B & ~0x00ff
+		// 0x022B & 0xff00
+		// 0x0200
+		// 512
+		return ((nSizeOfCBStruct + 255) & (~255));
+	}
 
+	//static
+	XMVECTOR DXUtil::SphericalToCartesian(float radius, float theta, float phi)
+	{
+		return XMVectorSet(
+			radius*sinf(phi)*cosf(theta),	// x
+			radius*cosf(phi),				// y
+			radius*sinf(phi)*sinf(theta),	// z
+			1.0f);							// w
+	}
+
+	//static
+	XMMATRIX DXUtil::InverseTranspose(CXMMATRIX M)
+	{
+		// Inverse-transpose is just applied to normals.  So zero out 
+		// translation row so that it doesn't get into our inverse-transpose
+		// calculation--we don't want the inverse-transpose of the translation.
+		XMMATRIX _Ty = M;
+		_Ty.r[3] = XMVectorSet(0.0f, 0.0f, 0.0f, 1.0f);
+
+		XMVECTOR det = XMMatrixDeterminant(_Ty);
+		return XMMatrixTranspose(XMMatrixInverse(&det, _Ty));
+	}
+
+
+	//static 极坐标方位角[0, 2*PI)
+	float DXUtil::Azimuth(float X, float Y)
+	{
+		float theta = 0.0f;
+
+		// Quadrant I or IV (1,4象限)
+		if (X >= 0.0f)
+		{
+			//If X = 0, then atanf(Y/X) = +pi/2 if Y > 0
+			//               atanf(Y/X) = -pi/2 if Y < 0
+
+			theta = atanf(Y / X); // in [-pi/2, +pi/2]
+
+			if (theta < 0.0f)
+			{
+				theta += 2.0f*(float)KMaths::PI; // in [0, 2*pi).
+			}
+		}
+		// Quadrant II or III(2,3象限)
+		else
+		{
+			theta = atanf(Y / X) + (float)KMaths::PI; // in [0, 2*pi).
+		}
+
+		return theta;
+	}
+
+	// ?
+	XMVECTOR DXUtil::RandUnitVec3()
+	{
+		XMVECTOR One = XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f);
+		XMVECTOR Zero = XMVectorZero();
+
+		// Keep trying until we get a point on/in the hemisphere.
+		while (true)
+		{
+			// Generate random point in the cube [-1,1]^3.
+			XMVECTOR v = XMVectorSet(KMaths::Rand(-1.0f, 1.0f),
+				KMaths::Rand(-1.0f, 1.0f),
+				KMaths::Rand(-1.0f, 1.0f), 0.0f);
+
+			// Ignore points outside the unit sphere in order to get an even distribution 
+			// over the unit sphere.  Otherwise points will clump more on the sphere near 
+			// the corners of the cube.
+
+			if (XMVector3Greater(XMVector3LengthSq(v), One))
+				continue;
+
+			return XMVector3Normalize(v);
+		}
+	}
+
+	// ?
+	XMVECTOR DXUtil::RandHemisphereUnitVec3(XMVECTOR n)
+	{
+		XMVECTOR One = XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f);
+		XMVECTOR Zero = XMVectorZero();
+
+		// Keep trying until we get a point on/in the hemisphere.
+		while (true)
+		{
+			// Generate random point in the cube [-1,1]^3.
+			XMVECTOR v = XMVectorSet(KMaths::Rand(-1.0f, 1.0f),
+				KMaths::Rand(-1.0f, 1.0f),
+				KMaths::Rand(-1.0f, 1.0f), 0.0f);
+
+			// Ignore points outside the unit sphere in order to get an even distribution 
+			// over the unit sphere.  Otherwise points will clump more on the sphere near 
+			// the corners of the cube.
+
+			if (XMVector3Greater(XMVector3LengthSq(v), One))
+				continue;
+
+			// Ignore points in the bottom hemisphere.
+			if (XMVector3Less(XMVector3Dot(n, v), Zero))
+				continue;
+
+			return XMVector3Normalize(v);
+		}
+	}
 
 
 

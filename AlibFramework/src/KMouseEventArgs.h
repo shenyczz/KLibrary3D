@@ -22,20 +22,25 @@ class ALIBFRAMEWORK_EXPORTS_CLASS KMouseEventArgs : public KEventArgs
 {
 public:
 	KMouseEventArgs();
-	KMouseEventArgs(KMouseButtons button, int clicks, int X, int Y, int delta);
-	KMouseEventArgs(KMouseButtons button, int clicks, int X, int Y, int delta, void* tag);
+	KMouseEventArgs(WPARAM wParam, LPARAM lParam);
 	~KMouseEventArgs();
+	//KMouseEventArgs();
+	//KMouseEventArgs(KMouseButtons button, int clicks, int X, int Y, int delta);
+	//KMouseEventArgs(KMouseButtons button, int clicks, int X, int Y, int delta, void* tag);
 
 
 public:
-	KMouseButtons MouseButtons;
-	int Clicks;
-	int Delta;
-	LONG X;
-	LONG Y;
-	POINT Location;
+	WPARAM WParam;
+	LPARAM LParam;
 
-	void* Tag;
+	//KMouseButtons MouseButtons;
+	//int Clicks;
+	//int Delta;
+	//LONG X;
+	//LONG Y;
+	//POINT Location;
+
+	//void* Tag;
 
 
 	//@EndOf(KMouseEventArgs)

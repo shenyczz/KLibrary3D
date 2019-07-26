@@ -20,9 +20,12 @@
 #include "KException.h"
 #include "KMouseListener.h"
 
+
 //static
 KApplication* KApplication::s_pApplication = nullptr;
-const KApplication __ebbe9801_bafa_4917_8dc9_5835f4ecb731_theApplication__;
+
+// 声明一个全局变量，取得应用程序的静态指针 s_pApplication
+const KApplication __global_EBBE9801_SYC_1968_0711_CYS_1089EBBE_application__;
 
 
 KApplication::KApplication()
@@ -52,18 +55,23 @@ void KApplication::Initialize(HINSTANCE hInstance, UINT width, UINT height, LPCT
 {
 	try
 	{
+		// 保存实例句柄
 		m_hInstance = hInstance;
 
 		// 构造启动路径
 		BuildStartup(hInstance);
 
+		// 构造文档
+		m_pDocument = new KDocument();
+
+		// 构造窗口
+		m_pWindow = new KWindow();
+		m_pWindow->Initialize(this, width, height, lpszName);
+
+		// 构造时钟
 		m_pClock = new KClock();
 		m_pClock->Reset();
 
-		m_pDocument = new KDocument();
-
-		m_pWindow = new KWindow();
-		m_pWindow->Initialize(this, width, height, lpszName);
 	}
 	catch (...)
 	{

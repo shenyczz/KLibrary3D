@@ -15,14 +15,14 @@
 ******************************************************************************/
 #pragma once
 
-class ALIBCOREMATHS_EXPORTS_CLASS KMath
+class ALIBCOREMATHS_EXPORTS_CLASS KMaths
 {
 private:
-	KMath() = delete;
+	KMaths() = delete;
 
 public:
 	// 符号（-1，0，1）
-	static int Sign(double X);
+	static int Sign(double x);
 
 	// 相等判断
 	static bool IsEqual(double v1, double v2);
@@ -41,6 +41,9 @@ public:
 
 	// 两点间距离
 	static double Distance(double x1, double y1, double x2, double y2);
+
+	//球坐标转换位笛卡尔坐标
+	static KVector3 SphericalToCartesian(double radius, double theta, double phi);
 
 
 	template<typename T>

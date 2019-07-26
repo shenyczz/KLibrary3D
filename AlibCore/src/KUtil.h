@@ -30,18 +30,9 @@ public:
 	static void Trace(LPCTSTR lpszInfo);
 
 
-	static std::string AString(LPCSTR str);
-	static std::string AString(LPCWSTR str);
-
-	static std::wstring WString(LPCSTR str);
-	static std::wstring WString(LPCWSTR str);
-
-	static _tstring TString(LPCSTR lpsz);
-	static _tstring TString(LPCWSTR lpsz);
-
 public:
 	template<class T>
-	static T* CreateSample()
+	static T* CreateObject()
 	{
 		return new T();
 	}

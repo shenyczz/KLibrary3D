@@ -25,7 +25,8 @@ public:
 	explicit KVector3(const float *pArray);
 
 public:
-	float X, Y, Z;
+	float x, y, z;
+	float V;
 
 	KVector3 operator -() const;
 	KVector3& operator =(const KVector3& other);

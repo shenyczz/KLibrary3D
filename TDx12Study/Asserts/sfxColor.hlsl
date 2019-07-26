@@ -9,17 +9,9 @@
 * IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR
 * PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
 *
+* 用于颜色
+* 
 ******************************************************************************/
-
-
-// 常量缓冲区(名称)
-cbuffer cbuf : register(b0)
-{
-	float4 offset;
-};
-
-
-
 
 // 输入顶点
 struct VertexIn
@@ -43,8 +35,10 @@ VertexOut VS(VertexIn vin)
 	VertexOut vout;
 
 	{
-		vout.PosH = float4(vin.PosL, 1.0f);
-		vout.PosH += offset;
+		float4 pos_h = float4(vin.PosL, 1.0f);
+
+		vout.PosH = pos_h;
+
 		vout.Color = vin.Color;
 	}
 
@@ -54,11 +48,9 @@ VertexOut VS(VertexIn vin)
 // 像素着色器
 float4 PS(VertexOut pin) : SV_TARGET
 {
-	float4 clr = float4(1.0f, 0.0f, 0.0f, 1.0f);
+	float4 clr = float4(1,0,0,0);
 
 	clr = pin.Color;
-	//clr = float4(0.9f, 0.9f, 0.0f, 1.0f);
 
 	return clr;
 }
-

@@ -9,30 +9,59 @@ namespace DX12
 
 
 	Dx12Sample::Dx12Sample()
-		: m_useWarpDevice(false)
-		, m_4xMsaaState(false)
-		, m_4xMsaaQuality(0)
-		, m_frameIndex(0)
-		, m_fenceValues{}
-		, m_fenceEvent(nullptr)
-		, m_rtvDescriptorSize(0)
-		, m_dsvDescriptorSize(0)
-		, m_cbvDescriptorSize(0)
-		, m_srvDescriptorSize(0)
-		, m_uavDescriptorSize(0)
-		, m_BackBufferFormat(DXGI_FORMAT_R8G8B8A8_UNORM)
-		, m_DepthStencilFormat(DXGI_FORMAT_D24_UNORM_S8_UINT)
-		, m_Viewport(0.0f, 0.0f, 1.0f, 1.0f)
-		, m_ScissorRect(0, 0, 1, 1)
-		, m_VSByteCode(nullptr)
-		, m_PSByteCode(nullptr)
-		, m_Texture(nullptr)
-		, m_VertexBuffer(nullptr)
-		, m_VertexBufferView{}
 	{
-		m_World = MathHelper::Identity4x4();
-		m_View = MathHelper::Identity4x4();
-		m_Proj = MathHelper::Identity4x4();
+		m_useWarpDevice = false;
+		m_4xMsaaState = false;
+		m_4xMsaaQuality = 0;
+
+		m_FrameIndex = 0;
+
+		m_rtvDescriptorSize = 0;
+		m_dsvDescriptorSize = 0;
+		m_cbvDescriptorSize = 0;
+		m_srvDescriptorSize = 0;
+		m_uavDescriptorSize = 0;
+
+		m_RenderTargetFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
+		m_DepthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+
+		m_World = DXUtil::Identity4x4;
+		m_View = DXUtil::Identity4x4;
+		m_Proj = DXUtil::Identity4x4;
+
+		m_Factory = nullptr;
+		m_device = nullptr;
+
+		m_rtvHeap = nullptr;
+		m_dsvHeap = nullptr;
+		m_cbvHeap = nullptr;
+		m_srvHeap = nullptr;
+		m_uavHeap = nullptr;
+
+		m_RootSignature = nullptr;
+
+		m_CommandQueue = nullptr;
+		m_CommandList = nullptr;
+		m_SwapChain = nullptr;
+		m_Fence = nullptr;
+		m_FenceEvent = nullptr;
+
+		for (int i = 0; i < FrameCount; i++)
+		{
+			m_FenceValues[i] = 0;
+			m_RenderTargets[i] = nullptr;
+			m_CommandAllocator[i] = nullptr;
+		}
+
+		m_DepthStencil = nullptr;
+
+		m_VSByteCode = nullptr;
+		m_PSByteCode = nullptr;
+
+		m_pso = nullptr;
+
+		m_ScreenViewport = CD3DX12_VIEWPORT(0.0f, 0.0f, 1.0f, 1.0f);
+		m_ScissorRect = CD3DX12_RECT(0, 0, 1, 1);
 	}
 
 	Dx12Sample::~Dx12Sample()
@@ -44,29 +73,95 @@ namespace DX12
 #pragma endregion
 
 
-
-#pragma region 工作流程： Init -> Render -> Destroy
+#pragma region 工作流程（Init -> Render -> Destroy）
 
 
 	void Dx12Sample::OnInit()
 	{
+#ifdef _DEBUG
+		KUtil::Trace(_T("--【BEG】OnInit"));
+#endif
+
 		InitializeGraphics();
-		InitializeAssets();
+		InitializeAssets();		// 
+
+#ifdef _DEBUG
+		KUtil::Trace(_T("--【END】OnInit"));
+#endif
 	}
 
 	void Dx12Sample::OnResize()
 	{
-		Resize();
+		assert(m_device);
+		assert(m_SwapChain);
+		assert(m_CommandAllocator[0]);
+		assert(m_CommandAllocator[1]);
+
+		int width = m_pWindow->ClientWidth();
+		int height = m_pWindow->ClientHeight();
+
+		ThrowIfFailed(m_CommandList->Reset(m_CommandAllocator[m_FrameIndex].Get(), m_pso.Get()));
+
+		// Release the previous resources we will be recreating.
+		for (int i = 0; i < FrameCount; ++i)
+		{
+			m_RenderTargets[i].Reset();
+		}
+
+		m_DepthStencil.Reset();
+
+		// Resize the swap chain.
+		ThrowIfFailed(m_SwapChain->ResizeBuffers(
+			FrameCount,
+			width,
+			height,
+			m_RenderTargetFormat,
+			DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH));
+
+		m_FrameIndex = 0;
+
+		CreateRenderTargetsResources();
+		CreateDepthStencilResources();
+
+		// Execute the resize commands.
+		ThrowIfFailed(m_CommandList->Close());
+
+		ID3D12CommandList* cmdsLists[] = { m_CommandList.Get() };
+		m_CommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+
+		//
+		WaitForGpu();
+
+		// Update the viewport transform to cover the client area.
+		m_ScreenViewport.TopLeftX = 0;
+		m_ScreenViewport.TopLeftY = 0;
+		m_ScreenViewport.Width = static_cast<float>(width);
+		m_ScreenViewport.Height = static_cast<float>(height);
+		m_ScreenViewport.MinDepth = 0.0f;
+		m_ScreenViewport.MaxDepth = 1.0f;
+
+		m_ScissorRect = { 0, 0, width, height };
+
+#ifdef _DEBUG
+		KUtil::Trace(_T("OnResize"));
+#endif
 	}
 
 	void Dx12Sample::OnUpdate()
 	{
 		// 更新参数数据
-		Update();
+
+#ifdef _DEBUG
+		KUtil::Trace(_T("OnUpdate"));
+#endif
 	}
 
 	void Dx12Sample::OnRender()
 	{
+#ifdef _DEBUG
+		KUtil::Trace(_T("--【BEG】OnRender"));
+#endif
+
 		// 记录命令
 		PopulateCommandList();
 
@@ -80,19 +175,23 @@ namespace DX12
 		// 下一帧
 		MoveToNextFrame();
 
-		return;
+#ifdef _DEBUG
+		KUtil::Trace(_T("--【END】OnRender"));
+#endif
 	}
 
 	void Dx12Sample::OnDestroy()
 	{
 		WaitForGpu();				// 确保GPU不再引用即将清理的资源
-		CloseHandle(m_fenceEvent);	// 关闭围栏事件
-		return;
+		CloseHandle(m_FenceEvent);	// 关闭围栏事件
+
+#ifdef _DEBUG
+		KUtil::Trace(_T("OnDestroy"));
+#endif
 	}
 
 
 #pragma endregion
-
 
 
 
@@ -135,13 +234,14 @@ namespace DX12
 	void Dx12Sample::InitializeAssets()
 	{
 		// 重置命令列表以便初始化
-		ThrowIfFailed(m_CommandList->Reset(m_CommandAllocator[m_frameIndex].Get(), m_PipelineState.Get()));
+		ThrowIfFailed(m_CommandList->Reset(m_CommandAllocator[m_FrameIndex].Get(), m_pso.Get()));
 		{
+			BuildRootSignature();
 			BuildShadersAndInputLayout();
-			BuildPipelineStateObject();
 			BuildMeshData();
 			BuildConstantBufferAndView();
 			BuildTextureBufferAndView();
+			BuildPipelineStateObject();
 		}
 		ThrowIfFailed(m_CommandList->Close());
 
@@ -151,56 +251,40 @@ namespace DX12
 		return;
 	}
 
-	// 窗口大小改变
-	void Dx12Sample::Resize()
-	{
-		/// PI = 3.1415926F
-		/// OPI = PI; QPI = PI/4; HPI = PI/2
-		/// 若用户调整了窗口尺寸，则
-
-		// 1.更新纵横比
-		m_fAspectRatio = (m_pWindow) ? m_pWindow->AaspectRatio() : 1.0f;
-
-		// 2.重新计算投影矩阵;
-		XMMATRIX prj = XMMatrixPerspectiveFovLH(XM_PIDIV4, m_fAspectRatio, 1.0f, 1000.0f);
-		XMStoreFloat4x4(&m_Proj, prj);
-
-		return;
-	}
-
-	// Update
-	void Dx12Sample::Update()
-	{
-
-	}
-
 	// 处理命令列表
+	//
 	void Dx12Sample::PopulateCommandList()
 	{
 		// Reset 之前要先 Close()
 		// Command list allocators can only be reset when the associated 
 		// command lists have finished execution on the GPU; apps should use 
 		// fences to determine GPU execution progress.
-		ThrowIfFailed(m_CommandAllocator[m_frameIndex]->Reset());
+		ThrowIfFailed(m_CommandAllocator[m_FrameIndex]->Reset());
 
 		// However, when ExecuteCommandList() is called on a particular command 
 		// list, that command list can then be reset at any time and must be before re-recording.
-		//ThrowIfFailed(m_CommandList->Reset(m_CommandAllocator.Get(), m_PipelineState.Get()));
-		ThrowIfFailed(m_CommandList->Reset(m_CommandAllocator[m_frameIndex].Get(), m_PipelineState.Get()));
+		//ThrowIfFailed(m_CommandList->Reset(m_CommandAllocator.Get(), m_pso.Get()));
+		ThrowIfFailed(m_CommandList->Reset(m_CommandAllocator[m_FrameIndex].Get(), m_pso.Get()));
+
+		// 设置根描述表
+		m_CommandList->SetGraphicsRootSignature(m_RootSignature.Get());
 
 		// 视图和剪切矩形
-		m_CommandList->RSSetViewports(1, &m_Viewport);
+		m_CommandList->RSSetViewports(1, &m_ScreenViewport);
 		m_CommandList->RSSetScissorRects(1, &m_ScissorRect);
 
+		// 输出合并
+		m_CommandList->OMSetRenderTargets(1, &RenderTargetView(), FALSE, nullptr);
+
 		// 按照资源用途指示其状态的转变，此处将资源从呈现状态转换为渲染状态
-		m_CommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_RenderTargets[m_frameIndex].Get(),
+		m_CommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_RenderTargets[m_FrameIndex].Get(),
 			D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
 		{
 			// 记录命令列表
 			ReccorCommand();
 		}
 		// 按照资源用途指示其状态的转变，此处将资源从渲染状态转换为呈现状态
-		m_CommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_RenderTargets[m_frameIndex].Get(),
+		m_CommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_RenderTargets[m_FrameIndex].Get(),
 			D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
 
 		ThrowIfFailed(m_CommandList->Close());
@@ -209,39 +293,48 @@ namespace DX12
 	}
 
 	// Prepare to render the next frame.
+	//
 	void Dx12Sample::MoveToNextFrame()
 	{
 		// Schedule a Signal command in the queue.
-		const UINT64 currentFenceValue = m_fenceValues[m_frameIndex];
+		const UINT64 currentFenceValue = m_FenceValues[m_FrameIndex];
 		ThrowIfFailed(m_CommandQueue->Signal(m_Fence.Get(), currentFenceValue));
 
 		// Update the frame index.
-		m_frameIndex = m_SwapChain->GetCurrentBackBufferIndex();
+		m_FrameIndex = m_SwapChain->GetCurrentBackBufferIndex();
 
 		// If the next frame is not ready to be rendered yet, wait until it is ready.
-		if (m_Fence->GetCompletedValue() < m_fenceValues[m_frameIndex])
+		if (m_Fence->GetCompletedValue() < m_FenceValues[m_FrameIndex])
 		{
-			ThrowIfFailed(m_Fence->SetEventOnCompletion(m_fenceValues[m_frameIndex], m_fenceEvent));
-			WaitForSingleObjectEx(m_fenceEvent, INFINITE, FALSE);
+			ThrowIfFailed(m_Fence->SetEventOnCompletion(m_FenceValues[m_FrameIndex], m_FenceEvent));
+			WaitForSingleObjectEx(m_FenceEvent, INFINITE, FALSE);
 		}
 
 		// Set the fence value for the next frame.
-		m_fenceValues[m_frameIndex] = currentFenceValue + 1;
+		m_FenceValues[m_FrameIndex] = currentFenceValue + 1;
 	}
 
 	// Wait for the command list to execute pending GPU work to complete.
+	//
 	void Dx12Sample::WaitForGpu()
 	{
-		// Schedule a Signal command in the queue.
-		UINT64 fenceValue = m_fenceValues[m_frameIndex];
-		ThrowIfFailed(m_CommandQueue->Signal(m_Fence.Get(), fenceValue));
+		try
+		{
+			// Schedule a Signal command in the queue.
+			UINT64 fenceValue = m_FenceValues[m_FrameIndex];
+			ThrowIfFailed(m_CommandQueue->Signal(m_Fence.Get(), fenceValue));
 
-		// Wait until the fence has been processed.
-		ThrowIfFailed(m_Fence->SetEventOnCompletion(fenceValue, m_fenceEvent));
-		WaitForSingleObjectEx(m_fenceEvent, INFINITE, FALSE);
+			// Wait until the fence has been processed.
+			ThrowIfFailed(m_Fence->SetEventOnCompletion(fenceValue, m_FenceEvent));
+			WaitForSingleObjectEx(m_FenceEvent, INFINITE, FALSE);
 
-		// Increment the fence value for the current frame.
-		m_fenceValues[m_frameIndex]++;
+			// Increment the fence value for the current frame.
+			m_FenceValues[m_FrameIndex]++;
+		}
+		catch (const std::exception&)
+		{
+
+		}
 	}
 
 
@@ -267,7 +360,7 @@ namespace DX12
 		else
 		{
 			ComPtr<IDXGIAdapter1> hardwareAdapter;
-			GetHardwareAdapter(m_Factory.Get(), &hardwareAdapter);
+			DXUtil::GetHardwareAdapter(m_Factory.Get(), &hardwareAdapter);
 
 			ThrowIfFailed(D3D12CreateDevice(
 				hardwareAdapter.Get(),
@@ -316,7 +409,7 @@ namespace DX12
 		cbvHeapDesc.NodeMask = 0;
 		ThrowIfFailed(m_device->CreateDescriptorHeap(&cbvHeapDesc, IID_PPV_ARGS(&m_cbvHeap)));
 
-		// UAV - ?
+		// UAV - 无序存取 View
 		D3D12_DESCRIPTOR_HEAP_DESC uavHeapDesc = {};
 		uavHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
 		uavHeapDesc.NumDescriptors = 1;
@@ -329,8 +422,6 @@ namespace DX12
 	// 根签名（根据实际情况重载）
 	void Dx12Sample::CreateRootSignature()
 	{
-		/* Example:
-
 		// 这里创建一个空的根签名
 		CD3DX12_ROOT_SIGNATURE_DESC rootSignatureDesc;
 		rootSignatureDesc.Init(
@@ -351,7 +442,6 @@ namespace DX12
 			IID_PPV_ARGS(&m_RootSignature)));
 
 		return;
-		*/
 	}
 
 	// 命令对象（需要根签名）
@@ -378,8 +468,8 @@ namespace DX12
 		//  Command List
 		{
 			ThrowIfFailed(m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT,
-				m_CommandAllocator[m_frameIndex].Get(),	// 此时 m_frameIndex = 0
-				m_PipelineState.Get(),
+				m_CommandAllocator[m_FrameIndex].Get(),	// 此时 m_FrameIndex = 0
+				m_pso.Get(),
 				IID_PPV_ARGS(&m_CommandList)));
 
 			// Command lists are created in the recording state,
@@ -396,8 +486,8 @@ namespace DX12
 	{
 		// 创建交换链需要窗口参数和命令队列
 		HWND hWnd = m_pWindow->Handle();
-		int width = m_pWindow->Width();
-		int height = m_pWindow->Height();
+		int width = m_pWindow->ClientWidth();
+		int height = m_pWindow->ClientHeight();
 
 		// 创建交换链
 		{
@@ -408,7 +498,7 @@ namespace DX12
 				BufferDesc.Height = height;
 				BufferDesc.RefreshRate.Numerator = 60;	// DXGI_RATIONAL
 				BufferDesc.RefreshRate.Denominator = 1;	// DXGI_RATIONAL
-				BufferDesc.Format = m_BackBufferFormat;	// DXGI_FORMAT
+				BufferDesc.Format = m_RenderTargetFormat;	// DXGI_FORMAT
 				BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;	// DXGI_MODE_SCANLINE_ORDER
 				BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;	// DXGI_MODE_SCALING
 			}
@@ -453,7 +543,7 @@ namespace DX12
 		}
 
 		// 取得当前背景缓冲区索引
-		m_frameIndex = m_SwapChain->GetCurrentBackBufferIndex();
+		m_FrameIndex = m_SwapChain->GetCurrentBackBufferIndex();
 
 		// 视口和剪切矩形
 		// This sample does not support fullscreen transitions.
@@ -466,21 +556,21 @@ namespace DX12
 	void Dx12Sample::CreateSynchObjects()
 	{
 		// 为 CPU、GPU 同步创建围栏
-		ThrowIfFailed(m_device->CreateFence(m_fenceValues[m_frameIndex],
+		ThrowIfFailed(m_device->CreateFence(m_FenceValues[m_FrameIndex],
 			D3D12_FENCE_FLAG_NONE,
 			IID_PPV_ARGS(&m_Fence)));
 
 		// 围栏值
-		m_fenceValues[m_frameIndex]++;
+		m_FenceValues[m_FrameIndex]++;
 
 		// 创建帧同步事件
-		m_fenceEvent = ::CreateEvent(
+		m_FenceEvent = ::CreateEvent(
 			nullptr,	// LPSECURITY_ATTRIBUTES
 			FALSE,		// bManualReset
 			FALSE,		// bInitialState
 			nullptr);	// lpName
 
-		if (m_fenceEvent == nullptr)
+		if (m_FenceEvent == nullptr)
 		{
 			ThrowIfFailed(HRESULT_FROM_WIN32(GetLastError()));
 		}
@@ -518,9 +608,9 @@ namespace DX12
 	// 深度模板（需根据实际情况）
 	void Dx12Sample::CreateDepthStencilResources()
 	{
-		int width = m_pWindow->Width();
-		int height = m_pWindow->Height();
-		//
+		int width = m_pWindow->ClientWidth();
+		int height = m_pWindow->ClientHeight();
+
 		D3D12_RESOURCE_DESC depthStencilDesc;
 		depthStencilDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;					// 资源维度
 		depthStencilDesc.Alignment = 0;														// ?对齐
@@ -533,6 +623,16 @@ namespace DX12
 		depthStencilDesc.SampleDesc.Quality = m_4xMsaaState ? (m_4xMsaaQuality - 1) : 0;	// 多重采样质量级别
 		depthStencilDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;								// 纹理布局
 		depthStencilDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;					// ?
+		/*
+		// 关于 depthStencilDesc.Format 的说明
+		// Correction 11/12/2016: SSAO chapter requires an SRV to the depth buffer to read from
+		// the depth buffer.  Therefore, because we need to create two views to the same resource:
+		//   1. SRV format: DXGI_FORMAT_R24_UNORM_X8_TYPELESS
+		//   2. DSV Format: DXGI_FORMAT_D24_UNORM_S8_UINT
+		// we need to create the depth buffer resource with a typeless format.
+		depthStencilDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+
+		*/
 
 		D3D12_CLEAR_VALUE optClear;
 		optClear.Format = m_DepthStencilFormat;	// 
@@ -545,23 +645,23 @@ namespace DX12
 			&depthStencilDesc,										// 资源描述符指针
 			D3D12_RESOURCE_STATE_COMMON,							// 资源状态
 			&optClear,												// 清除资源的优化值
-			IID_PPV_ARGS(m_DepthStencil.GetAddressOf())));
+			IID_PPV_ARGS(&m_DepthStencil)));
+		//	IID_PPV_ARGS(mDepthStencilBuffer.GetAddressOf())));
 
+		// Create descriptor to mip level 0 of entire resource using the format of the resource.
+		D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc;
+		dsvDesc.Format = m_DepthStencilFormat;
+		dsvDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+		dsvDesc.Flags = D3D12_DSV_FLAG_NONE;
+		dsvDesc.Texture2D.MipSlice = 0;
 
-		//Map and initialize the DepthStencil buffer.
-		//UINT8* m_pDsvDataBegin;
-		//CD3DX12_RANGE readRange(0, 0);		// We do not intend to read from this resource on the CPU.
-		//ThrowIfFailed(m_DepthStencil->Map(0, &readRange, reinterpret_cast<void**>(&m_pDsvDataBegin)));
-		//memcpy(m_pDsvDataBegin, m_DepthStencil, sizeof(??));
-		//m_ConstantBuffer->Unmap(0, nullptr);
+		// hDsv
+		CD3DX12_CPU_DESCRIPTOR_HANDLE dsvHandle(m_dsvHeap->GetCPUDescriptorHandleForHeapStart());
+		m_device->CreateDepthStencilView(m_DepthStencil.Get(), &dsvDesc, dsvHandle);
 
-		//CD3DX12_CPU_DESCRIPTOR_HANDLE dsvHandle(m_dsvHeap->GetCPUDescriptorHandleForHeapStart());
-
-		//D3D12_DEPTH_STENCIL_VIEW_DESC dsvDesc = {};
-		//dsvDesc.BufferLocation = m_ConstantBuffer->GetGPUVirtualAddress();
-		//cbvDesc.SizeInBytes = (sizeof(m_ConstantBuffer) + 255) & ~255;
-		//m_device->CreateDepthStencilView(m_DepthStencil.Get(), &dsvDesc, dsvHandle);
-
+		// Transition the resource from its initial state to be used as a depth buffer.
+		//m_CommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(m_DepthStencil.Get(),
+		//	D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_DEPTH_WRITE));
 
 		return;
 	}
@@ -569,19 +669,19 @@ namespace DX12
 	// 视图和剪切矩形（根据实际情况）
 	void Dx12Sample::CreateViewportAndScissorRect()
 	{
-		m_Viewport = CD3DX12_VIEWPORT(
+		m_ScreenViewport = CD3DX12_VIEWPORT(
 			0.0f, 0.0f,
-			static_cast<float>(m_pWindow->Width()),
-			static_cast<float>(m_pWindow->Height()));
-		//m_CommandList->RSSetViewports(1, &m_Viewport);
+			static_cast<float>(m_pWindow->ClientWidth()),
+			static_cast<float>(m_pWindow->ClientHeight()));
+		//m_CommandList->RSSetViewports(1, &m_ScreenViewport);
 
 		m_ScissorRect = CD3DX12_RECT(
 			1, 1,
-			static_cast<long>(m_pWindow->Width()),
-			static_cast<long>(m_pWindow->Height()));
+			static_cast<long>(m_pWindow->ClientWidth()),
+			static_cast<long>(m_pWindow->ClientHeight()));
 		//m_CommandList->RSSetScissorRects(1, &m_ScissorRect);
 
-		///为了实现高级效果，有时会采用多个剪切矩形
+		//为了实现高级效果，有时会采用多个剪切矩形
 	}
 
 
@@ -616,7 +716,7 @@ namespace DX12
 		//在一切支持Direct3D 11的设备上所有的渲染目标格式都已经支持4X MSAA了，
 		//这里只进行质量级别的检测
 		D3D12_FEATURE_DATA_MULTISAMPLE_QUALITY_LEVELS qulityLevels = {};
-		qulityLevels.Format = m_BackBufferFormat;
+		qulityLevels.Format = m_RenderTargetFormat;
 		qulityLevels.SampleCount = 4;	// check 4x MSAA
 		qulityLevels.Flags = D3D12_MULTISAMPLE_QUALITY_LEVELS_FLAG_NONE;
 		qulityLevels.NumQualityLevels = 0;	// _Out_
@@ -649,6 +749,12 @@ namespace DX12
 
 #pragma region InitializeAssets() 调用
 
+	// 构建根签名
+	void Dx12Sample::BuildRootSignature()
+	{
+		// 重载
+	}
+
 	// 构建着色器（顶点着色器、像素着色器）和输入布局
 	void Dx12Sample::BuildShadersAndInputLayout()
 	{
@@ -658,16 +764,24 @@ namespace DX12
 		_tstring file = _T("Asserts\\Triangle.hlsl");
 		_tstring filePath = path + file;
 
-		m_VSByteCode = DXUtil::CompileShader(filePath, nullptr, "VSMain", "vs_5_0");
-		m_PSByteCode = DXUtil::CompileShader(filePath, nullptr, "PSMain", "ps_5_0");
+		m_VSByteCode = DXUtil::CompileShader(filePath, nullptr, "VS", "vs_5_0");
+		m_PSByteCode = DXUtil::CompileShader(filePath, nullptr, "PS", "ps_5_0");
 
 
 		UINT offsetPos = 0;
 		UINT offsetClr = sizeof(Vertex::position);
-		m_InputElementDescs.clear();
-		m_InputElementDescs =
+		m_InputLayout.clear();
+		m_InputLayout =
 		{
-			D3D12_INPUT_ELEMENT_DESC{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, offsetPos, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+			D3D12_INPUT_ELEMENT_DESC{
+			"POSITION",
+			0,
+			DXGI_FORMAT_R32G32B32_FLOAT,
+			0,
+			offsetPos,
+			D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA,
+			0 },
+
 			D3D12_INPUT_ELEMENT_DESC{ "COLOR", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, offsetClr, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 		};
 
@@ -704,7 +818,7 @@ namespace DX12
 		psoDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;								// 标记(?)
 
 		// Create PSO
-		ThrowIfFailed(m_device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_PipelineState)));
+		ThrowIfFailed(m_device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_pso)));
 
 		return;
 		*/
@@ -713,6 +827,7 @@ namespace DX12
 	// 构造网格数据
 	void Dx12Sample::BuildMeshData()
 	{
+		/*
 		//ComPtr<ID3D12Resource> m_VertexBuffer;
 		//D3D12_VERTEX_BUFFER_VIEW m_VertexBufferView;
 		// 1.1 顶点数据
@@ -724,6 +839,7 @@ namespace DX12
 		// 2.1 索引数据
 		// 2.2 索引缓冲区
 		// 2.3 索引缓冲区视图
+		*/
 	}
 
 	// 常量缓冲区和视图
@@ -749,9 +865,31 @@ namespace DX12
 	void Dx12Sample::ReccorCommand()
 	{
 		/* Example:
-		CD3DX12_CPU_DESCRIPTOR_HANDLE rtvHandle(m_rtvHeap->GetCPUDescriptorHandleForHeapStart(), m_frameIndex, m_rtvDescriptorSize);
+
+		// 清除渲染背景
 		const float clearColor[] = { 0.0f, 0.2f, 0.4f, 1.0f };
-		m_CommandList->ClearRenderTargetView(rtvHandle, clearColor, 0, nullptr);
+		m_CommandList->ClearRenderTargetView(RtvHandleCPU(), clearColor, 0, nullptr);
+
+		// 输入装配
+		m_CommandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+		m_CommandList->IASetVertexBuffers(0, 1, &m_VertexBufferView);
+		m_CommandList->IASetIndexBuffer(&m_IndexBufferView);
+
+
+		// 绘制
+		if (m_mesh.IsUseIndex())
+		{
+			int indexCount = m_mesh.IndexCount();
+			m_CommandList->DrawIndexedInstanced(indexCount, 1, 0, 0, 0);
+		}
+		else
+		{
+			int vertexCount = m_mesh.VertexCount();
+			m_CommandList->DrawInstanced(vertexCount, 1, 0, 0);
+		}
+
+		。。。
+
 		*/
 	}
 
@@ -759,54 +897,6 @@ namespace DX12
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	//_Use_decl_annotations_
-	void Dx12Sample::GetHardwareAdapter(IDXGIFactory2* pFactory, IDXGIAdapter1** ppAdapter)
-	{
-		ComPtr<IDXGIAdapter1> adapter;
-		*ppAdapter = nullptr;
-
-		for (UINT adapterIndex = 0; DXGI_ERROR_NOT_FOUND != pFactory->EnumAdapters1(adapterIndex, &adapter); ++adapterIndex)
-		{
-			DXGI_ADAPTER_DESC1 desc;
-			adapter->GetDesc1(&desc);
-
-			if (desc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE)
-			{
-				// Don't select the Basic Render Driver adapter.
-				// If you want a software adapter, pass in "/warp" on the command line.
-				continue;
-			}
-
-			// Check to see if the adapter supports Direct3D 12, but don't create the
-			// actual device yet.
-			if (SUCCEEDED(D3D12CreateDevice(adapter.Get(), D3D_FEATURE_LEVEL_11_0, _uuidof(ID3D12Device), nullptr)))
-			{
-				break;
-			}
-		}
-
-		*ppAdapter = adapter.Detach();
-	}
 
 
 

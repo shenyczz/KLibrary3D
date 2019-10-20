@@ -117,13 +117,11 @@ int KWindow::MainLoop()
 		}
 		else
 		{
-
 			pClock->Tick();
 
 			if (!m_AppPaused)
 			{
-				pSample->Update();
-				pSample->Render();
+				pSample->OnApplicationIdle();
 			}
 			else
 			{
@@ -310,13 +308,13 @@ LRESULT KWindow::MsgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_MOUSEMOVE:			// 0x0200
 		{
 			// wParam = 0x0000000000000000
-			WORD lwx = LOWORD(lParam);	// X
-			WORD hwy = HIWORD(lParam);	// Y
+			WORD lwx = LOWORD(lParam);	// x
+			WORD hiy = HIWORD(lParam);	// y
 			MouseMove(hWnd, wParam, lParam);
 			if (wParam > 0)
 			{
 				// 按下鼠标拖动
-				int X = 0;
+				int x = 0;
 			}
 			break;
 		}
@@ -326,8 +324,8 @@ LRESULT KWindow::MsgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_XBUTTONDOWN:		// 0x020B
 		{
 			// wParam = 0x0000000000000010
-			WORD lwx = LOWORD(lParam);	// X
-			WORD hwy = HIWORD(lParam);	// Y
+			WORD lwx = LOWORD(lParam);	// x
+			WORD hiy = HIWORD(lParam);	// y
 			MouseDown(hWnd, wParam, lParam);
 			break;
 		}
@@ -345,17 +343,19 @@ LRESULT KWindow::MsgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		case WM_MBUTTONDBLCLK:		// 0x0209
 		case WM_XBUTTONDBLCLK:		// 0x020D
 		{
+			// todo: MouseDblClick
 			MouseDblClick(hWnd, wParam, lParam);
 			break;
 		}
 		case WM_MOUSEWHEEL:			// 0x020A
 		{
-			// wParam = 0x00000000ff880000
+			// todo: MouseWheel() - wParam = 0x00000000ff880000
 			MouseWheel(hWnd, wParam, lParam);
 			break;
 		}
 		case WM_MOUSEHWHEEL:		// 0x020E
 		{
+			// todo: MouseHWheel()
 			MouseHWheel(hWnd, wParam, lParam);
 			break;
 		}
@@ -394,7 +394,7 @@ void KWindow::OnDestroy(HWND hWnd, WPARAM wParam, LPARAM lParam)
 	try
 	{
 		KSample* pSample = KApplication::GetApp()->GetSample();
-		pSample->Destroy();
+		pSample->OnDestroy();
 	}
 	catch (const std::exception&) {}
 
@@ -441,7 +441,7 @@ void KWindow::OnSize(HWND hWnd, WPARAM wParam, LPARAM lParam)
 				m_Minimized = false;
 				m_Maximized = true;
 
-				pSample->Resize();
+				pSample->OnResize();
 			}
 			else if (wParam == SIZE_RESTORED)
 			{
@@ -451,14 +451,14 @@ void KWindow::OnSize(HWND hWnd, WPARAM wParam, LPARAM lParam)
 					m_AppPaused = false;
 					m_Minimized = false;
 
-					pSample->Resize();
+					pSample->OnResize();
 				}
 				else if (m_Maximized)
 				{
 					m_AppPaused = false;
 					m_Maximized = false;
 
-					pSample->Resize();
+					pSample->OnResize();
 				}
 				else if (m_Resizing)
 				{
@@ -474,7 +474,7 @@ void KWindow::OnSize(HWND hWnd, WPARAM wParam, LPARAM lParam)
 				else
 				{
 					// API call such as SetWindowPos or mSwapChain->SetFullscreenState.
-					pSample->Resize();
+					pSample->OnResize();
 				}
 			}
 
@@ -594,7 +594,7 @@ void KWindow::OnExitSizeMove(HWND hWnd, WPARAM wParam, LPARAM lParam)
 		m_Resizing = false;
 
 		pClock->Start();
-		pSample->Resize();
+		pSample->OnResize();
 
 	}
 	catch (const std::exception&) {}
@@ -676,7 +676,6 @@ void KWindow::MouseHWheel(HWND hWnd, WPARAM wParam, LPARAM lParam)
 	try
 	{
 		KSample* pSample = KApplication::GetApp()->GetSample();
-		//pSample->MouseUp(wParam, lParam);
 	}
 	catch (const std::exception&) {}
 

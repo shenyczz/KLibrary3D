@@ -270,7 +270,7 @@ bool  MC::ExportFile_STL_Binary(string filePath, const string & headerInfo, cons
 	//char dataBlock[5] = {};
 
 
-	_Uint32t triangleCount = inVertexBuffer.size() / 3;
+	_Uint32t triangleCount = (_Uint32t)inVertexBuffer.size() / 3;
 	REINTERPRET_WRITE(triangleCount);
 
 	for (_Uint32t i = 0; i<triangleCount; ++i)

@@ -39,31 +39,28 @@ public:
 
 #pragma region --渲染管线流程
 
-public:
-	void Initialize();	// 初 始 化: 调用 OnInit()
-	void Resize();		// 窗口改变: 调用 OnResize()
-	void Update();		// 系统更新: 调用 OnUpdate()
-	void Render();		// 系统渲染: 调用 OnRender()
-	void Destroy();		// 系统销毁: 调用 OnDestroy()
+private:
+	void Initialize();						// 初 始 化: 调用 OnInit()
 
 protected:
-	virtual void OnInit() = 0;
-	virtual void OnResize() = 0;
-	virtual void OnUpdate() = 0;
-	virtual void OnRender() = 0;
-	virtual void OnDestroy() = 0;
+	virtual void OnInit() = 0;				// 初 始 化
+	virtual void OnResize() = 0;			// 窗口改变
+	virtual void OnUpdate() = 0;			// 系统更新
+	virtual void OnRender() = 0;			// 系统渲染
+	virtual void OnDestroy() = 0;			// 系统销毁
+	virtual void OnApplicationIdle() = 0;	// 应用空闲
 
 #pragma endregion
 
 
 #pragma region --鼠标消息
 
-public:
+private:
 	void MouseDown(WPARAM wParam, LPARAM lParam);
 	void MouseUp(WPARAM wParam, LPARAM lParam);
 	void MouseMove(WPARAM wParam, LPARAM lParam);
 	void MouseWheel(WPARAM wParam, LPARAM lParam);
-	
+
 
 protected:
 	// WPARAM wParam => UINT_PTR nType
@@ -77,13 +74,16 @@ protected:
 
 
 protected:
-	float AspectRatio();
-
+	const float& AspectRatio() const;
+	const KWindow* GetWindow() const { return m_pWindow; }
 
 protected:
 	KDocument* m_pDocument;
 	KWindow* m_pWindow;
 
+private:
+	friend class KWindow;
+	friend class KApplication;
 
 	//@EndOf(KSample)
 };

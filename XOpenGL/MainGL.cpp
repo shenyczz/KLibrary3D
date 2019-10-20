@@ -31,7 +31,7 @@ int main1(int argc, char* argv[])
 	MCP mcp = {};
 	{
 		mcp.cubeCountX = cx;	// 150
-		mcp.cubeCountY = mc.m_Slices.size() - 1;
+		mcp.cubeCountY = (int)mc.m_Slices.size() - 1;
 		mcp.cubeCountZ = cz;	// 150
 		mcp.cubeWidth = w;		// 0.23
 		mcp.cubeHeight = h;		// 0.10

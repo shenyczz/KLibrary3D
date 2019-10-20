@@ -53,10 +53,10 @@ public:
 
 
 public:
-	HWND Handle() const { return m_hWnd; }
-	UINT ClientWidth() const { return m_iClientWidth; }
-	UINT ClientHeight() const { return m_iClientHeight; }
-	float AspectRatio() const { return m_fAspectRatio; }
+	const HWND& Handle() const { return m_hWnd; }
+	const UINT& ClientWidth() const { return m_iClientWidth; }
+	const UINT& ClientHeight() const { return m_iClientHeight; }
+	const float& AspectRatio() const { return m_fAspectRatio; }
 
 	LPCTSTR GetWindowTitle() const { return m_WindowTitle.c_str(); }
 	void SetWindowTitle(LPCTSTR lpszTitle) { m_WindowTitle = lpszTitle; }

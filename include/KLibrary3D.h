@@ -3,21 +3,25 @@
 
 #include "KLibrary3D.inl"
 //---------------------------------------------------------
-#include "AlibCore.h"
-#include "AlibCoreDataModel.h"
-#include "AlibCoreMaths.h"
+#include "AlibCommon.h"
+#include "AlibCommonCore.h"
+#include "AlibCommonDataModel.h"
 
 #include "AlibData.h"
-
 #include "AlibFramework.h"
 //---------------------------------------------------------
+#include "d3dCommon.h"
+//---------------------------------------------------------
 #ifdef __DX11APP__
-#include "Dx11Core.h"
+#include "DX11LibCommon.h"
+#include "DX11LibCommonCore.h"
+using namespace dx11;
 #endif
 //---------------------------------------------------------
 #ifdef __DX12APP__
-#include "Dx12Base.h"
-#include "Dx12Core.h"
+#include "DX12LibCommon.h"
+#include "DX12LibCommonCore.h"
+using namespace dx12;
 #endif
 //---------------------------------------------------------
 

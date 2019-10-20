@@ -6,10 +6,7 @@
 
 KSample::KSample()
 	: m_pWindow(nullptr)
-	, m_pDocument(nullptr)
-{
-
-}
+	, m_pDocument(nullptr) {}
 
 
 void KSample::Initialize()
@@ -18,32 +15,6 @@ void KSample::Initialize()
 	m_pDocument = KApplication::GetApp()->GetDocument();
 
 	OnInit();
-}
-
-void KSample::Resize()
-{
-	OnResize();
-}
-
-void KSample::Update()
-{
-	OnUpdate();
-}
-
-void KSample::Render()
-{
-	OnRender();
-}
-
-void KSample::Destroy()
-{
-	OnDestroy();
-}
-
-
-float KSample::AspectRatio()
-{
-	return m_pWindow->AspectRatio();
 }
 
 
@@ -69,4 +40,9 @@ void KSample::MouseWheel(WPARAM wParam, LPARAM lParam)
 
 
 
+
+const float& KSample::AspectRatio() const
+{
+	return m_pWindow->AspectRatio();
+}
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "FrameResource.h"
+#include "FrameResourceBox.h"
 
 class Box : public Dx12Book
 {
@@ -18,16 +18,31 @@ protected:
 
 protected:
 	void BuildRootSignature() override;
-
 	void BuildShadersAndInputLayout() override;
 	void BuildPipelineStateObject() override;
-
 	void BuildMeshData() override;
-
 	void BuildConstantBufferAndView() override;
 	void BuildTextureBufferAndView() override {}
 
-	void ReccorCommand() override;
+	void BuildCommandList() override;
+
+private:
+
+	void BuildBoxDefault();
+	void BuildBoxDefault2();
+	void BuildBoxGeometry();
+	void BuildBoxRadar();
+	void RadarMesh(MeshData* pMesh);
+
+
+	void DrawMeshData();
+
+	bool m_bShapes = false;
+
+
+	void GetRadarColor(float v, float& r, float& g, float& b);
+
+
 
 private:
 	unordered_map<PsoStyle, ComPtr<ID3D12PipelineState>> m_psoMap;
@@ -37,13 +52,11 @@ private:
 
 
 
-
 	//MeshData m_mesh;
-	void RadarMesh(MeshData* pMesh);
 
 	// PSO
 
-	bool m_bWireFrame;
+	bool m_IsWireframe;
 
 };
 

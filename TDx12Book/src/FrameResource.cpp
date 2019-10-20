@@ -1,0 +1,6 @@
+#include "stdafx.h"
+#include "FrameResource.h"
+#include "FrameResourceLaw.h"
+#include "FrameResourceLir.h"
+#include "FrameResourceLiw.h"
+#include "FrameResourceShapes.h"

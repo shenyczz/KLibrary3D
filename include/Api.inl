@@ -37,10 +37,6 @@
 #endif
 
 
-
-
-
-
 #define ALIBAPI(type)	__ALIBAPI type WINAPI
 
 

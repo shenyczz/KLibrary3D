@@ -15,6 +15,7 @@
 #include <DirectXCollision.h>
 #include <DirectXPackedVector.h>
 using namespace DirectX;
+using namespace DirectX::PackedVector;
 
 #include <wrl.h>
 using Microsoft::WRL::ComPtr;

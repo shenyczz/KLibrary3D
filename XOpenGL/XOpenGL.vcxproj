@@ -72,23 +72,23 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)bin\$(PlatformTarget)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)Tempout\$(PlatformTarget)\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)bin\$(PlatformTarget)\$(ProjectName)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(PlatformTarget)\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>$(SolutionDir)bin\$(PlatformTarget)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)Tempout\$(PlatformTarget)\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)bin\$(PlatformTarget)\$(ProjectName)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(PlatformTarget)\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)bin\$(PlatformTarget)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)Tempout\$(PlatformTarget)\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)bin\$(PlatformTarget)\$(ProjectName)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(PlatformTarget)\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)bin\$(PlatformTarget)\$(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)Tempout\$(PlatformTarget)\$(ProjectName)\$(Configuration)\</IntDir>
+    <OutDir>$(SolutionDir)bin\$(PlatformTarget)\$(ProjectName)\$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)obj\$(PlatformTarget)\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -98,7 +98,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);D:\sfxApis\GL\glut\Include;$(SolutionDir)Include;$(SolutionDir)AlibCore\src;$(SolutionDir)AlibCoreDataModel\src;$(SolutionDir)AlibCoreMaths\src;$(SolutionDir)AlibData\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Common;$(ProjectDir)src;$(SolutionDir)Include;$(SolutionDir)AlibCore\src;$(SolutionDir)AlibCoreDataModel\src;$(SolutionDir)AlibCoreMaths\src;$(SolutionDir)AlibData\src;$(SolutionDir)AlibFramework\src;$(SolutionDir)D3DCommon\src;$(SolutionDir)DX12LibCommon\src;$(SolutionDir)DX12LibCore\src;D:\sfxApis\GL\glut\Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -114,7 +114,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);D:\sfxApis\GL\glut\Include;$(SolutionDir)Include;$(SolutionDir)AlibCore\src;$(SolutionDir)AlibCoreDataModel\src;$(SolutionDir)AlibCoreMaths\src;$(SolutionDir)AlibData\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Common;$(ProjectDir)src;$(SolutionDir)Include;$(SolutionDir)AlibCore\src;$(SolutionDir)AlibCoreDataModel\src;$(SolutionDir)AlibCoreMaths\src;$(SolutionDir)AlibData\src;$(SolutionDir)AlibFramework\src;$(SolutionDir)D3DCommon\src;$(SolutionDir)DX12LibCommon\src;$(SolutionDir)DX12LibCore\src;D:\sfxApis\GL\glut\Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -132,7 +132,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);D:\sfxApis\GL\glut\Include;$(SolutionDir)Include;$(SolutionDir)AlibCore\src;$(SolutionDir)AlibCoreDataModel\src;$(SolutionDir)AlibCoreMaths\src;$(SolutionDir)AlibData\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Common;$(ProjectDir)src;$(SolutionDir)Include;$(SolutionDir)AlibCore\src;$(SolutionDir)AlibCoreDataModel\src;$(SolutionDir)AlibCoreMaths\src;$(SolutionDir)AlibData\src;$(SolutionDir)AlibFramework\src;$(SolutionDir)D3DCommon\src;$(SolutionDir)DX12LibCommon\src;$(SolutionDir)DX12LibCore\src;D:\sfxApis\GL\glut\Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -152,7 +152,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(ProjectDir);D:\sfxApis\GL\glut\Include;$(SolutionDir)Include;$(SolutionDir)AlibCore\src;$(SolutionDir)AlibCoreDataModel\src;$(SolutionDir)AlibCoreMaths\src;$(SolutionDir)AlibData\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Common;$(ProjectDir)src;$(SolutionDir)Include;$(SolutionDir)AlibCore\src;$(SolutionDir)AlibCoreDataModel\src;$(SolutionDir)AlibCoreMaths\src;$(SolutionDir)AlibData\src;$(SolutionDir)AlibFramework\src;$(SolutionDir)D3DCommon\src;$(SolutionDir)DX12LibCommon\src;$(SolutionDir)DX12LibCore\src;D:\sfxApis\GL\glut\Include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

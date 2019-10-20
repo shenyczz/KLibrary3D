@@ -7,6 +7,7 @@ public:
 	~AbookDemo();
 
 protected:
+	// 启动
 	void OnResize() override;
 	void OnUpdate() override;
 
@@ -18,17 +19,18 @@ protected:
 	// BuildAssets()调用
 	void BuildRootSignature() override;
 	void BuildShadersAndInputLayout() override;
-	void BuildPipelineStateObject() override;
 	void BuildMeshData() override;
 	void BuildConstantBufferAndView() override;
 	void BuildTextureBufferAndView() override;
+	void BuildPipelineStateObject() override;
 
 	// OnRender()调用
-	void ReccorCommand() override;
+	void BuildCommandList() override;
 
 
 private:
-	//std::unordered_map<PsoStyle, ComPtr<ID3D12PipelineState>> m_psoMap;
+	// 这里定义私有资产
 
+	//@EndOf(AbookDemo)
 };
 

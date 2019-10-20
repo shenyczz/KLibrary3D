@@ -19,6 +19,7 @@
 // Windows 
 //
 #include <windows.h>
+#include <windowsX.h>
 
 //
 // TCHAT
@@ -70,6 +71,7 @@
 #else
 	#define _tstring _astring
 #endif
+
 //---------------------------------------------------------
 #define _delete(p) { if(p) {delete p; p = 0;} }
 #define _deletea(p) { if(p) {delete []p; p = 0;} }

@@ -9,10 +9,11 @@
 * IMPLIED WARRANTIES OF FITNESS FOR A PARTICULAR
 * PURPOSE, MERCHANTABILITY, OR NON-INFRINGEMENT.
 *
-* bookShapes.hlsl
+* bookBox2.hlsl
 * 
 ******************************************************************************/
 
+// 常量缓冲区(名称不重要，要和常量结构一一对应)
 cbuffer cbPerObject : register(b0)
 {
 	float4x4 gWorld;
@@ -21,37 +22,17 @@ cbuffer cbPerObject : register(b0)
 cbuffer cbPass : register(b1)
 {
 	float4x4	gView;
-	float4x4	gInvView;
 	float4x4	gProj;
-	float4x4	gInvProj;
 	float4x4	gViewProj;
-	float4x4	gInvViewProj;
-
-	float3		gEyePosW;
-
-	float		cbPerObjectPad1;
-
-	float2		gRenderTargetSize;
-	float2		gInvRenderTargetSize;
-
-	float		gNearZ;
-	float		gFarZ;
-
-	float		gTotalTime;
-	float		gDeltaTime;
-};
+	
+}
 
 
-
-
-
-// 输入顶点
+// 输入顶点(顺序不重要，重要的是语义名称和索引)
 struct VertexIn
 {
 	float3 PosL  : POSITION;
 	float4 Color : COLOR;
-	float3 Normal : NORMAL;
-	float2 uv : TEXCOORD;
 };
 
 // 输出顶点
@@ -67,34 +48,22 @@ VertexOut VS(VertexIn vin)
 	VertexOut vout;
 
 	{
-		//float4 posW = mul(float4(vin.PosL, 1.0f), gWorld);
-		//vout.PosH = mul(posW, gViewProj);
-		//vout.Color = vin.Color;
+		float4x4 world = gWorld;
+		float4x4 view = gView;
+		float4x4 proj = gProj;
+		float4x4 viewProj = gViewProj;
 
+		float4x4 worldViewProj = mul(world, viewProj);
+
+		
 		float4 pos_h = float4(vin.PosL, 1.0f);
-		float4 pos_w = mul(pos_h, gWorld);
 
-		vout.PosH = mul(pos_w, gViewProj);
+		vout.PosH = mul(pos_h, worldViewProj);
 		vout.Color = vin.Color;
 	}
 
 	return vout;
 }
-/*
-
-VertexOut VS(VertexIn vin)
-{
-	VertexOut vout;
-	
-	// Transform to homogeneous clip space.
-    float4 posW = mul(float4(vin.PosL, 1.0f), gWorld);
-    vout.PosH = mul(posW, gViewProj);
-    vout.Color = vin.Color;
-    
-    return vout;
-}
-
-*/
 
 // 像素着色器
 float4 PS(VertexOut pin) : SV_TARGET

@@ -15,7 +15,7 @@
 #endif
 
 //---------------------------------------------------------
-#define DLL_NAME_DX11LIB_COMMON	"DX11LibCommon"
+#define DLL_NAME_DX11LIB_COMMON	"dx11Common"
 //---------------------------------------------------------
 
 namespace dx11 {}

@@ -204,13 +204,13 @@ void MC::Reconstruct(const MCP & mcp)
 				//利用 triangleCase 来生成迷之三角形
 				for (int i = 0; i < 16; i += 3)
 				{
-					if (triCase.index[i] == -1)
+					if (triCase.Edges[i] == -1)
 						break;
 
 					//减的那个东西是为了让模型靠近原点
-					m_MeshOutput.push_back(pointOnEdge[triCase.index[i + 0]] - Vector3(BigCubeWidth*0.5f, BigCubeHeight*0.5f, BigCubeDepth*0.5f));
-					m_MeshOutput.push_back(pointOnEdge[triCase.index[i + 1]] - Vector3(BigCubeWidth*0.5f, BigCubeHeight*0.5f, BigCubeDepth*0.5f));
-					m_MeshOutput.push_back(pointOnEdge[triCase.index[i + 2]] - Vector3(BigCubeWidth*0.5f, BigCubeHeight*0.5f, BigCubeDepth*0.5f));
+					m_MeshOutput.push_back(pointOnEdge[triCase.Edges[i + 0]] - Vector3(BigCubeWidth*0.5f, BigCubeHeight*0.5f, BigCubeDepth*0.5f));
+					m_MeshOutput.push_back(pointOnEdge[triCase.Edges[i + 1]] - Vector3(BigCubeWidth*0.5f, BigCubeHeight*0.5f, BigCubeDepth*0.5f));
+					m_MeshOutput.push_back(pointOnEdge[triCase.Edges[i + 2]] - Vector3(BigCubeWidth*0.5f, BigCubeHeight*0.5f, BigCubeDepth*0.5f));
 
 					// 这里可以计算每个顶点值？
 				}
@@ -468,13 +468,13 @@ void MC::Reconstruct16(MCP& mcp)
 				//利用 triangleCase 来生成迷之三角形
 				for (int i = 0; i < 16; i += 3)
 				{
-					if (triCase.index[i] == -1)
+					if (triCase.Edges[i] == -1)
 						break;
 
 					//减的那个东西是为了让模型靠近原点
-					m_MeshOutput.push_back(pointOnEdge[triCase.index[i + 0]] - Vector3(BigCubeWidth*0.5f, BigCubeHeight*0.5f, BigCubeDepth*0.5f));
-					m_MeshOutput.push_back(pointOnEdge[triCase.index[i + 1]] - Vector3(BigCubeWidth*0.5f, BigCubeHeight*0.5f, BigCubeDepth*0.5f));
-					m_MeshOutput.push_back(pointOnEdge[triCase.index[i + 2]] - Vector3(BigCubeWidth*0.5f, BigCubeHeight*0.5f, BigCubeDepth*0.5f));
+					m_MeshOutput.push_back(pointOnEdge[triCase.Edges[i + 0]] - Vector3(BigCubeWidth*0.5f, BigCubeHeight*0.5f, BigCubeDepth*0.5f));
+					m_MeshOutput.push_back(pointOnEdge[triCase.Edges[i + 1]] - Vector3(BigCubeWidth*0.5f, BigCubeHeight*0.5f, BigCubeDepth*0.5f));
+					m_MeshOutput.push_back(pointOnEdge[triCase.Edges[i + 2]] - Vector3(BigCubeWidth*0.5f, BigCubeHeight*0.5f, BigCubeDepth*0.5f));
 
 					// 这里可以计算每个顶点值？
 				}//i(16)

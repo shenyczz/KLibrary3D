@@ -1,18 +1,15 @@
-#ifndef __INCLUDED_DX12LIB_COMMONCORE_H__
-#define __INCLUDED_DX12LIB_COMMONCORE_H__
+#ifndef __INCLUDED_DX11LIB_COMMONCORE_H__
+#define __INCLUDED_DX11LIB_COMMONCORE_H__
 
 //-----------------------------------------------------------------------------
-#include "DX12LibCommonCore.inl"
+#include "dx11CommonCore.inl"
 //-----------------------------------------------------------------------------
-#include "KRootParameter.h"
-
-#include "Dx12Book.h"
-#include "Dx12Study.h"
+#include "Dx11Book.h"
 
 //-----------------------------------------------------------------------------
 #ifdef DLL_NAME
 	#undef DLL_NAME
-	#define DLL_NAME		DLL_NAME_DX12LIB_COMMONCORE
+	#define DLL_NAME		DLL_NAME_DX11LIB_COMMONCORE
 #endif
 //-----------------------------------------------------------------------------
 #define LIB_COMMENT			SFX_LIB
@@ -22,4 +19,4 @@
 #pragma message(DISPLAY_MESSAGE)
 //-----------------------------------------------------------------------------
 
-#endif // #ifndef __INCLUDED_DX12LIB_COMMONCORE_H__
+#endif // #ifndef __INCLUDED_DX11LIB_COMMONCORE_H__

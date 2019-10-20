@@ -20,11 +20,11 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{F455E163-D2B4-4EA6-A853-5592CD8240CC}</ProjectGuid>
+    <ProjectGuid>{8CCF5C0E-4150-43A5-92BB-08344C073ED1}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>D3DCommon</RootNamespace>
+    <RootNamespace>DX11LibCommonCore</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
-    <ProjectName>D3DCommon</ProjectName>
+    <ProjectName>dx11CommonCore</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -97,9 +97,9 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;D3DCOMMON_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;DX11LIBCOMMONCORE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include;$(SolutionDir)$(ProjectName);$(SolutionDir)$(ProjectName)\src;$(SolutionDir)AlibCommon\src;$(SolutionDir)AlibCommonCore\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include;$(SolutionDir)$(ProjectName);$(SolutionDir)$(ProjectName)\src;$(SolutionDir)AlibCommon\src;$(SolutionDir)AlibCommonCore\src;$(SolutionDir)AlibFramework\src;$(SolutionDir)d3dCommon\src;$(SolutionDir)dx11Common\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -113,9 +113,9 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;D3DCOMMON_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;DX11LIBCOMMONCORE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include;$(SolutionDir)$(ProjectName);$(SolutionDir)$(ProjectName)\src;$(SolutionDir)AlibCommon\src;$(SolutionDir)AlibCommonCore\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include;$(SolutionDir)$(ProjectName);$(SolutionDir)$(ProjectName)\src;$(SolutionDir)AlibCommon\src;$(SolutionDir)AlibCommonCore\src;$(SolutionDir)AlibFramework\src;$(SolutionDir)d3dCommon\src;$(SolutionDir)dx11Common\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -131,9 +131,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;D3DCOMMON_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;DX11LIBCOMMONCORE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include;$(SolutionDir)$(ProjectName);$(SolutionDir)$(ProjectName)\src;$(SolutionDir)AlibCommon\src;$(SolutionDir)AlibCommonCore\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include;$(SolutionDir)$(ProjectName);$(SolutionDir)$(ProjectName)\src;$(SolutionDir)AlibCommon\src;$(SolutionDir)AlibCommonCore\src;$(SolutionDir)AlibFramework\src;$(SolutionDir)d3dCommon\src;$(SolutionDir)dx11Common\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -151,9 +151,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;D3DCOMMON_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;DX11LIBCOMMONCORE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include;$(SolutionDir)$(ProjectName);$(SolutionDir)$(ProjectName)\src;$(SolutionDir)AlibCommon\src;$(SolutionDir)AlibCommonCore\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include;$(SolutionDir)$(ProjectName);$(SolutionDir)$(ProjectName)\src;$(SolutionDir)AlibCommon\src;$(SolutionDir)AlibCommonCore\src;$(SolutionDir)AlibFramework\src;$(SolutionDir)d3dCommon\src;$(SolutionDir)dx11Common\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -164,13 +164,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Utils.h" />
+    <ClInclude Include="src\Dx11Book.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="src\Utils.cpp" />
+    <ClCompile Include="src\Dx11Book.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

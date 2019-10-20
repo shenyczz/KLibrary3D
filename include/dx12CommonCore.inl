@@ -14,7 +14,7 @@
 #endif
 
 //---------------------------------------------------------
-#define DLL_NAME_DX12LIB_COMMONCORE	"DX12LibCommonCore"
+#define DLL_NAME_DX12LIB_COMMONCORE	"dx12CommonCore"
 //---------------------------------------------------------
 
 

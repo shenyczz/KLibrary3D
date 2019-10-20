@@ -119,6 +119,11 @@ struct TVector3
 
 #pragma endregion
 
+	// 向量长度
+	_Ty Length() const
+	{
+		return sqrt(x * x + y * y + z * z);
+	}
 
 	// 求模
 	_Ty Norm() const

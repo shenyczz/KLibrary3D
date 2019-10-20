@@ -20,10 +20,11 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
-    <ProjectGuid>{8CCF5C0E-4150-43A5-92BB-08344C073ED1}</ProjectGuid>
+    <ProjectGuid>{375E6D0E-03A2-4A64-B1CB-1C1B0606EDBD}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>DX11LibCommonCore</RootNamespace>
+    <RootNamespace>DX12LibCommonCore</RootNamespace>
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <ProjectName>dx12CommonCore</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -96,9 +97,9 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;_DEBUG;DX11LIBCOMMONCORE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;DX12LIBCOMMONCORE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include;$(SolutionDir)$(ProjectName);$(SolutionDir)$(ProjectName)\src;$(SolutionDir)AlibCommon\src;$(SolutionDir)AlibCommonCore\src;$(SolutionDir)AlibFramework\src;$(SolutionDir)D3DCommon\src;$(SolutionDir)DX11LibCommon\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include;$(SolutionDir)$(ProjectName);$(SolutionDir)$(ProjectName)\src;$(SolutionDir)AlibCommon\src;$(SolutionDir)AlibCommonCore\src;$(SolutionDir)AlibFramework\src;$(SolutionDir)d3dCommon\src;$(SolutionDir)dx12Common\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -112,9 +113,9 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;DX11LIBCOMMONCORE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;DX12LIBCOMMONCORE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include;$(SolutionDir)$(ProjectName);$(SolutionDir)$(ProjectName)\src;$(SolutionDir)AlibCommon\src;$(SolutionDir)AlibCommonCore\src;$(SolutionDir)AlibFramework\src;$(SolutionDir)D3DCommon\src;$(SolutionDir)DX11LibCommon\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include;$(SolutionDir)$(ProjectName);$(SolutionDir)$(ProjectName)\src;$(SolutionDir)AlibCommon\src;$(SolutionDir)AlibCommonCore\src;$(SolutionDir)AlibFramework\src;$(SolutionDir)d3dCommon\src;$(SolutionDir)dx12Common\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -130,9 +131,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>WIN32;NDEBUG;DX11LIBCOMMONCORE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;DX12LIBCOMMONCORE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include;$(SolutionDir)$(ProjectName);$(SolutionDir)$(ProjectName)\src;$(SolutionDir)AlibCommon\src;$(SolutionDir)AlibCommonCore\src;$(SolutionDir)AlibFramework\src;$(SolutionDir)D3DCommon\src;$(SolutionDir)DX11LibCommon\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include;$(SolutionDir)$(ProjectName);$(SolutionDir)$(ProjectName)\src;$(SolutionDir)AlibCommon\src;$(SolutionDir)AlibCommonCore\src;$(SolutionDir)AlibFramework\src;$(SolutionDir)d3dCommon\src;$(SolutionDir)dx12Common\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -150,9 +151,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>NDEBUG;DX11LIBCOMMONCORE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;DX12LIBCOMMONCORE_EXPORTS;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>$(SolutionDir)Include;$(SolutionDir)$(ProjectName);$(SolutionDir)$(ProjectName)\src;$(SolutionDir)AlibCommon\src;$(SolutionDir)AlibCommonCore\src;$(SolutionDir)AlibFramework\src;$(SolutionDir)D3DCommon\src;$(SolutionDir)DX11LibCommon\src</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)Include;$(SolutionDir)$(ProjectName);$(SolutionDir)$(ProjectName)\src;$(SolutionDir)AlibCommon\src;$(SolutionDir)AlibCommonCore\src;$(SolutionDir)AlibFramework\src;$(SolutionDir)d3dCommon\src;$(SolutionDir)dx12Common\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -163,13 +164,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="src\Dx11Book.h" />
+    <ClInclude Include="src\Dx12Book.h" />
+    <ClInclude Include="src\Dx12Study.h" />
+    <ClInclude Include="src\KRootParameter.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
-    <ClCompile Include="src\Dx11Book.cpp" />
+    <ClCompile Include="src\Dx12Book.cpp" />
+    <ClCompile Include="src\Dx12Study.cpp" />
+    <ClCompile Include="src\KRootParameter.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

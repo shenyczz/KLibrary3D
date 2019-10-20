@@ -14,7 +14,7 @@
 #endif
 
 //---------------------------------------------------------
-#define DLL_NAME_DX11LIB_COMMONCORE	"DX11LibCommonCore"
+#define DLL_NAME_DX11LIB_COMMONCORE	"dx11CommonCore"
 //---------------------------------------------------------
 
 

@@ -34,7 +34,7 @@ struct MCP
 };
 
 
-typedef KVector3 Vector3;
+//typedef KVector3 Vector3;
 
 class MC
 {

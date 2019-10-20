@@ -13,14 +13,14 @@
 #include "d3dCommon.h"
 //---------------------------------------------------------
 #ifdef __DX11APP__
-#include "DX11LibCommon.h"
-#include "DX11LibCommonCore.h"
+#include "dx11Common.h"
+#include "dx11CommonCore.h"
 using namespace dx11;
 #endif
 //---------------------------------------------------------
 #ifdef __DX12APP__
-#include "DX12LibCommon.h"
-#include "DX12LibCommonCore.h"
+#include "dx12Common.h"
+#include "dx12CommonCore.h"
 using namespace dx12;
 #endif
 //---------------------------------------------------------

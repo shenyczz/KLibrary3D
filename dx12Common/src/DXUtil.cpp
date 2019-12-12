@@ -3,19 +3,9 @@
 
 namespace dx12
 {
-	//static
-	const XMFLOAT4X4 DXUtil::Identity4x4 = 
-	{
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f,
-	};
-
-
 
 	//static
-	UINT DXUtil::GetCompileFlags()
+	UINT DXUtils::GetCompileFlags()
 	{
 		UINT compileFlags = 0;
 #if defined(_DEBUG)
@@ -28,7 +18,7 @@ namespace dx12
 	}
 
 	//static
-	void DXUtil::GetHardwareAdapter(_In_ IDXGIFactory2* pFactory,
+	void DXUtils::GetHardwareAdapter(_In_ IDXGIFactory2* pFactory,
 		_Outptr_result_maybenull_ IDXGIAdapter1** ppAdapter)
 	{
 		ComPtr<IDXGIAdapter1> adapter;
@@ -58,7 +48,7 @@ namespace dx12
 	}
 
 	//static
-	ComPtr<ID3DBlob> DXUtil::LoadBinary(LPCTSTR filename)
+	ComPtr<ID3DBlob> DXUtils::LoadBinary(LPCTSTR filename)
 	{
 		std::ifstream fin(filename, std::ios::binary);
 
@@ -80,7 +70,7 @@ namespace dx12
 	// defines		- 宏定义(可以为NULL)
 	// entrypoint	- 入口点："VSMain"、"PSMain"
 	// target		- 着色器模型："vs_5_0"、"ps_5_0"
-	ComPtr<ID3DBlob> DXUtil::CompileShader(
+	ComPtr<ID3DBlob> DXUtils::CompileShader(
 		_tstring filename,
 		const D3D_SHADER_MACRO* defines,	// 宏定义, 可空
 		const std::string& entrypoint,		// 入口：比如 "VS"
@@ -117,7 +107,7 @@ namespace dx12
 	}
 
 	//static
-	ComPtr<ID3D12Resource> DXUtil::CreateDefaultBuffer(
+	ComPtr<ID3D12Resource> DXUtils::CreateDefaultBuffer(
 		ID3D12Device* device,
 		ID3D12GraphicsCommandList* cmdList,
 		const void* initData,
@@ -146,7 +136,6 @@ namespace dx12
 			nullptr,
 			IID_PPV_ARGS(uploadBuffer.GetAddressOf())));
 
-
 		// Describe the data we want to copy into the default buffer.
 		D3D12_SUBRESOURCE_DATA subResourceData = {};
 		subResourceData.pData = initData;
@@ -160,6 +149,7 @@ namespace dx12
 			D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_COPY_DEST));
 		{
 			UpdateSubresources<1>(cmdList, defaultBuffer.Get(), uploadBuffer.Get(), 0, 0, 1, &subResourceData);
+			//UpdateSubresources(cmdList, defaultBuffer.Get(), uploadBuffer.Get(), 0, 0, 1, &subResourceData);
 		}
 		cmdList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(defaultBuffer.Get(),
 			D3D12_RESOURCE_STATE_COPY_DEST, D3D12_RESOURCE_STATE_GENERIC_READ));
@@ -174,7 +164,7 @@ namespace dx12
 
 
 	//static
-	UINT DXUtil::CalculateConstantBufferByteSize(UINT nSizeOfCBStruct)
+	UINT DXUtils::CalculateConstantBufferByteSize(UINT nSizeOfCBStruct)
 	{
 		// 常量缓冲区必须是最小硬件分配大小（通常为256字节）的倍数。
 		// 因此四舍五入到最接近256的倍数。
@@ -195,7 +185,7 @@ namespace dx12
 
 	//static
 	// 球坐标转换到笛卡尔坐标
-	XMFLOAT3 DXUtil::SphericalToCartesian(float radius, float theta, float phi)
+	XMFLOAT3 DXUtils::SphericalToCartesian(float radius, float theta, float phi)
 	{
 		return XMFLOAT3(
 			radius*sinf(phi)*cosf(theta),	// x
@@ -204,7 +194,7 @@ namespace dx12
 	}
 
 	//static
-	XMMATRIX DXUtil::InverseTranspose(CXMMATRIX M)
+	XMMATRIX DXUtils::InverseTranspose(CXMMATRIX M)
 	{
 		// Inverse-transpose is just applied to normals.  So zero out 
 		// translation row so that it doesn't get into our inverse-transpose
@@ -220,7 +210,7 @@ namespace dx12
 	//static 极坐标方位角[0, 2*PI)
 	// x - 笛卡尔x坐标
 	// y - 笛卡尔y坐标
-	float DXUtil::Azimuth(float x, float y)
+	float DXUtils::Azimuth(float x, float y)
 	{
 		float theta = 0.0f;
 
@@ -248,7 +238,7 @@ namespace dx12
 
 	//static
 	// 随机单位三维矢量
-	XMVECTOR DXUtil::RandUnitVec3()
+	XMVECTOR DXUtils::RandUnitVec3()
 	{
 		XMVECTOR One = XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f);
 		XMVECTOR Zero = XMVectorZero();
@@ -273,7 +263,7 @@ namespace dx12
 	}
 
 	// ?
-	XMVECTOR DXUtil::RandHemisphereUnitVec3(XMVECTOR n)
+	XMVECTOR DXUtils::RandHemisphereUnitVec3(XMVECTOR n)
 	{
 		XMVECTOR One = XMVectorSet(1.0f, 1.0f, 1.0f, 1.0f);
 		XMVECTOR Zero = XMVectorZero();

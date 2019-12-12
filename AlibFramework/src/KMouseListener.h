@@ -28,7 +28,9 @@ public:
 
 public:
 	// Êó±ê°´ÏÂ
-	void MouseDown(LPVOID pSender, KEventArgs e) {}
+	void MouseDown(LPVOID pSender, KMouseEventArgs e) {}
+	//void MouseDown(HWND hWnd, WPARAM wParam, LPARAM lParam);
+
 
 
 

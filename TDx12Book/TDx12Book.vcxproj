@@ -97,7 +97,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Common;$(ProjectDir)src;$(SolutionDir)Include;$(SolutionDir)AlibCommon\src;$(SolutionDir)AlibCommonCore\src;$(SolutionDir)AlibCommonDataModel\src;$(SolutionDir)AlibData\src;$(SolutionDir)AlibFramework\src;$(SolutionDir)d3dCommon\src;$(SolutionDir)dx12Common\src;$(SolutionDir)dx12CommonCore\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -113,7 +113,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Common;$(ProjectDir)src;$(SolutionDir)Include;$(SolutionDir)AlibCommon\src;$(SolutionDir)AlibCommonCore\src;$(SolutionDir)AlibCommonDataModel\src;$(SolutionDir)AlibData\src;$(SolutionDir)AlibFramework\src;$(SolutionDir)d3dCommon\src;$(SolutionDir)dx12Common\src;$(SolutionDir)dx12CommonCore\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -131,7 +131,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Common;$(ProjectDir)src;$(SolutionDir)Include;$(SolutionDir)AlibCommon\src;$(SolutionDir)AlibCommonCore\src;$(SolutionDir)AlibCommonDataModel\src;$(SolutionDir)AlibData\src;$(SolutionDir)AlibFramework\src;$(SolutionDir)d3dCommon\src;$(SolutionDir)dx12Common\src;$(SolutionDir)dx12CommonCore\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -151,7 +151,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <ConformanceMode>true</ConformanceMode>
+      <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)Common;$(ProjectDir)src;$(SolutionDir)Include;$(SolutionDir)AlibCommon\src;$(SolutionDir)AlibCommonCore\src;$(SolutionDir)AlibCommonDataModel\src;$(SolutionDir)AlibData\src;$(SolutionDir)AlibFramework\src;$(SolutionDir)d3dCommon\src;$(SolutionDir)dx12Common\src;$(SolutionDir)dx12CommonCore\src</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -165,7 +165,7 @@
   <ItemGroup>
     <ClInclude Include="FrameResourceLir.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="src\AbookDemo.h" />
+    <ClInclude Include="src\Abook12Demo.h" />
     <ClInclude Include="src\Box.h" />
     <ClInclude Include="src\FrameResource.h" />
     <ClInclude Include="src\FrameResourceLaw.h" />
@@ -180,7 +180,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\AbookDemo.cpp" />
+    <ClCompile Include="src\Abook12Demo.cpp" />
     <ClCompile Include="src\Box.cpp" />
     <ClCompile Include="src\FrameResource.cpp" />
     <ClCompile Include="src\LandWaves.cpp" />
@@ -340,7 +340,7 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="Assets\LitRadarUtil.hlsl">
+    <CustomBuild Include="Assets\LitRadarUtil.hlsli">
       <FileType>Document</FileType>
       <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">copy %(Identity) $(OutDir)\%(RelativeDir) &gt; NUL</Command>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">copy %(Identity) $(OutDir)\%(RelativeDir) &gt; NUL</Command>

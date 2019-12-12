@@ -22,6 +22,9 @@ public:
 	KObject();
 	~KObject();
 
+	// 属性定义示例
+	//__declspec(property(get = getXX, put = setXX)) int Count;
+
 public:
 	LPVOID GetOwner() const { return m_pOwner; }
 	void SetOwner(LPVOID pOwner) { m_pOwner = pOwner; }

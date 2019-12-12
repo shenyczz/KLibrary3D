@@ -13,92 +13,44 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="Assets">
-      <UniqueIdentifier>{5c27ba1d-dfc4-47e6-82d2-577e213dd3ca}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="FrameResources">
-      <UniqueIdentifier>{bde4c89c-9c15-4335-83df-113f30b273b1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Sysfiles">
-      <UniqueIdentifier>{6784fa17-73e2-4668-bb9e-f0b33187f01d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Miscs">
-      <UniqueIdentifier>{6b97b308-262d-4c25-bec8-463e9ad197cd}</UniqueIdentifier>
+    <Filter Include="着色器">
+      <UniqueIdentifier>{47ce3095-902d-4728-a53e-4f4567b42655}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Box.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="src\AbookDemo.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Shapes.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="src\FrameResource.h">
-      <Filter>FrameResources</Filter>
-    </ClInclude>
-    <ClInclude Include="src\FrameResourceBox.h">
-      <Filter>FrameResources</Filter>
-    </ClInclude>
-    <ClInclude Include="src\FrameResourceShapes.h">
-      <Filter>FrameResources</Filter>
-    </ClInclude>
     <ClInclude Include="stdafx.h">
-      <Filter>Sysfiles</Filter>
-    </ClInclude>
-    <ClInclude Include="Resource.h">
-      <Filter>Sysfiles</Filter>
+      <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
-      <Filter>Sysfiles</Filter>
-    </ClInclude>
-    <ClInclude Include="Common\MC.h">
-      <Filter>Miscs</Filter>
-    </ClInclude>
-    <ClInclude Include="src\FrameResourceLandAndWaves.h">
-      <Filter>FrameResources</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Waves.h">
-      <Filter>Miscs</Filter>
-    </ClInclude>
-    <ClInclude Include="src\Land.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\FrameResourceLand.h">
-      <Filter>FrameResources</Filter>
+    <ClInclude Include="Resource.h">
+      <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\Abook2Demo.h">
+    <ClInclude Include="src\Adx12Demo.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Mouse.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\ex01_Box.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\Box.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="src\AbookDemo.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Shapes.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp">
-      <Filter>Sysfiles</Filter>
-    </ClCompile>
-    <ClCompile Include="_MainDemo.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Common\MC.cpp">
-      <Filter>Miscs</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Waves.cpp">
-      <Filter>Miscs</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Land.cpp">
+    <ClCompile Include="src\Adx12Demo.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\Abook2Demo.cpp">
+    <ClCompile Include="_MainDemo12.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Mouse.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ex01_Box.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -114,33 +66,5 @@
     <Image Include="TDx12Demo.ico">
       <Filter>资源文件</Filter>
     </Image>
-  </ItemGroup>
-  <ItemGroup>
-    <CustomBuild Include="Asserts\bookBox.hlsl">
-      <Filter>Assets</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Asserts\bookShapes.hlsl">
-      <Filter>Assets</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Asserts\bookLandAndWaves.hlsl">
-      <Filter>Assets</Filter>
-    </CustomBuild>
-    <CustomBuild Include="Asserts\bookLand.hlsl">
-      <Filter>Assets</Filter>
-    </CustomBuild>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="Asserts\_AhlslConfig.txt">
-      <Filter>Assets</Filter>
-    </Text>
-    <Text Include="Readme.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <FxCompile Include="Asserts\bookLightingUtil.hlsl">
-      <Filter>Assets</Filter>
-    </FxCompile>
-    <FxCompile Include="Asserts\bookLightDefault.hlsl">
-      <Filter>Assets</Filter>
-    </FxCompile>
   </ItemGroup>
 </Project>

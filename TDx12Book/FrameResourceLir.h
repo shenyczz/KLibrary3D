@@ -6,21 +6,32 @@ struct _FrameResourceLir : public FrameResource
 {
 	_FrameResourceLir(ID3D12Device* device) : FrameResource(device) {}
 
+#pragma pack(1)
+
 	// 对象常量
 	struct ObjectConstants
 	{
-		DirectX::XMFLOAT4X4 World = DXUtil::Identity4x4;
+		DirectX::XMFLOAT4X4 World = DXUtils::Identity4x4;
+	};
+
+	// 材质常量
+	struct MaterialConstants
+	{
+		XMFLOAT4 DiffuseAlbedo = { 1.0f, 1.0f, 1.0f, 1.0f };
+		XMFLOAT3 FresnelR0 = { 0.01f, 0.01f, 0.01f };
+		float Roughness = 0.25f;
+		XMFLOAT4X4 MatTransform = DXUtils::Identity4x4;
 	};
 
 	// 过程常量
 	struct PassConstants
 	{
-		XMFLOAT4X4 View = DXUtil::Identity4x4;
-		XMFLOAT4X4 InvView = DXUtil::Identity4x4;
-		XMFLOAT4X4 Proj = DXUtil::Identity4x4;
-		XMFLOAT4X4 InvProj = DXUtil::Identity4x4;
-		XMFLOAT4X4 ViewProj = DXUtil::Identity4x4;
-		XMFLOAT4X4 InvViewProj = DXUtil::Identity4x4;
+		XMFLOAT4X4 View = DXUtils::Identity4x4;
+		XMFLOAT4X4 InvView = DXUtils::Identity4x4;
+		XMFLOAT4X4 Proj = DXUtils::Identity4x4;
+		XMFLOAT4X4 InvProj = DXUtils::Identity4x4;
+		XMFLOAT4X4 ViewProj = DXUtils::Identity4x4;
+		XMFLOAT4X4 InvViewProj = DXUtils::Identity4x4;
 
 		XMFLOAT3 EyePosW = { 0.0f, 0.0f, 0.0f };
 		float __cbPerObjectPad1 = 0.0f;
@@ -34,22 +45,13 @@ struct _FrameResourceLir : public FrameResource
 		float DeltaTime = 0.0f;
 
 		// 环境光
-		XMFLOAT4 AmbientLight = { 0.0f, 0.0f, 0.0f, 1.0f };
+		XMFLOAT4 AmbientLight = { 0.26f, 0.26f, 0.26f, 1.0f };
 
 		// Indices [0, NUM_DIR_LIGHTS) are directional lights;
 		// indices [NUM_DIR_LIGHTS, NUM_DIR_LIGHTS+NUM_POINT_LIGHTS) are point lights;
 		// indices [NUM_DIR_LIGHTS+NUM_POINT_LIGHTS, NUM_DIR_LIGHTS+NUM_POINT_LIGHT+NUM_SPOT_LIGHTS)
 		// are spot lights for a maximum of MaxLights per object.
 		Light Lights[MaxLights];
-	};
-
-	// 材质常量
-	struct MaterialConstants
-	{
-		XMFLOAT4 DiffuseAlbedo = { 1.0f, 1.0f, 1.0f, 1.0f };
-		XMFLOAT3 FresnelR0 = { 0.01f, 0.01f, 0.01f };
-		float Roughness = 0.25f;
-		XMFLOAT4X4 MatTransform = DXUtil::Identity4x4;
 	};
 
 	// 渲染条目
@@ -61,7 +63,7 @@ struct _FrameResourceLir : public FrameResource
 		int Dirtys;
 
 		// 物体世界坐标
-		XMFLOAT4X4 World = DXUtil::Identity4x4;
+		XMFLOAT4X4 World = DXUtils::Identity4x4;
 
 		// 常量缓冲区索引
 		UINT ObjCBIndex = -1;
@@ -80,6 +82,19 @@ struct _FrameResourceLir : public FrameResource
 		UINT StartIndexLocation = 0;
 		int BaseVertexLocation = 0;
 	};
+
+#pragma pack()
+
+
+	enum class RenderLayer : int
+	{
+		Opaque = 0,
+		Transparent,
+		AlphaTested,
+
+		Count,
+	};
+
 
 	//@EndOf(_FrameResourceLir)
 };

@@ -23,9 +23,29 @@ public:
 
 
 public:
-	// 
-	void Building_0(double *scalars, int dims[3], double origin[3], double spacing[3], double *values, int numValues);
+	// scalars		- 3D网格点要素值
+	// dims[3]		- 3D网格维度(nx,ny,nz)
+	// values		- 等值面值
+	// numValues	- 等值面数量
+	void Building(double *scalars, int dims[3], double *values, int numValues);
 
+	// 原点加间距决定了点在空间中的位置
+	// scalars		- 3D网格点要素值
+	// dims[3]		- 3D网格维度(nx,ny,nz)
+	// origin[3]	- 原点
+	// spacing[3]	- 间距
+	// values		- 等值面值
+	// numValues	- 等值面数量
+	void Building(double *scalars, int dims[3], double origin[3], double spacing[3], double *values, int numValues);
+
+
+	// scalars		- 3D网格点要素值
+	// dims[3]		- 3D网格维度(nx,ny,nz)
+	// origin[3]	- 源点？
+	// spacing[3]	- ??
+	// values		- 等值面值
+	// numValues	- 等值面数量
+	void Building_bak(double *scalars, int dims[3], double origin[3], double spacing[3], double *values, int numValues);
 
 
 	// scalars		- 3D网格点要素值
@@ -34,7 +54,7 @@ public:
 	// cubeCount[3]	- 移动立方体数量
 	// values		- 等值面值
 	// numValues	- 等值面数量
-	void Building(double *scalars, int dims[3], double cubeSize[3], int cubeCount[3], double *values, int numValues);
+	void Building_1(double *scalars, int dims[3], double cubeSize[3], int cubeCount[3], double *values, int numValues);
 
 
 

@@ -27,7 +27,13 @@
     <ClInclude Include="src\Dx12Book.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\KRootParameter.h">
+    <ClInclude Include="src\dx12Sample.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\RootParameter.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="src\DescriptorRange.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -44,7 +50,13 @@
     <ClCompile Include="src\Dx12Book.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\KRootParameter.cpp">
+    <ClCompile Include="src\dx12Sample.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\RootParameter.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DescriptorRange.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

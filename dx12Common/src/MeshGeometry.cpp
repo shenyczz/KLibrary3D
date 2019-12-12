@@ -21,11 +21,11 @@ namespace dx12
 		CopyMemory(this->IndexBufferCPU->GetBufferPointer(), pMeshData->pibInitData(), this->IBSizeInBytes);
 
 		// 上传缓冲区 - 顶点数据
-		this->VertexBufferGPU = DXUtil::CreateDefaultBuffer(pDevice, pCmdList,
+		this->VertexBufferGPU = DXUtils::CreateDefaultBuffer(pDevice, pCmdList,
 			pMeshData->pvbInitData(), VBSizeInBytes, this->VertexBufferUploader);
 
 		// 上传缓冲区 - 索引数据
-		this->IndexBufferGPU = DXUtil::CreateDefaultBuffer(pDevice, pCmdList,
+		this->IndexBufferGPU = DXUtils::CreateDefaultBuffer(pDevice, pCmdList,
 			pMeshData->pibInitData(), this->IBSizeInBytes, this->IndexBufferUploader);
 
 	}

@@ -113,8 +113,8 @@ void HelloTriangle::BuildShadersAndInputLayout()
 		_tstring file = _T("studyColors.hlsl");
 		_tstring filePath = path + _T("Assets\\") + file;
 
-		m_Shaders["VS"] = DXUtil::CompileShader(filePath.c_str(), nullptr, "VS", "vs_5_1");
-		m_Shaders["PS"] = DXUtil::CompileShader(filePath.c_str(), nullptr, "PS", "ps_5_1");
+		m_Shaders["VS"] = DXUtils::CompileShader(filePath.c_str(), nullptr, "VS", "vs_5_1");
+		m_Shaders["PS"] = DXUtils::CompileShader(filePath.c_str(), nullptr, "PS", "ps_5_1");
 	}
 
 	// InputLyout

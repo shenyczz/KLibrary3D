@@ -24,21 +24,22 @@ public:
 	KMouseEventArgs();
 	KMouseEventArgs(WPARAM wParam, LPARAM lParam);
 	~KMouseEventArgs();
+
 	//KMouseEventArgs();
-	//KMouseEventArgs(KMouseButtons button, int clicks, int X, int Y, int delta);
-	//KMouseEventArgs(KMouseButtons button, int clicks, int X, int Y, int delta, void* tag);
+	//KMouseEventArgs(MouseButtons button, int clicks, int X, int Y, int delta);
+	//KMouseEventArgs(MouseButtons button, int clicks, int X, int Y, int delta, void* tag);
 
 
 public:
 	WPARAM WParam;
 	LPARAM LParam;
 
-	//KMouseButtons MouseButtons;
-	//int Clicks;
-	//int Delta;
-	//LONG X;
-	//LONG Y;
-	//POINT Location;
+	MouseButtons Button;
+	int Clicks;
+	int Delta;
+	LONG X;
+	LONG Y;
+	POINT Location;
 
 	//void* Tag;
 

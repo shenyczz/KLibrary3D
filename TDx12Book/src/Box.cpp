@@ -17,8 +17,8 @@ Box::Box()
 	m_Radius = 5.0f;
 
 	m_GeoFlag = box;
-	m_GeoFlag = car;
-	m_GeoFlag = skull;
+	//m_GeoFlag = car;
+	//m_GeoFlag = skull;
 	//m_GeoFlag = shapes;
 	//m_GeoFlag = radar;
 }
@@ -74,7 +74,6 @@ void Box::OnMouseMove(WPARAM wParam, int x, int y)
 	m_LastMousePos.x = x;
 	m_LastMousePos.y = y;
 }
-
 
 
 //【构造资产】
@@ -146,8 +145,8 @@ void Box::BuildShadersAndInputLayout()
 		_tstring file = _T("Box.hlsl");
 		_tstring filePath = path + _T("Assets\\") + file;
 
-		m_Shaders["VS"] = DXUtil::CompileShader(filePath.c_str(), nullptr, "VS", "vs_5_0");
-		m_Shaders["PS"] = DXUtil::CompileShader(filePath.c_str(), nullptr, "PS", "ps_5_0");
+		m_Shaders["VS"] = DXUtils::CompileShader(filePath.c_str(), nullptr, "VS", "vs_5_0");
+		m_Shaders["PS"] = DXUtils::CompileShader(filePath.c_str(), nullptr, "PS", "ps_5_0");
 	}
 
 	// InputLyout
@@ -225,6 +224,7 @@ void Box::BuildPipelineState()
 
 		// 输入布局 - D3D12_INPUT_LAYOUT_DESC
 		psoDesc.InputLayout = { m_InputLayout.data(), (UINT)m_InputLayout.size() };
+		//psoDesc.InputLayout = { Vertex::InputLayout.data(), (UINT)Vertex::InputLayout.size() };
 
 		// ？ - D3D12_INDEX_BUFFER_STRIP_CUT_VALUE
 		psoDesc.IBStripCutValue = D3D12_INDEX_BUFFER_STRIP_CUT_VALUE_DISABLED;
@@ -366,8 +366,11 @@ void Box::BuildCarGeometry()
 	m_IsWireframe = false;
 
 
-	_tstring path = _tstring(KApplication::GetApp()->Startup()) + _T("Models\\");
-	_tstring file = _T("car.dat");
+	//_tstring path = _tstring(KApplication::GetApp()->Startup()) + _T("Models\\");
+	//_tstring file = _T("car.dat");
+	_tstring path = _T("d:\\temp\\");
+	_tstring file = _T("1.txt");
+
 	_tstring filePath = path + file;
 
 	std::ifstream fin(filePath);
@@ -656,7 +659,7 @@ void Box::BuildConstantBufferAndView()
 	// 创建常量缓冲区
 	m_ObjectCB = std::make_unique<TUploadBuffer<ObjectConstants>>(m_device.Get(), 1, true);
 
-	UINT objCBByteSize = DXUtil::CalculateConstantBufferByteSize(sizeof(ObjectConstants));
+	UINT objCBByteSize = DXUtils::CalculateConstantBufferByteSize(sizeof(ObjectConstants));
 	D3D12_GPU_VIRTUAL_ADDRESS cbAddress = m_ObjectCB->Resource()->GetGPUVirtualAddress();
 
 	// Offset to the ith object constant buffer in the buffer.
@@ -665,7 +668,7 @@ void Box::BuildConstantBufferAndView()
 
 	D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc = {};
 	cbvDesc.BufferLocation = cbAddress;
-	cbvDesc.SizeInBytes = DXUtil::CalculateConstantBufferByteSize(sizeof(ObjectConstants));
+	cbvDesc.SizeInBytes = DXUtils::CalculateConstantBufferByteSize(sizeof(ObjectConstants));
 
 	int offsetInDescriptors = 0;
 	auto cbvHandle = m_cbvHeap->GetCPUDescriptorHandleForHeapStart();
@@ -678,6 +681,7 @@ void Box::BuildConstantBufferAndView()
 }
 void Box::BuildBoxRadar()
 {
+	// 由 LitRadar 代替
 	if (m_GeoFlag != radar)
 		return;
 
@@ -702,14 +706,14 @@ void Box::BuildBoxRadar()
 		CopyMemory(boxGeo->VertexBufferCPU->GetBufferPointer(), mesh.pvbInitData(), vbSizeInBytes);
 
 		//todo: VertexBufferGPU,VertexBufferUploader 各自用途？ VertexBufferGPU
-		boxGeo->VertexBufferGPU = DXUtil::CreateDefaultBuffer(m_device.Get(), m_CommandList.Get(),
+		boxGeo->VertexBufferGPU = DXUtils::CreateDefaultBuffer(m_device.Get(), m_CommandList.Get(),
 			mesh.pvbInitData(), vbSizeInBytes, boxGeo->VertexBufferUploader);
 
 		UINT ibSizeInBytes = (UINT)mesh.ibSizeInBytes();
 		ThrowIfFailed(D3DCreateBlob(ibSizeInBytes, &boxGeo->IndexBufferCPU));						// IB
 		CopyMemory(boxGeo->IndexBufferCPU->GetBufferPointer(), mesh.pibInitData(), ibSizeInBytes);
 
-		boxGeo->IndexBufferGPU = DXUtil::CreateDefaultBuffer(m_device.Get(), m_CommandList.Get(),	// 
+		boxGeo->IndexBufferGPU = DXUtils::CreateDefaultBuffer(m_device.Get(), m_CommandList.Get(),	// 
 			mesh.pibInitData(), ibSizeInBytes, boxGeo->IndexBufferUploader);
 
 		boxGeo->VBSizeInBytes = vbSizeInBytes;
@@ -745,7 +749,7 @@ void Box::Update()
 void Box::UpdateCamera()
 {
 	// 观察点
-	m_EyePos = DXUtil::SphericalToCartesian(m_Radius, m_Theta, m_Phi);
+	m_EyePos = DXUtils::SphericalToCartesian(m_Radius, m_Theta, m_Phi);
 
 	// Build the view matrix.
 	XMVECTOR pos = XMVectorSet(m_EyePos.x, m_EyePos.y, m_EyePos.z, 1.0f);
@@ -780,7 +784,7 @@ void Box::Draw()
 	ID3D12CommandAllocator* pCommandAllocator = m_CommandAllocator.Get();
 	ID3D12GraphicsCommandList* pCommandList = m_CommandList.Get();
 
-	m_IsWireframe = true;
+	//m_IsWireframe = true;
 	ID3D12PipelineState* pCurrentPso = m_IsWireframe ? m_PSOs["Wireframe"].Get() : m_PSOs["Solid"].Get();
 
 	// 复位命令分配器，清除其保存的命令记录

@@ -8,7 +8,7 @@ public:
 
 	struct ObjectConstants
 	{
-		XMFLOAT4X4 WorldViewProj = DXUtil::Identity4x4;
+		XMFLOAT4X4 WorldViewProj = DXUtils::Identity4x4;
 	};
 
 protected:

@@ -15,10 +15,16 @@
 ******************************************************************************/
 #pragma once
 
-class DX11LIBCOMMON_EXPORTS_CLASS dx11Utils : public dxCommon::Utils
+namespace dx11
 {
-public:
-	dx11Utils();
-	~dx11Utils();
-};
+
+	class DX11LIBCOMMON_EXPORTS_CLASS DXUtils : public dxCommon::Utils
+	{
+	public:
+		DXUtils();
+		~DXUtils();
+	};
+
+
+}
 

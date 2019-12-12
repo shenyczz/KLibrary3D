@@ -10,7 +10,7 @@
 #include "AlibData.h"
 #include "AlibFramework.h"
 //---------------------------------------------------------
-#include "d3dCommon.h"
+#include "d3dxCommon.h"
 //---------------------------------------------------------
 #ifdef __DX11APP__
 #include "dx11Common.h"

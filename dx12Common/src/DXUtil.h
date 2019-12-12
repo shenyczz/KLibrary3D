@@ -17,12 +17,12 @@
 
 namespace dx12
 {
-	// dx12Utils
-	class DX12LIBCOMMON_EXPORTS_CLASS DXUtil
+
+	class DX12LIBCOMMON_EXPORTS_CLASS DXUtils : public dxCommon::Utils
 	{
 	private:
-		DXUtil() = delete;
-		~DXUtil() = delete;
+		DXUtils() = delete;
+		~DXUtils() = delete;
 
 	public:
 		// 编译标志, 用于着色器编译
@@ -71,15 +71,6 @@ namespace dx12
 		// ?
 		// Hemisphere（半球）
 		static XMVECTOR RandHemisphereUnitVec3(XMVECTOR n);
-
-
-
-
-
-
-		// 常量
-		static const XMFLOAT4X4 Identity4x4;
-
 
 
 

@@ -11,9 +11,7 @@
 #include "CommonStructs.h"
 
 
-#include "Vertex.h"
-#include "MeshData.h"
-#include "MeshFactory.h"
+#include "Vertex12.h"
 #include "MeshGeometry.h"
 
 

@@ -9,17 +9,17 @@ struct _FrameResourceLiw : public FrameResource
 
 	struct ObjectConstants
 	{
-		DirectX::XMFLOAT4X4 World = DXUtil::Identity4x4;
+		DirectX::XMFLOAT4X4 World = DXUtils::Identity4x4;
 	};
 
 	struct PassConstants
 	{
-		XMFLOAT4X4 View = DXUtil::Identity4x4;
-		XMFLOAT4X4 InvView = DXUtil::Identity4x4;
-		XMFLOAT4X4 Proj = DXUtil::Identity4x4;
-		XMFLOAT4X4 InvProj = DXUtil::Identity4x4;
-		XMFLOAT4X4 ViewProj = DXUtil::Identity4x4;
-		XMFLOAT4X4 InvViewProj = DXUtil::Identity4x4;
+		XMFLOAT4X4 View = DXUtils::Identity4x4;
+		XMFLOAT4X4 InvView = DXUtils::Identity4x4;
+		XMFLOAT4X4 Proj = DXUtils::Identity4x4;
+		XMFLOAT4X4 InvProj = DXUtils::Identity4x4;
+		XMFLOAT4X4 ViewProj = DXUtils::Identity4x4;
+		XMFLOAT4X4 InvViewProj = DXUtils::Identity4x4;
 
 		XMFLOAT3 EyePosW = { 0.0f, 0.0f, 0.0f };
 		float cbPerObjectPad1 = 0.0f;
@@ -47,7 +47,7 @@ struct _FrameResourceLiw : public FrameResource
 		XMFLOAT4 DiffuseAlbedo = { 1.0f, 1.0f, 1.0f, 1.0f };
 		XMFLOAT3 FresnelR0 = { 0.01f, 0.01f, 0.01f };
 		float Roughness = 0.25f;
-		XMFLOAT4X4 MatTransform = DXUtil::Identity4x4;
+		XMFLOAT4X4 MatTransform = DXUtils::Identity4x4;
 	};
 
 	struct RenderItem
@@ -58,10 +58,10 @@ struct _FrameResourceLiw : public FrameResource
 		int Dirtys;
 
 		// 物体世界坐标
-		XMFLOAT4X4 World = DXUtil::Identity4x4;
+		XMFLOAT4X4 World = DXUtils::Identity4x4;
 
 		// 
-		XMFLOAT4X4 TexTransform = DXUtil::Identity4x4;
+		XMFLOAT4X4 TexTransform = DXUtils::Identity4x4;
 
 		// 常量缓冲区索引
 		UINT ObjCBIndex = -1;

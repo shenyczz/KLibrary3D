@@ -1,12 +1,16 @@
 #include "stdafx.h"
 #include "dx11Utils.h"
 
-
-dx11Utils::dx11Utils()
+namespace dx11
 {
-}
+
+	DXUtils::DXUtils()
+	{
+	}
+
+	DXUtils::~DXUtils()
+	{
+	}
 
 
-dx11Utils::~dx11Utils()
-{
 }

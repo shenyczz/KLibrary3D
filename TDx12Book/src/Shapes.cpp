@@ -135,8 +135,8 @@ void Shapes::BuildShadersAndInputLayout()
 		_tstring file = _T("Shapes.hlsl");
 		_tstring filePath = path + _T("Assets\\") + file;
 
-		m_Shaders["VS"] = DXUtil::CompileShader(filePath.c_str(), nullptr, "VS", "vs_5_0");
-		m_Shaders["PS"] = DXUtil::CompileShader(filePath.c_str(), nullptr, "PS", "ps_5_0");
+		m_Shaders["VS"] = DXUtils::CompileShader(filePath.c_str(), nullptr, "VS", "vs_5_0");
+		m_Shaders["PS"] = DXUtils::CompileShader(filePath.c_str(), nullptr, "PS", "ps_5_0");
 	}
 
 	// InputLyout
@@ -407,7 +407,7 @@ void Shapes::BuildRenderItems()
 		_astring subname = "box";
 		auto ritem = std::make_unique<FrameResourceShapes::RenderItem>(m_FrameResourceCount);
 		ritem->ObjCBIndex = objCBindex++;
-		ritem->World = DXUtil::Identity4x4;
+		ritem->World = DXUtils::Identity4x4;
 		ritem->Geo = pMeshGeometry;
 		ritem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		ritem->IndexCount = pMeshGeometry->DrawArgs[subname].IndexCount;
@@ -423,7 +423,7 @@ void Shapes::BuildRenderItems()
 		_astring subname = "grid";
 		auto ritem = std::make_unique<FrameResourceShapes::RenderItem>(m_FrameResourceCount);
 		ritem->ObjCBIndex = objCBindex++;
-		ritem->World = DXUtil::Identity4x4;
+		ritem->World = DXUtils::Identity4x4;
 		ritem->Geo = pMeshGeometry;
 		ritem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		ritem->IndexCount = pMeshGeometry->DrawArgs[subname].IndexCount;
@@ -546,7 +546,7 @@ void Shapes::BuildConstantBufferAndView()
 	// 资源 的渲染过程CBV
 
 	// 物体常量缓冲区（256对齐）字节大小
-	UINT objCBByteSize = DXUtil::CalculateConstantBufferByteSize(sizeof(FrameResourceShapes::ObjectConstants));
+	UINT objCBByteSize = DXUtils::CalculateConstantBufferByteSize(sizeof(FrameResourceShapes::ObjectConstants));
 
 	for (int frmindex = 0; frmindex < m_FrameResourceCount; frmindex++)
 	{
@@ -577,7 +577,7 @@ void Shapes::BuildConstantBufferAndView()
 
 
 	// 过程常量缓冲区（256对齐）字节大小
-	UINT passCBByteSize = DXUtil::CalculateConstantBufferByteSize(sizeof(FrameResourceShapes::PassConstants));
+	UINT passCBByteSize = DXUtils::CalculateConstantBufferByteSize(sizeof(FrameResourceShapes::PassConstants));
 	for (int frmindex = 0; frmindex < m_FrameResourceCount; frmindex++)
 	{
 		// 过程常量资源
@@ -630,7 +630,7 @@ void Shapes::Update()
 void Shapes::UpdateCamera()
 {
 	// 计算观察点位置（摄像机）
-	m_EyePos = DXUtil::SphericalToCartesian(m_Radius, m_Theta, m_Phi);
+	m_EyePos = DXUtils::SphericalToCartesian(m_Radius, m_Theta, m_Phi);
 
 	// 构建观察矩阵 - view matrix
 	FXMVECTOR EyePosition = DirectX::XMVectorSet(m_EyePos.x, m_EyePos.y, m_EyePos.z, 1.0f);
@@ -791,7 +791,7 @@ void Shapes::DrawRenderItems()
 	// 绘制渲染项
 	UINT objCount = (UINT)m_AllRitems.size();
 	auto objectCB = CurrentFrameResource()->ObjectCB->Resource();
-	UINT objCBByteSize = DXUtil::CalculateConstantBufferByteSize(sizeof(FrameResourceShapes::ObjectConstants));
+	UINT objCBByteSize = DXUtils::CalculateConstantBufferByteSize(sizeof(FrameResourceShapes::ObjectConstants));
 	for (auto& ritem : m_AllRitems)
 	{
 		// 绑定物体常量到b0

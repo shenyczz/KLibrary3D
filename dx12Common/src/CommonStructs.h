@@ -65,7 +65,7 @@ struct Material
 	// Roughness - ´Ö²Ú¶È
 	float Roughness = 0.25f;
 	// MatTransform - ²ÄÖÊ±ä»»¾ØÕó
-	XMFLOAT4X4 MatTransform = DXUtil::Identity4x4;
+	XMFLOAT4X4 MatTransform = DXUtils::Identity4x4;
 
 	//@EndOf(Material)
 };

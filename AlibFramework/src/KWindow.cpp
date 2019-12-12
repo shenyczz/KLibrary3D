@@ -107,29 +107,29 @@ int KWindow::MainLoop()
 
 	while (msg.message != WM_QUIT)
 	{
-		bool AppIdle = PeekMessage(&msg, 0, 0, 0, PM_NOREMOVE) != 0;
-
 		// If there are Window messages then process them.
 		if (PeekMessage(&msg, 0, 0, 0, PM_REMOVE) !=0 )
 		{
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
 		}
+		//bool AppIdle = PeekMessage(&msg, 0, 0, 0, PM_NOREMOVE) == 0;
 		else
 		{
 			pClock->Tick();
 
 			if (!m_AppPaused)
 			{
-				pSample->OnApplicationIdle();
+				pSample->ApplicationIdle();
 			}
 			else
 			{
 				Sleep(100);
 			}
 
+
 #ifdef _DEBUG
-			KUtil::Trace(_T("AppIdle"));
+			KUtil::Trace(_T("Application Idle"));
 #endif
 		}
 
@@ -250,7 +250,7 @@ LRESULT KWindow::MsgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		case WM_QUIT:			// 0x0012
 		{
-			//todo:不会到 WM_QUIT??
+			// 不会到 WM_QUIT,因为在消息循环中碰到 WM_QUIT 就结束了
 			break;
 		}
 		case WM_GETMINMAXINFO:	// 0x0024
@@ -293,7 +293,7 @@ LRESULT KWindow::MsgProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		}
 		case WM_KEYUP:		// 0x0101
 		{
-			if (wParam == VK_ESCAPE)
+			if (wParam == VK_ESCAPE)	// 0x1B
 			{
 				//::PostMessage(hWnd, WM_DESTROY, 0, 0);
 			}
@@ -427,7 +427,7 @@ void KWindow::OnSize(HWND hWnd, WPARAM wParam, LPARAM lParam)
 		m_fAspectRatio = static_cast<float>(m_iClientWidth) / static_cast<float>(m_iClientHeight);
 
 		//if (md3dDevice)
-		if (true)
+		if (pSample->GetDevice3D())
 		{
 			if (wParam == SIZE_MINIMIZED)
 			{
@@ -527,6 +527,12 @@ void KWindow::OnPaint(HWND hWnd, WPARAM wParam, LPARAM lParam)
 	try
 	{
 		KSample* pSample = KApplication::GetApp()->GetSample();
+
+		if (pSample->GetDevice3D())
+		{
+			//pSample->OnUpdate();
+			//pSample->OnRender();
+		}
 	}
 	catch (const std::exception&) {}
 

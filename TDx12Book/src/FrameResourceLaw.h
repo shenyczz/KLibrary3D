@@ -8,17 +8,17 @@ struct _FrameResourceLaw : public FrameResource
 
 	struct ObjectConstants
 	{
-		DirectX::XMFLOAT4X4 World = DXUtil::Identity4x4;
+		DirectX::XMFLOAT4X4 World = DXUtils::Identity4x4;
 	};
 
 	struct PassConstants
 	{
-		XMFLOAT4X4 View = DXUtil::Identity4x4;
-		XMFLOAT4X4 InvView = DXUtil::Identity4x4;
-		XMFLOAT4X4 Proj = DXUtil::Identity4x4;
-		XMFLOAT4X4 InvProj = DXUtil::Identity4x4;
-		XMFLOAT4X4 ViewProj = DXUtil::Identity4x4;
-		XMFLOAT4X4 InvViewProj = DXUtil::Identity4x4;
+		XMFLOAT4X4 View = DXUtils::Identity4x4;
+		XMFLOAT4X4 InvView = DXUtils::Identity4x4;
+		XMFLOAT4X4 Proj = DXUtils::Identity4x4;
+		XMFLOAT4X4 InvProj = DXUtils::Identity4x4;
+		XMFLOAT4X4 ViewProj = DXUtils::Identity4x4;
+		XMFLOAT4X4 InvViewProj = DXUtils::Identity4x4;
 		XMFLOAT3 EyePosW = { 0.0f, 0.0f, 0.0f };
 		float cbPerObjectPad1 = 0.0f;
 		XMFLOAT2 RenderTargetSize = { 0.0f, 0.0f };
@@ -42,7 +42,7 @@ struct _FrameResourceLaw : public FrameResource
 		UINT ObjCBIndex;
 
 		// 物体世界坐标
-		XMFLOAT4X4 World = DXUtil::Identity4x4;
+		XMFLOAT4X4 World = DXUtils::Identity4x4;
 
 		// 物体网格
 		MeshGeometry* Geo = nullptr;

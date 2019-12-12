@@ -54,9 +54,6 @@
     <ClInclude Include="src\Box.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\AbookDemo.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="src\FrameResourceShapes.h">
       <Filter>FrameResources</Filter>
     </ClInclude>
@@ -68,6 +65,9 @@
     </ClInclude>
     <ClInclude Include="FrameResourceLir.h">
       <Filter>FrameResources</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Abook12Demo.h">
+      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -89,9 +89,6 @@
     <ClCompile Include="src\Box.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\AbookDemo.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="src\Shapes.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
@@ -99,6 +96,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="_MainBook12.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Abook12Demo.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
@@ -140,7 +140,7 @@
     <CustomBuild Include="Assets\LitRadar.hlsl">
       <Filter>Assets</Filter>
     </CustomBuild>
-    <CustomBuild Include="Assets\LitRadarUtil.hlsl">
+    <CustomBuild Include="Assets\LitRadarUtil.hlsli">
       <Filter>Assets</Filter>
     </CustomBuild>
   </ItemGroup>

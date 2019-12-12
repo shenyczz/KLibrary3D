@@ -163,6 +163,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="resource.h" />
     <ClInclude Include="src\KObject.h" />
     <ClInclude Include="src\KSmartPointer.h" />
     <ClInclude Include="src\TSlice.h" />
@@ -187,6 +188,9 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="Alib.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="AlibCommon.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

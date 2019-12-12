@@ -22,9 +22,9 @@ Dx12Book::Dx12Book()
 	m_BackBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 	m_DepthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
-	m_World = DXUtil::Identity4x4;
-	m_View = DXUtil::Identity4x4;
-	m_Proj = DXUtil::Identity4x4;
+	m_World = DXUtils::Identity4x4;
+	m_View = DXUtils::Identity4x4;
+	m_Proj = DXUtils::Identity4x4;
 
 	//ComPtr<X>
 	m_Factory = nullptr;
@@ -119,7 +119,7 @@ void Dx12Book::OnMouseMove(WPARAM wParam, int x, int y)
 
 #pragma region --渲染管线流程
 
-void Dx12Book::OnInit()
+void Dx12Book::OnInitialize()
 {
 #ifdef _DEBUG
 	KUtil::Trace(_T("--【BEG】OnInit"));
@@ -149,9 +149,9 @@ void Dx12Book::OnResize()
 	assert(m_SwapChain);
 	assert(m_CommandAllocator);
 
-	WaitForGpu();	// in OnResize
+	WaitForGpu();
 
-					// 复位命令列表
+	// 复位命令列表
 	ThrowIfFailed(m_CommandList->Reset(m_CommandAllocator.Get(), nullptr));
 
 	// 复位 RenderTarget
@@ -185,9 +185,9 @@ void Dx12Book::OnResize()
 	m_CommandQueue->ExecuteCommandLists(_countof(cmdLists), cmdLists);
 
 	// Wait until resize is complete.
-	WaitForGpu();	// in OnResize
+	WaitForGpu();
 
-					// AfterResised
+	// AfterResised
 	Resized();
 
 #ifdef _DEBUG
@@ -227,12 +227,11 @@ void Dx12Book::OnDestroy()
 #endif
 }
 
-void Dx12Book::OnApplicationIdle()
+void Dx12Book::OnAppIdle()
 {
-	OnUpdate();
-	OnRender();
 	DoAppIdle();
 }
+
 
 #pragma endregion
 

@@ -120,10 +120,8 @@ void LandWaves::BuildShadersAndInputLayout()
 
 		//auto geo = std::make_unique<MeshGeometry>();
 
-		m_Shaders["VS"] = DXUtil::CompileShader(filePath.c_str(), nullptr, "VS", "vs_5_0");
-		m_Shaders["PS"] = DXUtil::CompileShader(filePath.c_str(), nullptr, "PS", "ps_5_0");
-		//m_Shaders["VS"] = DXUtil::CompileShader(L"Assets\\LandAndWaves.hlsl", nullptr, "VS", "vs_5_0");
-		//m_Shaders["PS"] = DXUtil::CompileShader(L"Assets\\LandAndWaves.hlsl", nullptr, "PS", "ps_5_0");
+		m_Shaders["VS"] = DXUtils::CompileShader(filePath.c_str(), nullptr, "VS", "vs_5_0");
+		m_Shaders["PS"] = DXUtils::CompileShader(filePath.c_str(), nullptr, "PS", "ps_5_0");
 	}
 
 	// InputLyout
@@ -322,7 +320,7 @@ void LandWaves::BuildRenderItems()
 	auto wavesRitem = std::make_unique<FrameResourceLaw::RenderItem>(m_FrameResourceCount);
 	{
 		wavesRitem->ObjCBIndex = index++;
-		wavesRitem->World = DXUtil::Identity4x4;
+		wavesRitem->World = DXUtils::Identity4x4;
 		wavesRitem->Geo = m_Geometries["waterGeo"].get();
 		wavesRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		wavesRitem->IndexCount = wavesRitem->Geo->DrawArgs["grid"].IndexCount;
@@ -337,7 +335,7 @@ void LandWaves::BuildRenderItems()
 	auto gridRitem = std::make_unique<FrameResourceLaw::RenderItem>(m_FrameResourceCount);
 	{
 		gridRitem->ObjCBIndex = index++;
-		gridRitem->World = DXUtil::Identity4x4;
+		gridRitem->World = DXUtils::Identity4x4;
 		gridRitem->Geo = m_Geometries["landGeo"].get();
 		gridRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		gridRitem->IndexCount = gridRitem->Geo->DrawArgs["grid"].IndexCount;
@@ -570,7 +568,7 @@ void LandWaves::Draw()
 void LandWaves::DrawRenderItems()
 {
 	auto currObjCB = mCurrFrameResource->ObjectCB->Resource();
-	UINT objCBByteSize = DXUtil::CalculateConstantBufferByteSize(sizeof(FrameResourceLaw::ObjectConstants));
+	UINT objCBByteSize = DXUtils::CalculateConstantBufferByteSize(sizeof(FrameResourceLaw::ObjectConstants));
 
 	for (size_t i = 0; i < m_AllRitems.size(); i++)
 	{

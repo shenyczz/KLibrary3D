@@ -15,11 +15,12 @@
 ******************************************************************************/
 #pragma once
 
-#include "MeshData.h"
+//#include "MeshData.h"
 
 namespace dx12
 {
-	// SubMesh
+	using namespace dxCommon;
+
 	struct SubmeshGeometry
 	{
 		SubmeshGeometry()

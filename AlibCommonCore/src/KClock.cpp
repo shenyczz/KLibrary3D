@@ -111,7 +111,6 @@ float KClock::DeltaTime()const
 }
 
 
-
 // Returns the total time elapsed since Reset() was called, NOT counting any
 // time when the clock is stopped.
 float KClock::TotalTime() const

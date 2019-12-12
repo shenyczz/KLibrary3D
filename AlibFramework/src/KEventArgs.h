@@ -24,8 +24,7 @@ public:
 };
 
 
-
-enum class ALIBFRAMEWORK_EXPORTS_CLASS KMouseButtons
+enum class MouseButtons
 {
 	// 0x100000
 	// No mouse button was pressed.

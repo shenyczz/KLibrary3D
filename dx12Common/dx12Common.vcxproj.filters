@@ -33,19 +33,13 @@
     <ClInclude Include="src\DXUtil.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\MeshData.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="src\MeshFactory.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="src\MeshGeometry.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="src\TUploadBuffer.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\Vertex.h">
+    <ClInclude Include="src\Vertex12.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -68,19 +62,13 @@
     <ClCompile Include="src\DXUtil.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\MeshData.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="src\MeshFactory.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="src\MeshGeometry.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="src\TUploadBuffer.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\Vertex.cpp">
+    <ClCompile Include="src\Vertex12.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

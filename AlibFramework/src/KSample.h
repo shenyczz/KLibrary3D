@@ -34,21 +34,24 @@ protected:
 public:
 	~KSample() = default;
 
+	virtual LPVOID GetDevice3D() = 0;
+
 #pragma endregion
 
 
 #pragma region --渲染管线流程
 
 private:
-	void Initialize();						// 初 始 化: 调用 OnInit()
+	void Setup();
+	void ApplicationIdle();
 
 protected:
-	virtual void OnInit() = 0;				// 初 始 化
+	virtual void OnInitialize() = 0;		// 初 始 化
 	virtual void OnResize() = 0;			// 窗口改变
 	virtual void OnUpdate() = 0;			// 系统更新
 	virtual void OnRender() = 0;			// 系统渲染
 	virtual void OnDestroy() = 0;			// 系统销毁
-	virtual void OnApplicationIdle() = 0;	// 应用空闲
+	virtual void OnAppIdle() = 0;			// 应用空闲
 
 #pragma endregion
 
@@ -63,7 +66,6 @@ private:
 
 
 protected:
-	// WPARAM wParam => UINT_PTR nType
 	virtual void OnMouseDown(WPARAM wParam, int x, int y) = 0;
 	virtual void OnMouseUp(WPARAM wParam, int x, int y) = 0;
 	virtual void OnMouseMove(WPARAM wParam, int x, int y) = 0;
@@ -75,7 +77,7 @@ protected:
 
 protected:
 	const float& AspectRatio() const;
-	const KWindow* GetWindow() const { return m_pWindow; }
+	KWindow* GetWindow() const { return m_pWindow; }
 
 protected:
 	KDocument* m_pDocument;

@@ -1,3 +1,0 @@
-ÃüÁî£ºcopy %(Identity) $(OutDir)\%(RelativeDir) > NUL
-ËµÃ÷£ºPerforming Custom Build Tools - %(Identity)
-Êä³ö£º$(OutDir)\%(Identity)

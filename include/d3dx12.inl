@@ -4,21 +4,12 @@
 //
 // h
 //
-#include "d3dx12.h"
-
 #include <d3d12.h>
 #include <dxgi1_4.h>
 #include <d3dcompiler.h>
 
-#include <DirectXMath.h>
-#include <DirectXColors.h>
-#include <DirectXCollision.h>
-#include <DirectXPackedVector.h>
-using namespace DirectX;
-using namespace DirectX::PackedVector;
-
-#include <wrl.h>
-using Microsoft::WRL::ComPtr;
+#include "d3dx.inl"
+#include "d3dx12.h"
 
 
 // lib

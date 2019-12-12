@@ -67,7 +67,7 @@ void Dx12Study::OnMouseWheel(WPARAM wParam, LPARAM lParam)
 
 #pragma region --渲染管线流程
 
-void Dx12Study::OnInit()
+void Dx12Study::OnInitialize()
 {
 #ifdef _DEBUG
 	KUtil::Trace(_T("--【BEG】OnInit"));
@@ -178,13 +178,6 @@ void Dx12Study::OnDestroy()
 #endif
 }
 
-void Dx12Study::OnApplicationIdle()
-{
-	OnUpdate();
-	OnRender();
-	DoAppIdle();
-}
-
 #pragma endregion
 
 
@@ -230,7 +223,7 @@ void Dx12Study::CreateDevice()
 	else
 	{
 		ComPtr<IDXGIAdapter1> hardwareAdapter;
-		DXUtil::GetHardwareAdapter(m_Factory.Get(), &hardwareAdapter);
+		DXUtils::GetHardwareAdapter(m_Factory.Get(), &hardwareAdapter);
 
 		ThrowIfFailed(D3D12CreateDevice(
 			hardwareAdapter.Get(),

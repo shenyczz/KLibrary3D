@@ -82,8 +82,8 @@ void HelloConstBuffers::BuildShadersAndInputLayout()
 		_tstring file = _T("studyColors.hlsl");
 		_tstring filePath = path + _T("Assets\\") + file;
 
-		m_Shaders["VS"] = DXUtil::CompileShader(filePath.c_str(), nullptr, "VS_CB", "vs_5_1");
-		m_Shaders["PS"] = DXUtil::CompileShader(filePath.c_str(), nullptr, "PS", "ps_5_1");
+		m_Shaders["VS"] = DXUtils::CompileShader(filePath.c_str(), nullptr, "VS_CB", "vs_5_1");
+		m_Shaders["PS"] = DXUtils::CompileShader(filePath.c_str(), nullptr, "PS", "ps_5_1");
 	}
 
 	// InputLyout
@@ -263,7 +263,7 @@ void HelloConstBuffers::BuildVertexBuffer()
 void HelloConstBuffers::BuildConstantBufferAndView()
 {
 	// 1.创建常量缓冲区 - ConstantBuffer
-	UINT nCbvBytesSize = DXUtil::CalculateConstantBufferByteSize(sizeof(SceneConstants));
+	UINT nCbvBytesSize = DXUtils::CalculateConstantBufferByteSize(sizeof(SceneConstants));
 	m_device->CreateCommittedResource(
 		&CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD),
 		D3D12_HEAP_FLAG_NONE,

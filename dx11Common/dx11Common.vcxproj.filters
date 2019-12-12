@@ -21,10 +21,10 @@
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\TDx11C.h">
+    <ClInclude Include="src\dx11Utils.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\dx11Utils.h">
+    <ClInclude Include="src\Vertex11.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -35,10 +35,10 @@
     <ClCompile Include="dllmain.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\TDx11C.cpp">
+    <ClCompile Include="src\dx11Utils.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\dx11Utils.cpp">
+    <ClCompile Include="src\Vertex11.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -35,45 +35,12 @@ private:
 	_tstring CustomMessage;
 };
 
-inline void ThrowIfFailed_22(HRESULT hr)
-{
-	if (FAILED(hr))
-	{
-		_tstring s = KUtil::HR2String(hr);
-		throw KException();
-	}
-}
-
 #ifndef ThrowIfFailed
-//#define ThrowIfFailed(x)	\
-//{							\
-//	ThrowIfFailed_22(x);	\
-//}
-#define ThrowIfFailed(x)			\
-{									\
-    HRESULT hr__ = (x);				\
-	_tstring fun = __TFUNCTION__;	\
-    _tstring wfn = __TFILE__;		\
-    if(FAILED(hr__)) { throw KException(hr__, fun, wfn, __LINE__); } \
+#define ThrowIfFailed(x)												\
+{																		\
+    HRESULT hr_ = (x);													\
+	_tstring _fun = __TFUNCTION__;										\
+    _tstring _file = __TFILE__;											\
+    if(FAILED(hr_)) { throw KException(hr_, _fun, _file, __LINE__); }	\
 }
 #endif
-
-
-/*
-#ifndef ThrowIfFailed
-#define ThrowIfFailed(x)                                              \
-{                                                                     \
-    HRESULT hr__ = (x);                                               \
-    std::wstring wfn = AnsiToWString(__FILE__);                       \
-    if(FAILED(hr__)) { throw DxException(hr__, L#x, wfn, __LINE__); } \
-}
-#endif
-
-inline std::wstring AnsiToWString(const std::string& str)
-{
-    WCHAR buffer[512];
-    MultiByteToWideChar(CP_ACP, 0, str.c_str(), -1, buffer, 512);
-    return std::wstring(buffer);
-}
-
-*/

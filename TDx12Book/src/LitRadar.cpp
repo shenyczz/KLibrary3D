@@ -1,10 +1,19 @@
 #include "stdafx.h"
 #include "LitRadar.h"
 
+//const _astring MatName::All = "All";
+//
+//const _astring MatName::RL050 = "RL050";
+//const _astring MatName::RL100 = "RL100";
+//const _astring MatName::RL200 = "RL200";
+//
+
+
+
 LitRadar::LitRadar()
 {
 	m_Theta = 1.5f*XM_PI;
-	m_Phi = XM_PIDIV2 - 0.1f;
+	m_Phi = XM_PI / 2 + 0.3f;
 	m_Radius = 3.0f;
 
 	m_IsWireframe = false;
@@ -13,6 +22,38 @@ LitRadar::LitRadar()
 	m_FrameResourceCount = 3;
 
 	m_EyePos = { 0.0f, 0.0f, 0.0f };
+
+	m_MatNames[RLayer::All] = "All";
+	m_MatNames[RLayer::RL050] = "RL050";
+	m_MatNames[RLayer::RL100] = "RL100";
+	m_MatNames[RLayer::RL150] = "RL150";
+	m_MatNames[RLayer::RL200] = "RL200";
+	m_MatNames[RLayer::RL250] = "RL250";
+	m_MatNames[RLayer::RL300] = "RL300";
+	m_MatNames[RLayer::RL350] = "RL350";
+	m_MatNames[RLayer::RL400] = "RL400";
+	m_MatNames[RLayer::RL450] = "RL450";
+	m_MatNames[RLayer::RL500] = "RL500";
+	m_MatNames[RLayer::RL550] = "RL550";
+	m_MatNames[RLayer::RL600] = "RL600";
+	m_MatNames[RLayer::RL650] = "RL650";
+
+	//m_DiffuseAlbedos
+	m_DiffuseAlbedos[RLayer::All] = XMFLOAT4(0.999f, 0.999f, 0.999f, 1.000f);
+	m_DiffuseAlbedos[RLayer::RL050] = XMFLOAT4(0.478f, 0.447f, 0.933f, 0.050f);
+	m_DiffuseAlbedos[RLayer::RL100] = XMFLOAT4(0.118f, 0.118f, 0.816f, 0.100f);
+	m_DiffuseAlbedos[RLayer::RL150] = XMFLOAT4(0.651f, 0.988f, 0.659f, 0.150f);
+	m_DiffuseAlbedos[RLayer::RL200] = XMFLOAT4(0.000f, 0.918f, 0.000f, 0.200f);
+	m_DiffuseAlbedos[RLayer::RL250] = XMFLOAT4(0.063f, 0.573f, 0.102f, 0.250f);
+	m_DiffuseAlbedos[RLayer::RL300] = XMFLOAT4(0.988f, 0.957f, 0.392f, 0.300f);
+	m_DiffuseAlbedos[RLayer::RL350] = XMFLOAT4(0.784f, 0.784f, 0.008f, 0.350f);
+	m_DiffuseAlbedos[RLayer::RL400] = XMFLOAT4(0.549f, 0.549f, 0.000f, 0.400f);
+	m_DiffuseAlbedos[RLayer::RL450] = XMFLOAT4(0.996f, 0.675f, 0.675f, 0.450f);
+	m_DiffuseAlbedos[RLayer::RL500] = XMFLOAT4(0.996f, 0.392f, 0.361f, 0.500f);
+	m_DiffuseAlbedos[RLayer::RL550] = XMFLOAT4(0.933f, 0.008f, 0.188f, 0.550f);
+	m_DiffuseAlbedos[RLayer::RL600] = XMFLOAT4(0.831f, 0.557f, 0.996f, 0.600f);
+	m_DiffuseAlbedos[RLayer::RL650] = XMFLOAT4(0.667f, 0.141f, 0.980f, 0.650f);
+
 }
 
 
@@ -65,6 +106,7 @@ void LitRadar::OnMouseMove(WPARAM wParam, int x, int y)
 	m_LastMousePos.x = x;
 	m_LastMousePos.y = y;
 }
+
 void LitRadar::OnKeyboardInput()
 {
 	KClock* pClock = KApplication::GetApp()->GetClock();
@@ -92,6 +134,13 @@ void LitRadar::OnKeyboardInput()
 }
 
 
+// BuildRadarGeometry - xxx
+// BuildMaterials - xxx
+// BuildRenderItems - xxx
+// Draw - xxx
+
+static int flag_radar = 1;
+
 //【构造资产】
 void LitRadar::BuildAssets()
 {
@@ -99,31 +148,34 @@ void LitRadar::BuildAssets()
 	BuildShadersAndInputLayout();
 	BuildPipelineState();
 
-	BuildRadarGeometry();
-	BuildMaterials();
+	if (flag_radar == 0)
+	{
+		BuildRadarGeometry_0();
+		BuildMaterials_0();
+		BuildRenderItems_0();
+	}
+	else
+	{
+		BuildRadarGeometry();
+		BuildMaterials();
+		BuildRenderItems();
+	}
 
-	BuildRenderItems();
 	BuildFrameResources();
 
 	return;
 }
 void LitRadar::BuildRootSignature()
 {
-	// 需要3个常量缓冲区：物体、材质、过程（依据更新频率排序）
+	// 需要3个常量缓冲区：物体、材质、过程(Once)（依据更新频率排序）
 	const int NUM_CB = 3;
 	CD3DX12_ROOT_PARAMETER rootParameters[NUM_CB];
 	{
-		rootParameters[0].InitAsConstantBufferView(0);
-		rootParameters[1].InitAsConstantBufferView(1);
-		rootParameters[2].InitAsConstantBufferView(2);
+		// b0,b1,b2
+		rootParameters[0].InitAsConstantBufferView(0);	// b0 - 物体
+		rootParameters[1].InitAsConstantBufferView(1);	// b1 - 材质
+		rootParameters[2].InitAsConstantBufferView(2);	// b2 - 过程
 	}
-
-	//KRootParameter rootParameters[NUM_CB];
-	//{
-	//	rootParameters[0].InitAsConstantBufferView(0);
-	//	rootParameters[1].InitAsConstantBufferView(1);
-	//	rootParameters[2].InitAsConstantBufferView(2);
-	//}
 
 	// 根签名是根参数数组
 	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(
@@ -161,8 +213,8 @@ void LitRadar::BuildShadersAndInputLayout()
 		_tstring file = _T("LitRadar.hlsl");
 		_tstring filePath = path + _T("Assets\\") + file;
 
-		m_Shaders["VS"] = DXUtil::CompileShader(filePath.c_str(), nullptr, "VS", "vs_5_1");
-		m_Shaders["PS"] = DXUtil::CompileShader(filePath.c_str(), nullptr, "PS", "ps_5_1");
+		m_Shaders["VS"] = DXUtils::CompileShader(filePath.c_str(), nullptr, "VS", "vs_5_1");
+		m_Shaders["PS"] = DXUtils::CompileShader(filePath.c_str(), nullptr, "PS", "ps_5_1");
 	}
 
 	// InputLyout
@@ -227,26 +279,13 @@ void LitRadar::BuildPipelineState()
 
 		// 混合状态 - D3D12_BLEND_DESC
 		psoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
-		{
-			//psoDesc.BlendState.AlphaToCoverageEnable = TRUE;
-			//BOOL AlphaToCoverageEnable;
-			//BOOL IndependentBlendEnable;
-			//D3D12_RENDER_TARGET_BLEND_DESC RenderTarget[8];
-		}
 
 		// 光栅输出状态 - D3D12_RASTERIZER_DESC
 		psoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-		{
-			//psoDesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
-			psoDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
-		}
+		psoDesc.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
 
 		// 深度模板状态 - D3D12_DEPTH_STENCIL_DESC
 		psoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
-		{
-			//psoDesc.DepthStencilState.DepthEnable = FALSE;
-			//psoDesc.DepthStencilState.StencilEnable = FALSE;
-		}
 
 		// 输入布局 - D3D12_INPUT_LAYOUT_DESC
 		psoDesc.InputLayout = { m_InputLayout.data(), (UINT)m_InputLayout.size() };
@@ -259,10 +298,11 @@ void LitRadar::BuildPipelineState()
 
 		// 渲染视图格式 - RTV，DXGI_FORMAT_R8G8B8A8_UNORM
 		psoDesc.NumRenderTargets = BackBufferCount;
-		for (int i = 0; i < BackBufferCount; i++)
-		{
-			psoDesc.RTVFormats[i] = m_BackBufferFormat;
-		}
+		psoDesc.RTVFormats[0] = m_BackBufferFormat;
+		//for (int i = 0; i < BackBufferCount; i++)
+		//{
+		//	psoDesc.RTVFormats[i] = m_BackBufferFormat;
+		//}
 
 		// 深度模板格式 - DSV，DXGI_FORMAT_D24_UNORM_S8_UINT
 		psoDesc.DSVFormat = m_DepthStencilFormat;
@@ -282,30 +322,86 @@ void LitRadar::BuildPipelineState()
 		// ?
 		psoDesc.Flags = D3D12_PIPELINE_STATE_FLAG_NONE;
 	}
-
-	// Create PSO
-	{
-		psoDesc.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
-		ThrowIfFailed(m_device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_PSOs["Solid"])));
-
-		psoDesc.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
-		ThrowIfFailed(m_device->CreateGraphicsPipelineState(&psoDesc, IID_PPV_ARGS(&m_PSOs["Wireframe"])));
-	}
+	BuildPipelineStateSub(psoDesc);
 
 	return;
 }
-void LitRadar::BuildRadarGeometry()
+void LitRadar::BuildPipelineStateSub(const D3D12_GRAPHICS_PIPELINE_STATE_DESC& psoDesc)
 {
+	// Default
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoDefault = psoDesc;
+	ThrowIfFailed(m_device->CreateGraphicsPipelineState(&psoDefault, IID_PPV_ARGS(&m_PSOs["Default"])));
+
+	// Solid
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoSoild = psoDesc;
+	psoSoild.RasterizerState.FillMode = D3D12_FILL_MODE_SOLID;
+	ThrowIfFailed(m_device->CreateGraphicsPipelineState(&psoSoild, IID_PPV_ARGS(&m_PSOs["Solid"])));
+
+	// Wireframe
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoWireframe = psoDesc;
+	psoWireframe.RasterizerState.FillMode = D3D12_FILL_MODE_WIREFRAME;
+	ThrowIfFailed(m_device->CreateGraphicsPipelineState(&psoWireframe, IID_PPV_ARGS(&m_PSOs["Wireframe"])));
+
+	// Transparent
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoTransparent = psoDesc;
+	{
+		psoTransparent.RasterizerState.CullMode = D3D12_CULL_MODE_NONE;
+		//psoTransparent.RasterizerState.CullMode = D3D12_CULL_MODE_FRONT;
+		//psoTransparent.RasterizerState.CullMode = D3D12_CULL_MODE_BACK;
+
+		D3D12_RENDER_TARGET_BLEND_DESC transparencyBlendDesc = {};
+		transparencyBlendDesc.BlendEnable = true;
+		transparencyBlendDesc.LogicOpEnable = false;
+
+		transparencyBlendDesc.SrcBlend = D3D12_BLEND_SRC_ALPHA;			// 来自着色器
+		transparencyBlendDesc.DestBlend = D3D12_BLEND_INV_SRC_ALPHA;	// 来自后台缓冲区
+		transparencyBlendDesc.BlendOp = D3D12_BLEND_OP_ADD;
+
+		// D3D12_BLEND_SRC_ALPHA
+		transparencyBlendDesc.SrcBlendAlpha = D3D12_BLEND_ONE;
+		transparencyBlendDesc.DestBlendAlpha = D3D12_BLEND_ZERO;
+		transparencyBlendDesc.BlendOpAlpha = D3D12_BLEND_OP_ADD;
+
+		transparencyBlendDesc.LogicOp = D3D12_LOGIC_OP_NOOP;
+		transparencyBlendDesc.RenderTargetWriteMask = D3D12_COLOR_WRITE_ENABLE_ALL;
+
+		psoTransparent.BlendState.RenderTarget[0] = transparencyBlendDesc;
+	}
+	ThrowIfFailed(m_device->CreateGraphicsPipelineState(&psoTransparent,
+		IID_PPV_ARGS(&m_PSOs["Transparent"])));
+
+
+	// Alpha tested
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC psoAlphaTested = psoDesc;
+	{
+		//reinterpret_cast<BYTE*>(mShaders["alphaTestedPS"]->GetBufferPointer()),
+		//	mShaders["alphaTestedPS"]->GetBufferSize()
+	}
+	ThrowIfFailed(m_device->CreateGraphicsPipelineState(&psoAlphaTested, IID_PPV_ARGS(&m_PSOs["AlphaTested"])));
+
+	return;
+}
+
+void LitRadar::BuildRadarGeometry_0()
+{
+	//KString s = KString::Format(_T("%03d"), 50);
+	//_astring  as = KString::AString(s);
+
 	//m_Theta = 1.5f*XM_PI;
 	//m_Phi = XM_PIDIV2 - 0.1f;
 	//m_Radius = 3.0f;
 
 	MeshData meshRadar;
 
-	bool output = true;
-	//bool output = false;
+	// 输出
+	//bool output = true;
+	bool output = false;
 
-	_tstring rfile(_T("d:\\sfxData\\R3Data\\r050.txt"));
+	//_tstring rfile(_T("d:\\temp\\2.txt"));
+	_tstring rfile(_T("d:\\temp\\2_xyz.txt"));
+	//_tstring rfile(_T("d:\\temp\\2_llh.txt"));
+
+	//_tstring rfile(_T("d:\\sfxData\\R3Data\\r150.txt"));
 	//_tstring rfile(_T("d:\\sfxData\\R3Data\\r100.txt"));
 	//_tstring rfile(_T("d:\\sfxData\\R3Data\\r150.txt"));
 	//_tstring rfile(_T("d:\\sfxData\\R3Data\\r200.txt"));
@@ -322,15 +418,10 @@ void LitRadar::BuildRadarGeometry()
 
 	if(output)
 	{
-		// 装载数据
-		//d:\\sfxData\\R3Data\\mhd
-		//LoadSlicerFromFiles16(_T("D:\\sfxData\\R3Data\\Radar\\rad3d\\rad"), 1, 24, 68, 52);
+		// 数据保存到 m_Slices
 		LoadSlicerFromFiles16(_T("d:\\sfxData\\R3Data\\mhd\\rad.mhd"));
 
-		vector<double> contourValues = { 450, 500 };
-		//vector<double> contourValues = { 450,470,490, 500 };
-		//vector<double> contourValues = { 150, 350 };
-
+		//vector<double> contourValues = { 50 };
 		//vector<double> contourValues = { 150, 550, 600, 650 };
 		//vector<double> contourValues = { 500, 550, 600, 650 };
 		//vector<double> contourValues = { 450, 500, 550, 600, 650 };
@@ -343,11 +434,13 @@ void LitRadar::BuildRadarGeometry()
 		//vector<double> contourValues = { 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650 };
 		//vector<double> contourValues = { 50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650 };
 
+		vector<double> contourValues = { 350 };
+
 		// 三维重构
 		RebuildRadar3d(&m_Slices, contourValues);
 
 		// 生成网格数据
-		GenerateMesh(&meshRadar);
+		GenerateMeshData(&meshRadar);
 
 		// 输出网格数据
 		_tstring outfile = rfile;
@@ -358,57 +451,177 @@ void LitRadar::BuildRadarGeometry()
 	if (!output)
 	{
 		_tstring infile = rfile;
-		InputMesh(rfile, &meshRadar);
+		InputMesh(rfile, &meshRadar);	// 使用xyz文件（可以来自 MTK 输出）
 	}
 
 
 	// MeshGeometry
-	_astring meshName = "radar";
+	_astring dwaw_name = m_MatNames[RLayer::All];
 	auto geo = std::make_unique<MeshGeometry>();
 	{
 		geo->Init(m_device.Get(), m_CommandList.Get(), &meshRadar);
-		geo->DrawArgs[meshName] = SubmeshGeometry(meshRadar.IndexCount(), 0, 0);
+		geo->DrawArgs[dwaw_name] = SubmeshGeometry(meshRadar.IndexCount(), 0, 0);
 	}
-	m_Geometries["radarGeo"] = std::move(geo);
+	m_Geometries[RLayer::All] = std::move(geo);
+
+	return;
+}
+
+// 读取雷达数据
+void LitRadar::BuildRadarGeometry()
+{
+	// 数据保存到 m_Slices
+	//LoadSlicerFromFiles16(_T("d:\\sfxData\\R3Data\\mhd\\rad.mhd"));
+	//LoadSlicerFromFiles16(_T("d:\\sfxData\\R3Data\\mhd\\rad03.mhd"));
+	LoadSlicerFromFiles16(_T("d:\\sfxData\\R3Data\\mhd\\rad36Layer.mhd"));
+
+	//vector<double> CONTOUR_VALUES = { 50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650 };
+
+	vector<int> _contourValues = { 300, 500 };
+	//vector<int> _contourValues = { 50,200,250,300, 450,500,550 };
+	//vector<int> _contourValues = { 150, 300, 350, 450, 500, 550, 600, 650 };
+	//vector<int> _contourValues = { 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650 };
+
+	// 
+	//vector<int> _contourValues = { 250, 300, 350, 400, 450, 500, 550, 600, 650 };
+
+	//vector<int> _contourValues = { 300, 350, 400, 450, 500, 550, 600, 650 };
+	//vector<int> _contourValues = { 50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650 };
+	for (size_t i = 0; i < _contourValues.size(); i++)
+	{
+		int icvalue = _contourValues[i];	// 每次一个曲面
+		vector<double> contour_values = { static_cast<double>(icvalue) };
+
+		// 三维重构
+		RebuildRadar3d(&m_Slices, contour_values);
+
+		// 生成网格数据
+		auto radarMeshData = std::make_unique<MeshData>();
+		auto pradarMeshData = radarMeshData.get();
+		GenerateMeshData(pradarMeshData);
+
+		if (pradarMeshData->VertexCount() == 0)
+			continue;
+
+		// 绘制参数名称
+		RLayer eLayer = (RLayer)icvalue;
+		_astring drawName = m_MatNames[eLayer];
+
+		// 生成 MeshGeometry
+		auto geo = std::make_unique<MeshGeometry>();
+		{
+			geo->Init(m_device.Get(), m_CommandList.Get(), pradarMeshData);
+			geo->DrawArgs[drawName] = SubmeshGeometry(pradarMeshData->IndexCount(), 0, 0);
+		}
+
+		m_Geometries[eLayer] = std::move(geo);
+		m_MeshDatas[eLayer] = std::move(radarMeshData);
+	}
+
+	// 输出数据
+	//vector<int> _contourValues = { 150, 300, 450, 500, 550, 600, 650 };
+	//int nCount = m_MeshDatas.size();
+
+	XINFO xi = m_xinfo;
+	for (size_t i = 0; i < _contourValues.size(); i++)
+	{
+		int icvalue = _contourValues[i];
+		RLayer eLayer = (RLayer)icvalue;
+		MeshData* pm = m_MeshDatas[eLayer].get();
+	}
+
+	return;
+
+}
+
+void LitRadar::BuildMaterials_0()
+{
+	int index = 0;
+
+	// mat_All
+	{
+		auto mat_All = std::make_unique<Material>(m_FrameResourceCount);
+		auto pMat = mat_All.get();
+
+		XMFLOAT4 diffuseAlbedo = XMFLOAT4(1.000f, 1.000f, 1.000f, 1.000f);
+
+		pMat->Name = m_MatNames[RLayer::All];
+		pMat->MatCBIndex = index++;
+		pMat->DiffuseAlbedo = diffuseAlbedo;
+		pMat->FresnelR0 = XMFLOAT3(0.01f, 0.01f, 0.01f);
+		pMat->Roughness = 0.853f;
+
+		m_Materials[RLayer::All] = std::move(mat_All);
+	}
 
 	return;
 }
 void LitRadar::BuildMaterials()
 {
 	int index = 0;
+	m_Materials.clear();
 
-	// 草地材质
-	auto grass = std::make_unique<Material>(m_FrameResourceCount);
+	BuildMaterials(index, RLayer::RL050);
+	BuildMaterials(index, RLayer::RL100);
+	BuildMaterials(index, RLayer::RL150);
+	BuildMaterials(index, RLayer::RL200);
+	BuildMaterials(index, RLayer::RL250);
+	BuildMaterials(index, RLayer::RL300);
+	BuildMaterials(index, RLayer::RL350);
+	BuildMaterials(index, RLayer::RL400);
+	BuildMaterials(index, RLayer::RL450);
+	BuildMaterials(index, RLayer::RL500);
+	BuildMaterials(index, RLayer::RL550);
+	BuildMaterials(index, RLayer::RL600);
+	BuildMaterials(index, RLayer::RL650);
+
+	return;
+}
+void LitRadar::BuildMaterials(int& index, RLayer eLayer)
+{
+	auto mat = std::make_unique<Material>(m_FrameResourceCount);
+
+	auto pMat = mat.get();
+	pMat->Name = m_MatNames[eLayer];
+	pMat->MatCBIndex = index++;
+	pMat->DiffuseAlbedo = m_DiffuseAlbedos[eLayer];
+	pMat->FresnelR0 = XMFLOAT3(0.01f, 0.01f, 0.01f);
+	pMat->Roughness = 0.853f;
+
+	m_Materials[eLayer] = std::move(mat);
+}
+
+void LitRadar::BuildRenderItems_0()
+{
+	assert(m_FrameResourceCount > 0);
+
+	int index = 0;
+	m_AllRitems.clear();
+
+	auto radarRitem = std::make_unique<FrameResourceLir::RenderItem>(m_FrameResourceCount);
 	{
-		XMFLOAT4 Grass = XMFLOAT4(0.2f, 0.6f, 0.2f, 1.0f);
-		XMFLOAT4 SandyBeach = XMFLOAT4(1.0f, 0.96f, 0.62f, 1.0f);
-		XMFLOAT4 LightYellowGreen = XMFLOAT4(0.48f, 0.77f, 0.46f, 1.0f);
-		XMFLOAT4 DarkYellowGreen = XMFLOAT4(0.1f, 0.48f, 0.19f, 1.0f);
-		XMFLOAT4 Darkbrown = XMFLOAT4(0.45f, 0.39f, 0.34f, 1.0f);
-		XMFLOAT4 WhiteSnow = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+		_astring mat_name = m_MatNames[RLayer::All];
 
-		grass->Name = "grass";
-		grass->MatCBIndex = index++;
-		grass->DiffuseAlbedo = Grass;
-		grass->FresnelR0 = XMFLOAT3(0.01f, 0.01f, 0.01f);
-		//grass->Roughness = 0.125f;
-		grass->Roughness = 0.853f;
+		auto pGeo = m_Geometries[RLayer::All].get();
+
+		radarRitem->ObjCBIndex = index++;
+		radarRitem->World = DXUtils::Identity4x4;
+		radarRitem->Mat = m_Materials[RLayer::All].get();
+		radarRitem->Geo = pGeo;
+
+		radarRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+
+		// 绘制参数
+		radarRitem->IndexCount = pGeo->DrawArgs[mat_name].IndexCount;
+		radarRitem->StartIndexLocation = pGeo->DrawArgs[mat_name].StartIndexLocation;
+		radarRitem->BaseVertexLocation = pGeo->DrawArgs[mat_name].BaseVertexLocation;
+
+		// 调整世界坐标
+		//XMStoreFloat4x4(&radarRitem->World, XMMatrixTranslation(-0.5f, -0.5f, -0.5f));
 	}
-	m_Materials["grass"] = std::move(grass);
 
-	// This is not a good water material definition, but we do not have all the rendering
-	// tools we need (transparency, environment reflection), so we fake(伪造) it for now.
-
-	// 水体材质
-	auto water = std::make_unique<Material>(m_FrameResourceCount);
-	{
-		water->Name = "water";
-		water->MatCBIndex = index++;
-		water->DiffuseAlbedo = XMFLOAT4(0.0f, 0.2f, 0.6f, 1.0f);
-		water->FresnelR0 = XMFLOAT3(0.1f, 0.1f, 0.1f);
-		water->Roughness = 0.0f;
-	}
-	m_Materials["water"] = std::move(water);
+	// 保存数据
+	m_AllRitems.push_back(std::move(radarRitem));
 
 	return;
 }
@@ -416,40 +629,74 @@ void LitRadar::BuildRenderItems()
 {
 	assert(m_FrameResourceCount > 0);
 
+	int index = 0;
 	m_AllRitems.clear();
 
-	int index = 0;
-
-	auto radarRitem = std::make_unique<FrameResourceLir::RenderItem>(m_FrameResourceCount);
-	{
-		radarRitem->ObjCBIndex = index++;
-		radarRitem->World = DXUtil::Identity4x4;
-		radarRitem->Mat = m_Materials["grass"].get();
-		radarRitem->Geo = m_Geometries["radarGeo"].get();
-
-		radarRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-
-		// 绘制参数
-		radarRitem->IndexCount = radarRitem->Geo->DrawArgs["radar"].IndexCount;
-		radarRitem->StartIndexLocation = radarRitem->Geo->DrawArgs["radar"].StartIndexLocation;
-		radarRitem->BaseVertexLocation = radarRitem->Geo->DrawArgs["radar"].BaseVertexLocation;
-	}
-	m_AllRitems.push_back(std::move(radarRitem));
+	BuildRenderItems(index, RLayer::RL050);
+	BuildRenderItems(index, RLayer::RL100);
+	BuildRenderItems(index, RLayer::RL150);
+	BuildRenderItems(index, RLayer::RL200);
+	BuildRenderItems(index, RLayer::RL250);
+	BuildRenderItems(index, RLayer::RL300);
+	BuildRenderItems(index, RLayer::RL350);
+	BuildRenderItems(index, RLayer::RL400);
+	BuildRenderItems(index, RLayer::RL450);
+	BuildRenderItems(index, RLayer::RL500);
+	BuildRenderItems(index, RLayer::RL550);
+	BuildRenderItems(index, RLayer::RL600);
+	BuildRenderItems(index, RLayer::RL650);
 
 	return;
 }
+void LitRadar::BuildRenderItems(int& index, RLayer eLayer)
+{
+	RLayer rlayer = eLayer;			// 
+
+	auto drw_name = m_MatNames[rlayer];
+
+	auto pMat = (m_Materials.end() != m_Materials.find(rlayer))
+		? m_Materials.at(rlayer).get()
+		: nullptr;
+
+	auto pGeo = (m_Geometries.end() != m_Geometries.find(rlayer))
+		? m_Geometries.at(rlayer).get() : nullptr;
+
+	if (pGeo && pMat)
+	{
+		auto ritem = std::make_unique<FrameResourceLir::RenderItem>(m_FrameResourceCount);
+		auto pRitem = ritem.get();
+
+		pRitem->ObjCBIndex = index++;
+		pRitem->World = DXUtils::Identity4x4;
+		pRitem->Mat = pMat;
+		pRitem->Geo = pGeo;
+		pRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+		pRitem->IndexCount = pGeo->DrawArgs[drw_name].IndexCount;
+		pRitem->StartIndexLocation = pGeo->DrawArgs[drw_name].StartIndexLocation;
+		pRitem->BaseVertexLocation = pGeo->DrawArgs[drw_name].BaseVertexLocation;
+
+		m_RitemLayer[0].push_back(pRitem);
+		m_AllRitems.push_back(std::move(ritem));
+	}
+}
+
 void LitRadar::BuildFrameResources()
 {
-	for (int i = 0; i < m_FrameResourceCount; ++i)
+	if (m_AllRitems.size() > 0)
 	{
-		m_FrameResources.push_back
-		(
-			std::make_unique<FrameResourceLir>(m_device.Get(),
-				1,							// pass count
-				(UINT)m_AllRitems.size(),	// obj count
-				(UINT)m_Materials.size())	// mat count
-		);
+		for (int i = 0; i < m_FrameResourceCount; ++i)
+		{
+			m_FrameResources.push_back
+			(
+				std::make_unique<FrameResourceLir>(m_device.Get(),
+					1,							// pass count
+					(UINT)m_AllRitems.size(),	// obj count
+					(UINT)m_Materials.size())	// mat count
+			);
+		}
 	}
+
+	return;
 }
 
 
@@ -469,8 +716,8 @@ void LitRadar::Update()
 	OnKeyboardInput();
 	UpdateCamera();
 	UpdateObjectCB();
-	UpdatePassCB();
 	UpdateMaterialCB();
+	UpdatePassCB();
 }
 void LitRadar::UpdateCamera()
 {
@@ -489,7 +736,10 @@ void LitRadar::UpdateCamera()
 }
 void LitRadar::UpdateObjectCB()
 {
-	auto currObjectCB = CurrentFrameResource()->ObjectCB.get();
+	auto pFrameResource = CurrentFrameResource();
+	if (pFrameResource == nullptr)		return;
+
+	auto currObjectCB = pFrameResource->ObjectCB.get();
 
 	for (auto& e : m_AllRitems)
 	{
@@ -509,8 +759,40 @@ void LitRadar::UpdateObjectCB()
 		}
 	}
 }
+void LitRadar::UpdateMaterialCB()
+{
+	auto pFrameResource = CurrentFrameResource();
+	if (pFrameResource == nullptr) return;
+
+	auto currMaterialCB = pFrameResource->MaterialCB.get();
+	for (auto& e : m_Materials)
+	{
+		Material* mat = e.second.get();
+
+		//if (mat && mat->Dirtys > 0)
+		if (mat->Dirtys > 0)
+		{
+			XMMATRIX matTransform = XMLoadFloat4x4(&(mat->MatTransform));
+
+			FrameResourceLir::MaterialConstants matConstants;
+			matConstants.DiffuseAlbedo = mat->DiffuseAlbedo;
+			matConstants.FresnelR0 = mat->FresnelR0;
+			matConstants.Roughness = mat->Roughness;
+			XMStoreFloat4x4(&matConstants.MatTransform, matTransform);
+
+			currMaterialCB->CopyData(mat->MatCBIndex, matConstants);
+
+			// Next FrameResource need to be updated too.
+			mat->Dirtys--;
+		}
+	}
+}
 void LitRadar::UpdatePassCB()
 {
+	auto pFrameResource = CurrentFrameResource();
+	if (pFrameResource == nullptr) return;
+
+	// 只更新1次
 	KClock* pClock = KApplication::GetApp()->GetClock();
 	int iClientWidth = m_pWindow->ClientWidth();
 	int iClientHeight = m_pWindow->ClientHeight();
@@ -541,143 +823,148 @@ void LitRadar::UpdatePassCB()
 		passCB.TotalTime = pClock->TotalTime();
 		passCB.DeltaTime = pClock->DeltaTime();
 
-		passCB.AmbientLight = { 0.25f, 0.25f, 0.25f, 1.0f };
+		passCB.AmbientLight = { 0.26f, 0.26f, 0.26f, 1.0f };
 
+		float sss = 0.6f, dir = 0.576f;
+		for (int i = 0; i < 6; i++)
+		{
+			passCB.Lights[i].Strength = { sss, sss, sss };
+		}
 
-		float sss = 0.8f;
-		float clr = 0.6f;
-		for (int i = 0; i < 6; i++) { passCB.Lights[i].Strength = { sss, sss, sss }; }
+		passCB.Lights[0].Direction = { dir, 0.0f, 0.0f };
+		passCB.Lights[1].Direction = { 0.0f, dir,0.0f };
+		passCB.Lights[2].Direction = { 0.0f, 0.0f, dir };
+		passCB.Lights[3].Direction = { -dir, 0.0f, 0.0f };
+		passCB.Lights[4].Direction = { 0.0f, -dir, 0.0f };
+		passCB.Lights[5].Direction = { 0.0f, 0.0f, -dir };
 
-		passCB.Lights[0].Direction = { clr, 0.0f, 0.0f };
-		passCB.Lights[1].Direction = { 0.0f, clr,0.0f };
-		passCB.Lights[2].Direction = { 0.0f, 0.0f, clr };
-		passCB.Lights[3].Direction = { -clr, 0.0f, 0.0f };
-		passCB.Lights[4].Direction = { 0.0f, -clr, 0.0f };
-		passCB.Lights[5].Direction = { 0.0f, 0.0f, -clr };
+		//passCB.Lights[0].Direction = { dir, dir, dir };
+		//passCB.Lights[0].Strength = { 0.6f, 0.6f, 0.6f };
+		//passCB.Lights[1].Direction = { -dir, -dir, -dir };
+		//passCB.Lights[1].Strength = { 0.6f, 0.6f, 0.6f };
 	}
 
-	auto currPassCB = CurrentFrameResource()->PassCB.get();
+	auto currPassCB = pFrameResource->PassCB.get();
 	currPassCB->CopyData(0, passCB);
 
 	return;
-}
-void LitRadar::UpdateMaterialCB()
-{
-	auto currMaterialCB = CurrentFrameResource()->MaterialCB.get();
-	for (auto& e : m_Materials)
-	{
-		Material* mat = e.second.get();
-
-		if (mat->Dirtys > 0)
-		{
-			XMMATRIX matTransform = XMLoadFloat4x4(&mat->MatTransform);
-
-			FrameResourceLir::MaterialConstants matConstants;
-			matConstants.DiffuseAlbedo = mat->DiffuseAlbedo;
-			matConstants.FresnelR0 = mat->FresnelR0;
-			matConstants.Roughness = mat->Roughness;
-			XMStoreFloat4x4(&matConstants.MatTransform, matTransform);
-
-			currMaterialCB->CopyData(mat->MatCBIndex, matConstants);
-
-			// Next FrameResource need to be updated too.
-			mat->Dirtys--;
-		}
-	}
 }
 
 
 // 【渲染绘制】
 void LitRadar::Draw()
 {
+	auto pFrameResource = CurrentFrameResource();
+	if (pFrameResource == nullptr) return;
+
 	// 数据准备
-	auto pCommandAllocator = CurrentFrameResource()->CmdListAllocator.Get();
+	auto pCommandAllocator = pFrameResource->CmdListAllocator.Get();
 	auto pCurrentPso = m_IsWireframe ? m_PSOs["Wireframe"].Get() : m_PSOs["Solid"].Get();
+	auto pCommandList = m_CommandList.Get();
+	auto pCommandQueue = m_CommandQueue.Get();
+	auto pSwapChain = m_SwapChain.Get();
 
 	// 复位命令分配器，清空命令分配器中的命令记录
 	ThrowIfFailed(pCommandAllocator->Reset());
 
 	// 复位命令列表（后面的命令记录保存在pCommandAllocator中）
-	ThrowIfFailed(m_CommandList->Reset(pCommandAllocator, pCurrentPso));
+	ThrowIfFailed(pCommandList->Reset(pCommandAllocator, pCurrentPso));
 
 	{
 		// 资源屏障 - 由呈现转换为渲染状体
-		m_CommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
+		pCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
 			D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
 
 		// 光栅化阶段
-		m_CommandList->RSSetViewports(1, &m_ScreenViewport);
-		m_CommandList->RSSetScissorRects(1, &m_ScissorRect);
+		pCommandList->RSSetViewports(1, &m_ScreenViewport);
+		pCommandList->RSSetScissorRects(1, &m_ScissorRect);
 
 		// 输出装配
-		m_CommandList->OMSetRenderTargets(1, &CurrentBackBufferView(), true, &DepthStencilView());
+		pCommandList->OMSetRenderTargets(1, &CurrentBackBufferView(), true, &DepthStencilView());
 
 		// 清除渲染背景
-		//const float* clearColor = Colors::LightSkyBlue;
 		const float* clearColor = Colors::Black;
-		m_CommandList->ClearRenderTargetView(CurrentBackBufferView(), clearColor, 0, nullptr);
+		//const float* clearColor = Colors::White;
+		//const float* clearColor = Colors::DarkGray;
+		//const float* clearColor = Colors::Blue;
+		//const float* clearColor = Colors::LightBlue;
+		//const float* clearColor = Colors::LightSkyBlue;
+		pCommandList->ClearRenderTargetView(CurrentBackBufferView(), clearColor, 0, nullptr);
 
 		// 清除深度模板视图
 		const auto clearFlags = D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL;
-		m_CommandList->ClearDepthStencilView(DepthStencilView(), clearFlags, 1.0f, 0, 0, nullptr);
+		pCommandList->ClearDepthStencilView(DepthStencilView(), clearFlags, 1.0f, 0, 0, nullptr);
 
 		{
 			// 设置根签名
-			m_CommandList->SetGraphicsRootSignature(m_RootSignature.Get());
+			pCommandList->SetGraphicsRootSignature(m_RootSignature.Get());
 
 			// 绑定过程资源到常量缓冲区
-			auto passCB = CurrentFrameResource()->PassCB->Resource();
-			m_CommandList->SetGraphicsRootConstantBufferView(2, passCB->GetGPUVirtualAddress());	// b2
+			auto passCB = pFrameResource->PassCB->Resource();
+			pCommandList->SetGraphicsRootConstantBufferView(2, passCB->GetGPUVirtualAddress());	// b2
 
-			DrawRenderItems();
+			// 绘制
+			if (flag_radar == 0)
+			{
+				DrawRenderItems_0();
+			}
+			else
+			{
+				pCommandList->SetPipelineState(m_PSOs["Transparent"].Get());
+				DrawRenderItems(pCommandList, m_RitemLayer[0]);
+			}
 		}
 
 		// 资源屏障 - 由渲染转换为呈现状态
-		m_CommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
+		pCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
 			D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
 
 	}
 
 	// 完成记录命令
-	ThrowIfFailed(m_CommandList->Close());
+	ThrowIfFailed(pCommandList->Close());
 
 	{
 		// 把命令列表加入命令队列
-		ID3D12CommandList* cmdsLists[] = { m_CommandList.Get() };
-		m_CommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
+		ID3D12CommandList* cmdsLists[] = { pCommandList };
+		pCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
 		// 交换前后台缓冲区
-		ThrowIfFailed(m_SwapChain->Present(1, 0));
+		ThrowIfFailed(pSwapChain->Present(1, 0));
 		m_BackBufferIndex = (m_BackBufferIndex + 1) % BackBufferCount;
 
 		// 将围栏值向前推进，将命令标记到此围栏点
-		CurrentFrameResource()->FenceValue = ++m_FenceValue;
+		pFrameResource->FenceValue = ++m_FenceValue;
 
 		// 向命令队列中添加一条指令，以设置新的围栏点。
 		// 因为我们在GPU时间轴上，在GPU处理完之前的所有命令之前，
 		// 此Signal()将不会设置新的围栏点。
-		m_CommandQueue->Signal(m_Fence.Get(), m_FenceValue);
+		pCommandQueue->Signal(m_Fence.Get(), m_FenceValue);
 	}
 
 	return;
 }
-void LitRadar::DrawRenderItems()
-{
-	UINT objCBByteSize = DXUtil::CalculateConstantBufferByteSize(sizeof(FrameResourceLir::ObjectConstants));
-	UINT matCBByteSize = DXUtil::CalculateConstantBufferByteSize(sizeof(FrameResourceLir::MaterialConstants));
 
-	auto objCB = CurrentFrameResource()->ObjectCB->Resource();
-	auto matCB = CurrentFrameResource()->MaterialCB->Resource();
+void LitRadar::DrawRenderItems_0()
+{
+	auto pFrameResource = CurrentFrameResource();
+	if (pFrameResource == nullptr) return;
+
+	UINT objCBByteSize = DXUtils::CalculateConstantBufferByteSize(sizeof(FrameResourceLir::ObjectConstants));
+	UINT matCBByteSize = DXUtils::CalculateConstantBufferByteSize(sizeof(FrameResourceLir::MaterialConstants));
+
+	auto objCB = pFrameResource->ObjectCB->Resource();
+	auto matCB = pFrameResource->MaterialCB->Resource();
 
 	for (size_t i = 0; i < m_AllRitems.size(); i++)
 	{
 		auto ri = m_AllRitems[i].get();
 
-		// b0
+		// b0 - 物体
 		D3D12_GPU_VIRTUAL_ADDRESS objCBAddress = objCB->GetGPUVirtualAddress() + ri->ObjCBIndex * objCBByteSize;
 		m_CommandList->SetGraphicsRootConstantBufferView(0, objCBAddress);
 
-		// b1
+		// b1 - 材质
 		D3D12_GPU_VIRTUAL_ADDRESS matCBAddress = matCB->GetGPUVirtualAddress() + ri->Mat->MatCBIndex * matCBByteSize;
 		m_CommandList->SetGraphicsRootConstantBufferView(1, matCBAddress);
 
@@ -697,6 +984,50 @@ void LitRadar::DrawRenderItems()
 
 	return;
 }
+void LitRadar::DrawRenderItems(ID3D12GraphicsCommandList* pCommandList,
+	const std::vector<FrameResourceLir::RenderItem*>& ritems)
+{
+	auto pFrameResource = CurrentFrameResource();
+	if (pFrameResource == nullptr) return;
+
+	UINT objCBByteSize = DXUtils::CalculateConstantBufferByteSize(sizeof(FrameResourceLir::ObjectConstants));
+	UINT matCBByteSize = DXUtils::CalculateConstantBufferByteSize(sizeof(FrameResourceLir::MaterialConstants));
+
+	auto objCB = pFrameResource->ObjectCB->Resource();
+	auto matCB = pFrameResource->MaterialCB->Resource();
+
+	size_t count = ritems.size();
+	for (size_t i = 0; i < count; ++i)
+	{
+		int ii = (count - 1) - i;	// 倒序
+		auto ri = ritems[ii];
+
+		// b0
+		D3D12_GPU_VIRTUAL_ADDRESS objCBAddress = objCB->GetGPUVirtualAddress() + ri->ObjCBIndex * objCBByteSize;
+		pCommandList->SetGraphicsRootConstantBufferView(0, objCBAddress);
+
+		// b1
+		D3D12_GPU_VIRTUAL_ADDRESS matCBAddress = matCB->GetGPUVirtualAddress() + ri->Mat->MatCBIndex * matCBByteSize;
+		pCommandList->SetGraphicsRootConstantBufferView(1, matCBAddress);
+
+		// 输入装配
+		pCommandList->IASetVertexBuffers(0, 1, &ri->Geo->VertexBufferView());
+		pCommandList->IASetIndexBuffer(&ri->Geo->IndexBufferView());
+		pCommandList->IASetPrimitiveTopology(ri->PrimitiveType);
+
+		// 绘制
+		pCommandList->DrawIndexedInstanced(
+			ri->IndexCount,			// 索引数量
+			1,						// 实例数量
+			ri->StartIndexLocation,	// 索引开始位置
+			ri->BaseVertexLocation,	// 顶点开始位置
+			0);						// 实例开始位置
+	}
+
+	return;
+}
+
+
 
 void LitRadar::DoAppIdle()
 {
@@ -738,6 +1069,7 @@ bool LitRadar::LoadSlicerFromFiles16(_tstring filePrefix, int indexBeg, int inde
 	return true;
 }
 
+// 数据保存到 m_Slices
 bool LitRadar::LoadSlicerFromFiles16(_tstring fileName)
 {
 	KString mhdFile = fileName;
@@ -778,7 +1110,7 @@ void LitRadar::LoadSlicerFromFiles16_mhd(_tstring fileName)
 
 	for (int i = 0; i < 3; i++)
 	{
-		m_xinfo.dim[i] = dim[i];
+		m_xinfo.dims[i] = dim[i];
 		m_xinfo.elementSize[i] = elementSize[i];
 		m_xinfo.elememtSpace[i] = elememtSpace[i];
 	}
@@ -793,9 +1125,9 @@ void LitRadar::LoadSlicerFromFiles16_raw(_tstring fileName)
 {
 	m_Slices.clear();
 
-	int nSliceWidth = m_xinfo.dim[0];		// 57
-	int nSliceHeight = m_xinfo.dim[1];		// 47
-	int nSliceCount = m_xinfo.dim[2];		// 切片数量 24
+	int nSliceWidth = m_xinfo.dims[0];		// 57
+	int nSliceHeight = m_xinfo.dims[1];		// 47
+	int nSliceCount = m_xinfo.dims[2];		// 切片数量 24
 
 	int nSliceSize = nSliceWidth * nSliceHeight;				// 切片大小
 	int nBufferSize = nSliceSize * sizeof(uint16);	// 缓冲区大小(字节)
@@ -831,7 +1163,7 @@ void LitRadar::LoadSlicerFromFiles16_raw(_tstring fileName)
 	return;
 }
 
-
+// pSlices -> 数据源
 void LitRadar::RebuildRadar3d(vector<TSlice<uint16>>* pSlices, const vector<double>& contourValues)
 {
 	// dims - 68,52,24
@@ -856,25 +1188,23 @@ void LitRadar::RebuildRadar3d(vector<TSlice<uint16>>* pSlices, const vector<doub
 		}
 	}
 
-	// origin
-	double origin[3] = { 0, 0, 0 };
 
-	// spacing
-	m_xinfo.elememtSpace[0];
-	//double spacing[3] = { 0.10, 0.10, 0.10 };
-	double spacing[3] = { 1.0, 1.0, 1.0 };
-
-
-	// values
-	//contourValues
 
 	KMarchingCubes* pmc = &m_KMarchingCubes;
 	pmc->Clear();
-	pmc->Building_0(scalars.data(), dims, origin, spacing, (double*)contourValues.data(), contourValues.size());
+
+	// pmc->Building()
+	pmc->Building(scalars.data(), dims, (double*)contourValues.data(), contourValues.size());
+
+
+	//double origin[3] = { 0, 0, 0 };
+	//double spacing[3] = { 1.0, 1.0, 1.0 };
+	//pmc->Building(scalars.data(), dims, origin, spacing, (double*)contourValues.data(), contourValues.size());
+
 
 	return;
 }
-void LitRadar::GenerateMesh(MeshData* pMeshData)
+void LitRadar::GenerateMeshData(MeshData* pMeshData)
 {
 	KMarchingCubes* pmc = &m_KMarchingCubes;
 
@@ -896,31 +1226,34 @@ void LitRadar::GenerateMesh(MeshData* pMeshData)
 
 
 	// 顶点数量
-	float r, g, b;
+	float r, g, b, a;
 	int nCount = (int)vertices.size();
 
 	for (int i = 0; i < nCount; i++)
 	{
 		Vector3 v = vertices[i];
+		//XMFLOAT3 pnt = { (float)v.x, (float)v.y, (float)v.z };
 		//XMFLOAT3 pnt = { (float)v.x, (float)-v.y, (float)v.z };
 		XMFLOAT3 pnt = { (float)v.x, (float)-v.z, (float)-v.y };
 
 		Vector3 n = normals[i];
 		XMFLOAT3 nom = { (float)n.x, (float)n.y, (float)n.z };
 
+		a = 1.0f;
 		float sv = (float)vertexValues[i];	// 顶点值
-		//if (sv > 200)
-		{
-			GetRadarColor(sv, r, g, b);
-			XMFLOAT4 clr = { r, g, b, 1.0f };
+		//if (sv = 350) a = 0.2f;
+		//if (sv = 450) a = 1.0f;
 
-			pMeshData->vertex_push_bak(Vertex(pnt, nom, clr));
-			pMeshData->index_push_back(i);
-		}
+		GetRadarColor(sv, r, g, b);
+		XMFLOAT4 clr = { r, g, b, a };
+
+		pMeshData->vertex_push_bak(Vertex(pnt, nom, clr));
+		pMeshData->index_push_back(i);
 	}
 
 	return;
 }
+
 void LitRadar::OutputMesh(_tstring fileName, const MeshData* pMeshData)
 {
 	ofstream out(fileName);
@@ -954,7 +1287,7 @@ void LitRadar::OutputMesh(_tstring fileName, const MeshData* pMeshData)
 	...
 
 	4、三角形索引：(idx0 idx1 idx2)三个索引（顺时针绕序）决定一个三角形
-	Triangles: 80
+	Triangles 80
 	idx0 idx1 idx2
 	...
 
@@ -970,7 +1303,12 @@ void LitRadar::OutputMesh(_tstring fileName, const MeshData* pMeshData)
 	{
 		Vertex vertex = pMeshData->Vertices[i];
 		XMFLOAT3 vec = vertex.Position;
-		out << vec.x << _blank_space_ << vec.y << _blank_space_ << vec.z << endl;
+		_astring sx = KString::AString((LPCTSTR)KString::Format(_T("%8.5f"), vec.x));
+		_astring sy = KString::AString((LPCTSTR)KString::Format(_T("%8.5f"), vec.y));
+		_astring sz = KString::AString((LPCTSTR)KString::Format(_T("%8.5f"), vec.z));
+
+		//out << vec.x << _blank_space_ << vec.y << _blank_space_ << vec.z << endl;
+		out << sx << _blank_space_ << sy << _blank_space_ << sz << endl;
 	}
 
 	out << "Normals " << iVertexCount << endl;
@@ -1013,7 +1351,6 @@ void LitRadar::InputMesh(_tstring fileName, MeshData* pMeshData)
 	/*
 	Points 71562
 	Normals 71562
-	Colors 71562
 	Triangles 23854
 	*/
 
@@ -1022,7 +1359,7 @@ void LitRadar::InputMesh(_tstring fileName, MeshData* pMeshData)
 
 	vector<XMFLOAT3> points;
 	vector<XMFLOAT3> normals;
-	vector<XMFLOAT4> colors;
+	//vector<XMFLOAT4> colors;
 
 	vector<Vertex> vertices;
 	vector<uint32> indices32;
@@ -1049,13 +1386,13 @@ void LitRadar::InputMesh(_tstring fileName, MeshData* pMeshData)
 
 	// Colors 71562
 	// 0 0.917647 0
-	fin >> ignore_str >> nCount;
-	for (int i = 0; i < nCount; i++)
-	{
-		XMFLOAT4 vec(0, 0, 0, 1);
-		fin >> vec.x >> vec.y >> vec.z;
-		colors.push_back(vec);
-	}
+	//fin >> ignore_str >> nCount;
+	//for (int i = 0; i < nCount; i++)
+	//{
+	//	XMFLOAT4 vec(0, 0, 0, 1);
+	//	fin >> vec.x >> vec.y >> vec.z;
+	//	colors.push_back(vec);
+	//}
 
 	//Triangles 23854
 	// 0 1 2
@@ -1077,7 +1414,7 @@ void LitRadar::InputMesh(_tstring fileName, MeshData* pMeshData)
 	{
 		XMFLOAT3 pnt = points[i];
 		XMFLOAT3 nom = normals[i];
-		XMFLOAT4 clr = colors[i];
+		XMFLOAT4 clr = { 0.0f, 0.0f, 0.0f, 1.0f };
 
 		Vertex vertex = { pnt, nom, clr };
 		vertices.push_back(vertex);

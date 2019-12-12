@@ -131,8 +131,8 @@ void LitWaves::BuildShadersAndInputLayout()
 		_tstring file = _T("LitWaves.hlsl");
 		_tstring filePath = path + _T("Assets\\") + file;
 
-		m_Shaders["VS"] = DXUtil::CompileShader(filePath.c_str(), nullptr, "VS", "vs_5_0");
-		m_Shaders["PS"] = DXUtil::CompileShader(filePath.c_str(), nullptr, "PS", "ps_5_0");
+		m_Shaders["VS"] = DXUtils::CompileShader(filePath.c_str(), nullptr, "VS", "vs_5_0");
+		m_Shaders["PS"] = DXUtils::CompileShader(filePath.c_str(), nullptr, "PS", "ps_5_0");
 	}
 
 	// InputLyout
@@ -400,7 +400,7 @@ void LitWaves::BuildRenderItems()
 	auto wavesRitem = std::make_unique<FrameResourceLiw::RenderItem>(m_FrameResourceCount);
 	{
 		wavesRitem->ObjCBIndex = index++;
-		wavesRitem->World = DXUtil::Identity4x4;
+		wavesRitem->World = DXUtils::Identity4x4;
 		wavesRitem->Mat = m_Materials["water"].get();
 		wavesRitem->Geo = m_Geometries["waterGeo"].get();
 		wavesRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
@@ -414,7 +414,7 @@ void LitWaves::BuildRenderItems()
 	auto gridRitem = std::make_unique<FrameResourceLiw::RenderItem>(m_FrameResourceCount);
 	{
 		gridRitem->ObjCBIndex = index++;
-		gridRitem->World = DXUtil::Identity4x4;
+		gridRitem->World = DXUtils::Identity4x4;
 		gridRitem->Mat = m_Materials["grass"].get();
 		gridRitem->Geo = m_Geometries["landGeo"].get();
 		gridRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
@@ -685,8 +685,8 @@ void LitWaves::Draw()
 }
 void LitWaves::DrawRenderItems()
 {
-	UINT objCBByteSize = DXUtil::CalculateConstantBufferByteSize(sizeof(FrameResourceLiw::ObjectConstants));
-	UINT matCBByteSize = DXUtil::CalculateConstantBufferByteSize(sizeof(FrameResourceLiw::MaterialConstants));
+	UINT objCBByteSize = DXUtils::CalculateConstantBufferByteSize(sizeof(FrameResourceLiw::ObjectConstants));
+	UINT matCBByteSize = DXUtils::CalculateConstantBufferByteSize(sizeof(FrameResourceLiw::MaterialConstants));
 
 	auto objCB = CurrentFrameResource()->ObjectCB->Resource();
 	auto matCB = CurrentFrameResource()->MaterialCB->Resource();

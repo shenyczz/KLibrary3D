@@ -43,7 +43,7 @@ protected:
 
 protected:
 	// 1.Initialize
-	void OnInit() override;
+	void OnInitialize() override;
 
 	// 2.Resize
 	void OnResize() override;
@@ -56,9 +56,6 @@ protected:
 
 	// 5.Destory
 	void OnDestroy() override;
-
-	// 6.ApplicationIdle
-	void OnApplicationIdle() override;
 
 #pragma endregion
 
@@ -165,9 +162,9 @@ protected:
 	DXGI_FORMAT m_DepthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 	// ×ª»»¾ØÕó
-	XMFLOAT4X4 m_World = DXUtil::Identity4x4;
-	XMFLOAT4X4 m_View = DXUtil::Identity4x4;
-	XMFLOAT4X4 m_Proj = DXUtil::Identity4x4;
+	XMFLOAT4X4 m_World = DXUtils::Identity4x4;
+	XMFLOAT4X4 m_View = DXUtils::Identity4x4;
+	XMFLOAT4X4 m_Proj = DXUtils::Identity4x4;
 
 	std::vector<D3D12_INPUT_ELEMENT_DESC> m_InputLayout;
 

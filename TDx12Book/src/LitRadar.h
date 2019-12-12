@@ -4,6 +4,65 @@
 
 using namespace std;
 
+struct XINFO
+{
+	int dims[3];
+	float elementSize[3];
+	float elememtSpace[3];
+
+	float lon0;
+	float lat0;
+	float xInterval;
+	float yInterval;
+};
+
+struct XYZ
+{
+	float x, y, z;
+
+};
+
+struct RCOLOR
+{
+	float r, g, b, a;
+};
+
+struct IsoSuface
+{
+	float EValue;
+	RCOLOR Color;
+	std::vector<XYZ> Positions;
+	std::vector<XYZ> Normals;
+	std::vector<uint32> Indices;
+};
+
+
+enum class PSO
+{
+	Default = 0,
+	Solid,
+	Wireframe,
+};
+
+enum class RLayer
+{
+	All = 0,
+
+	RL050 = 50,
+	RL100 = 100,
+	RL150 = 150,
+	RL200 = 200,
+	RL250 = 250,
+	RL300 = 300,
+	RL350 = 350,
+	RL400 = 400,
+	RL450 = 450,
+	RL500 = 500,
+	RL550 = 550,
+	RL600 = 600,
+	RL650 = 650,
+};
+
 class LitRadar : public Dx12Book
 {
 public:
@@ -21,9 +80,15 @@ protected:
 	void BuildRootSignature();
 	void BuildShadersAndInputLayout();
 	void BuildPipelineState();
+	void BuildPipelineStateSub(const D3D12_GRAPHICS_PIPELINE_STATE_DESC& pso);
+	void BuildRadarGeometry_0();
 	void BuildRadarGeometry();
+	void BuildMaterials_0();
 	void BuildMaterials();
+	void BuildMaterials(int& index, RLayer eLayer);
+	void BuildRenderItems_0();
 	void BuildRenderItems();
+	void BuildRenderItems(int& index, RLayer eLayer);
 	void BuildFrameResources();
 
 	void Resized() override;
@@ -35,7 +100,8 @@ protected:
 	void UpdateMaterialCB();
 
 	void Draw() override;
-	void DrawRenderItems();
+	void DrawRenderItems_0();
+	void DrawRenderItems(ID3D12GraphicsCommandList* pCommandList, const std::vector<FrameResourceLir::RenderItem*>& ritems);
 
 	void DoAppIdle() override;
 
@@ -49,7 +115,7 @@ private:
 
 	// 雷达三维重构
 	void RebuildRadar3d(vector<TSlice<uint16>>* pSlices, const vector<double>& contourValues);
-	void GenerateMesh(MeshData* pMeshData);
+	void GenerateMeshData(MeshData* pMeshData);
 
 	// 输出网格数据
 	void OutputMesh(_tstring fileName, const MeshData* pMeshData);
@@ -96,33 +162,30 @@ private:
 	ComPtr<ID3D12RootSignature> m_RootSignature;
 
 	bool m_IsWireframe;
-	vector<TSlice<uint16>>	m_Slices;
 
-	unordered_map<_astring, unique_ptr<MeshGeometry>> m_Geometries;
-	unordered_map<_astring, unique_ptr<Material>> m_Materials;
+	unordered_map<RLayer, unique_ptr<MeshData>> m_MeshDatas;
+
+
+	unordered_map<RLayer, unique_ptr<MeshGeometry>> m_Geometries;
+	unordered_map<RLayer, unique_ptr<Material>> m_Materials;
+
+	unordered_map<RLayer, _astring> m_MatNames;			// 材质名称
+	unordered_map<RLayer, XMFLOAT4> m_DiffuseAlbedos;	// 反照率
+
 
 	vector<unique_ptr<FrameResourceLir::RenderItem>> m_AllRitems;
+	vector<FrameResourceLir::RenderItem*> m_RitemLayer[(int)FrameResourceLir::RenderLayer::Count];
 
 	// 观察点
 	XMFLOAT3 m_EyePos = { 0.0f, 0.0f, 0.0f };
 
-	//float m_SunTheta = XM_PI * 5.0f / 4;
-	//float m_SunPhi = XM_PI * 1.0f / 4;
-
+	// 保存雷达切片数据
+	vector<TSlice<uint16>>	m_Slices;
 	KMarchingCubes m_KMarchingCubes;
 
-private:
-	struct XINFO
-	{
-		int dim[3];
-		float elementSize[3];
-		float elememtSpace[3];
 
-		float lon0;
-		float lat0;
-		float xInterval;
-		float yInterval;
-	};
+
+private:
 
 	XINFO m_xinfo;
 

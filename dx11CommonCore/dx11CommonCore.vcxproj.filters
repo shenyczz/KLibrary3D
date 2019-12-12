@@ -21,7 +21,7 @@
     <ClInclude Include="targetver.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="src\Dx11Book.h">
+    <ClInclude Include="src\dx11Sample.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -32,7 +32,7 @@
     <ClCompile Include="dllmain.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="src\Dx11Book.cpp">
+    <ClCompile Include="src\dx11Sample.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

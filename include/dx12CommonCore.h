@@ -4,7 +4,12 @@
 //-----------------------------------------------------------------------------
 #include "dx12CommonCore.inl"
 //-----------------------------------------------------------------------------
-#include "KRootParameter.h"
+#include "dx12Sample.h"
+
+
+
+#include "DescriptorRange.h"
+#include "RootParameter.h"
 
 #include "Dx12Book.h"
 #include "Dx12Study.h"

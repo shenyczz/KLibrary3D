@@ -7,41 +7,21 @@ KMarchingCubes::KMarchingCubes()
 {
 }
 
-
 KMarchingCubes::~KMarchingCubes()
 {
 }
 
 
 
-
-
-//---------------------------------------------------------
-//
-// 右手坐标系 ?
-//    z
-//	  |
-//	  |    y
-//	  |   /
-//	  |  /
-//	  | /
-//	  0--------------x
-//
-// 
-// 立方体：8个顶点、6个面、12条边、12个三角形、36个顶点索引
-//
-// scalars		- 点云要素值（dim = dims[0]*dims[1]*dims[2]）
-// dims			- x,y,z方向维度
-// origin[3]	- 中心点坐标
-// spacing[3]	- 小方块跨度
-// values		- 要追踪的等值线值
-// numValues	- 等值线数量
-// 
-void KMarchingCubes::Building_0(double *scalars, int dims[3], double origin[3], double spacing[3], double *values, int numValues)
+// scalars		- 3D网格点标量值
+// dims[3]		- 3D网格维度(nx,ny,nz)
+// values		- 等值面值
+// numValues	- 等值面数量
+void KMarchingCubes::Building(double *scalars, int dims[3], double *values, int numValues)
 {
 	static int CASE_MASK[8] = { 1,2,4,8,16,32,64,128 };
 	static int EDGES[12][2] =
-	{ 
+	{
 		{ 0,1 },{ 1,2 },{ 3,2 },{ 0,3 },
 		{ 4,5 },{ 5,6 },{ 7,6 },{ 4,7 },
 		{ 0,4 },{ 1,5 },{ 3,7 },{ 2,6 },
@@ -52,7 +32,14 @@ void KMarchingCubes::Building_0(double *scalars, int dims[3], double origin[3], 
 	int iCubeNY = dims[1];
 	int iCubeNZ = dims[2];
 
-	// 小方块大小
+	// 原点
+	double origin[3] = { 0, 0, 0 };
+	double x0 = origin[0];
+	double y0 = origin[1];
+	double z0 = origin[2];
+
+	// 间距 - 小方块大小
+	double spacing[3] = { 1, 1, 1 };
 	double dCubeCX = spacing[0];
 	double dCubeCY = spacing[1];
 	double dCubeCZ = spacing[2];
@@ -61,11 +48,6 @@ void KMarchingCubes::Building_0(double *scalars, int dims[3], double origin[3], 
 	double BigCubeCX = dCubeCX * iCubeNX;
 	double BigCubeCY = dCubeCY * iCubeNY;
 	double BigCubeCZ = dCubeCZ * iCubeNZ;
-
-	// 
-	double x0 = origin[0];
-	double y0 = origin[1];
-	double z0 = origin[2];
 
 	// 小立方体8个顶点要素值
 	double s[8];
@@ -80,14 +62,13 @@ void KMarchingCubes::Building_0(double *scalars, int dims[3], double origin[3], 
 	int sliceNums = dims[2];
 	int sliceSize = dims[0] * dims[1];
 
+	// 顶点id、坐标、梯度
+	int ptIds[3];
+	double xyz[3];
+	double n[3];
 
-	// ?
-	int ptIds[3];	// 顶点id
-	double xyz[3];	// 坐标
-	double n[3];	// 梯度
-
-	// ？
-	int extent[6];
+	// 范围
+	int extent[6];	// { 0,NX, 0,NY, 0,NZ }
 	//vtkInformation *inInfo = self->GetExecutive()->GetInputInformation(0, 0);
 	//inInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), extent);
 
@@ -100,15 +81,15 @@ void KMarchingCubes::Building_0(double *scalars, int dims[3], double origin[3], 
 
 	double min = values[0];
 	double max = values[0];
-	for (int n = 1; n < numValues; n++)
+	for (int i = 1; i < numValues; i++)
 	{
-		if (values[n] < min)
+		if (values[i] < min)
 		{
-			min = values[n];
+			min = values[i];
 		}
-		if (values[n] > max)
+		if (values[i] > max)
 		{
-			max = values[n];
+			max = values[i];
 		}
 	}
 
@@ -116,7 +97,6 @@ void KMarchingCubes::Building_0(double *scalars, int dims[3], double origin[3], 
 	for (int kk = 0; kk < iCubeNZ - 1; kk++)
 	{
 		int k = kk;
-		//int k = iCubeNZ - 1 - 1 - kk;
 
 		// 面偏移
 		int kOffset = k * sliceSize;
@@ -126,7 +106,7 @@ void KMarchingCubes::Building_0(double *scalars, int dims[3], double origin[3], 
 		pts[0][2] = origin[2] + k * spacing[2];
 		double zp = pts[0][2] + spacing[2];
 
-		for (int j = 0; j < iCubeNY; j++)
+		for (int j = 0; j < iCubeNY - 1; j++)
 		{
 			// 行偏移
 			int jOffset = j * dims[0];
@@ -136,7 +116,7 @@ void KMarchingCubes::Building_0(double *scalars, int dims[3], double origin[3], 
 			pts[0][1] = origin[1] + j * spacing[1];
 			double yp = pts[0][1] + spacing[1];
 
-			for (int i = 0; i < iCubeNX; i++)
+			for (int i = 0; i < iCubeNX - 1; i++)
 			{
 				// 取得小立方体的8个顶点的标量值
 				int idx = i + jOffset + kOffset;
@@ -208,18 +188,18 @@ void KMarchingCubes::Building_0(double *scalars, int dims[3], double origin[3], 
 				}
 
 				// 等值线数量
-				double svalue = 50;	//标量值
+				double svalue = values[0];	//标量值
 				for (int contNum = 0; contNum < numValues; contNum++)
 				{
 					svalue = values[contNum];
 
 					// 根据8个顶点来计算要用256种情况的哪一种
 					int index = 0;
-					for (int ii = 0; ii < 8; ii++)
+					for (int vi = 0; vi < 8; vi++)
 					{
-						if (s[ii] >= svalue)
+						if (s[vi] >= svalue)
 						{
-							index |= CASE_MASK[ii];
+							index |= CASE_MASK[vi];
 						}
 					}
 
@@ -229,16 +209,17 @@ void KMarchingCubes::Building_0(double *scalars, int dims[3], double origin[3], 
 						continue;
 					}
 
+
 					KMarchingCubesTriangleCases* triCase = triCases + index;
 					int* edge = triCase->Edges;
 
 					for (; edge[0] > -1; edge += 3)
 					{
 						// insert triangle
-						for (int ii = 0; ii < 3; ii++)
+						for (int tri = 0; tri < 3; tri++)
 						{
 							// 线性插值计算坐标 LERP
-							int* vert = EDGES[edge[ii]];
+							int* vert = EDGES[edge[tri]];
 							double t = (svalue - s[vert[0]]) / (s[vert[1]] - s[vert[0]]);
 
 							// 计算坐标
@@ -248,50 +229,338 @@ void KMarchingCubes::Building_0(double *scalars, int dims[3], double origin[3], 
 							xyz[1] = p1[1] + t * (p2[1] - p1[1]);
 							xyz[2] = p1[2] + t * (p2[2] - p1[2]);
 
-							// 保存顶点
+							// check for a new point
+							bool bNewPoint = true;
+							if (bNewPoint)
 							{
 								// 靠近中心点
-								//double x = xyz[0];
-								//double y = xyz[1];
-								//double z = xyz[2];
-
-								double x = xyz[0] - BigCubeCX / 2;
-								double y = xyz[1] - BigCubeCY / 2;
-								double z = xyz[2] - BigCubeCZ / 2;
-
+								double x = xyz[0];
+								double y = xyz[1];
+								double z = xyz[2];
+								x = xyz[0] - BigCubeCX / 2;
+								y = xyz[1] - BigCubeCY / 2;
+								z = xyz[2] - BigCubeCZ / 2;
 
 								// 标准化处理
 								x /= BigCubeCX;
 								y /= BigCubeCY;
 								z /= BigCubeCZ;
 
+								// 顶点
 								m_Vertices.push_back(Vector3(x, y, z));
+
+								// 计算梯度
+								double* n1 = gradients[vert[0]];
+								double* n2 = gradients[vert[1]];
+								n[0] = n1[0] + t * (n2[0] - n1[0]);
+								n[1] = n1[1] + t * (n2[1] - n1[1]);
+								n[2] = n1[2] + t * (n2[2] - n1[2]);
+								// 法线
+								KMaths::Normalize(n);
+								m_Normals.push_back(Vector3(n[0], n[1], n[2]));
+
+								// 顶点标量
 								m_VertexValues.push_back(svalue);
-							}
 
-							// 计算梯度
-							double* n1 = gradients[vert[0]];
-							double* n2 = gradients[vert[1]];
-							n[0] = n1[0] + t * (n2[0] - n1[0]);
-							n[1] = n1[1] + t * (n2[1] - n1[1]);
-							n[2] = n1[2] + t * (n2[2] - n1[2]);
+							}// check for a new point
+						}//for tri
 
-							// 标准化
-							KMaths::Normalize(n);
+						 //
+						 // check for degenerate triangle(检查退化三角形)
+						 //if (ptIds[0] != ptIds[1] &&
+						 //	ptIds[0] != ptIds[2] &&
+						 //	ptIds[1] != ptIds[2])
+						 //{
+						 //	newPolys->InsertNextCell(3, ptIds);
+						 //}
 
-							// 法线
-							m_Normals.push_back(Vector3(n[0], n[1], n[2]));
 
-						}//for (int ii = 0; ii < 3; ii++)
+					}//for each triangle
+				}//for all contours
+			}//for i
+		}// for j
+	}// for k
 
-						//
-						// check for degenerate triangle(检查退化三角形)
-						//if (ptIds[0] != ptIds[1] &&
-						//	ptIds[0] != ptIds[2] &&
-						//	ptIds[1] != ptIds[2])
-						//{
-						//	newPolys->InsertNextCell(3, ptIds);
-						//}
+
+	return;
+}
+
+
+//---------------------------------------------------------
+//
+//    y
+//	  |
+//	  |    z
+//	  |   /
+//	  |  /
+//	  | /
+//	  0--------------x
+//
+// 
+// 立方体：8个顶点、6个面、12条边、12个三角形、36个顶点索引
+//
+// scalars		- 点云要素值（dim = dims[0]*dims[1]*dims[2]）
+// dims			- x,y,z方向维度
+// origin[3]	- 中心点坐标
+// spacing[3]	- 小方块跨度
+// values		- 要追踪的等值线值
+// numValues	- 等值线数量
+// 
+void KMarchingCubes::Building(double *scalars, int dims[3], double origin[3], double spacing[3], double *values, int numValues)
+{
+	static int CASE_MASK[8] = { 1,2,4,8,16,32,64,128 };
+	static int EDGES[12][2] =
+	{
+		{ 0,1 },{ 1,2 },{ 3,2 },{ 0,3 },
+		{ 4,5 },{ 5,6 },{ 7,6 },{ 4,7 },
+		{ 0,4 },{ 1,5 },{ 3,7 },{ 2,6 },
+	};
+
+	// 小方块数量
+	int iCubeNX = dims[0];
+	int iCubeNY = dims[1];
+	int iCubeNZ = dims[2];
+
+	// 原点
+	double x0 = origin[0];
+	double y0 = origin[1];
+	double z0 = origin[2];
+
+	// 间距 - 小方块大小
+	double dCubeCX = spacing[0];
+	double dCubeCY = spacing[1];
+	double dCubeCZ = spacing[2];
+
+	// 大方块大小
+	double BigCubeCX = dCubeCX * iCubeNX;
+	double BigCubeCY = dCubeCY * iCubeNY;
+	double BigCubeCZ = dCubeCZ * iCubeNZ;
+
+	// 小立方体8个顶点要素值
+	double s[8];
+
+	// 小立方体8个顶点坐标、梯度
+	double pts[8][3];
+
+	// 小立方体8个顶点梯度
+	double gradients[8][3];
+
+	// 切片数量和尺寸
+	int sliceNums = dims[2];
+	int sliceSize = dims[0] * dims[1];
+
+
+	// ?
+	int ptIds[3];	// 顶点id
+	double xyz[3];	// 坐标
+	double n[3];	// 梯度
+
+					// ？
+	int extent[6];
+	//vtkInformation *inInfo = self->GetExecutive()->GetInputInformation(0, 0);
+	//inInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), extent);
+
+	// 
+	KMarchingCubesTriangleCases* triCases = KMarchingCubesTriangleCases::GetCases();
+
+	// 求等高线最大最小值
+	if (numValues < 1)
+		return;
+
+	double min = values[0];
+	double max = values[0];
+	for (int i = 1; i < numValues; i++)
+	{
+		if (values[i] < min)
+		{
+			min = values[i];
+		}
+		if (values[i] > max)
+		{
+			max = values[i];
+		}
+	}
+
+	// 遍历所有的体素细胞，使用MC算法生成三角形和点梯度
+	for (int kk = 0; kk < iCubeNZ - 1; kk++)
+	{
+		int k = kk;
+
+		// 面偏移
+		int kOffset = k * sliceSize;
+
+		// z坐标
+		//pts[0][2] = origin[2] + (k+extent[4]) * spacing[2];
+		pts[0][2] = origin[2] + k * spacing[2];
+		double zp = pts[0][2] + spacing[2];
+
+		for (int j = 0; j < iCubeNY - 1; j++)
+		{
+			// 行偏移
+			int jOffset = j * dims[0];
+
+			// y坐标
+			//pts[0][1] = origin[1] + (j + extent[2]) * spacing[1];
+			pts[0][1] = origin[1] + j * spacing[1];
+			double yp = pts[0][1] + spacing[1];
+
+			for (int i = 0; i < iCubeNX - 1; i++)
+			{
+				// 取得小立方体的8个顶点的标量值
+				int idx = i + jOffset + kOffset;
+
+				s[0] = scalars[idx];
+				s[1] = scalars[idx + 1];
+				s[2] = scalars[idx + dims[0] + 1];
+				s[3] = scalars[idx + dims[0]];
+
+				s[4] = scalars[idx + sliceSize];
+				s[5] = scalars[idx + sliceSize + 1];
+				s[6] = scalars[idx + sliceSize + dims[0] + 1];
+				s[7] = scalars[idx + sliceSize + dims[0]];
+
+				// 要素值不在范围内
+				if ((s[0] < min && s[1] < min && s[2] < min && s[3] < min &&
+					s[4] < min && s[5] < min && s[6] < min && s[7] < min) ||
+					(s[0] > max && s[1] > max && s[2] > max && s[3] > max &&
+						s[4] > max && s[5] > max && s[6] > max && s[7] > max))
+				{
+					continue;
+				}
+
+				//create voxel points
+				//pts[0][0] = origin[0] + (i + extent[0]) * spacing[0];
+				pts[0][0] = origin[0] + i * spacing[0];
+				double xp = pts[0][0] + spacing[0];
+
+				pts[1][0] = xp;
+				pts[1][1] = pts[0][1];
+				pts[1][2] = pts[0][2];
+
+				pts[2][0] = xp;
+				pts[2][1] = yp;
+				pts[2][2] = pts[0][2];
+
+				pts[3][0] = pts[0][0];
+				pts[3][1] = yp;
+				pts[3][2] = pts[0][2];
+
+				pts[4][0] = pts[0][0];
+				pts[4][1] = pts[0][1];
+				pts[4][2] = zp;
+
+				pts[5][0] = xp;
+				pts[5][1] = pts[0][1];
+				pts[5][2] = zp;
+
+				pts[6][0] = xp;
+				pts[6][1] = yp;
+				pts[6][2] = zp;
+
+				pts[7][0] = pts[0][0];
+				pts[7][1] = yp;
+				pts[7][2] = zp;
+
+				// 计算梯度 - gradients[8]
+				bool needGradients = true;
+				if (needGradients)
+				{
+					ComputePointGradient(i, j, k, sliceSize, scalars, dims, spacing, gradients[0]);
+					ComputePointGradient(i + 1, j, k, sliceSize, scalars, dims, spacing, gradients[1]);
+					ComputePointGradient(i + 1, j + 1, k, sliceSize, scalars, dims, spacing, gradients[2]);
+					ComputePointGradient(i, j + 1, k, sliceSize, scalars, dims, spacing, gradients[3]);
+					ComputePointGradient(i, j, k + 1, sliceSize, scalars, dims, spacing, gradients[4]);
+					ComputePointGradient(i + 1, j, k + 1, sliceSize, scalars, dims, spacing, gradients[5]);
+					ComputePointGradient(i + 1, j + 1, k + 1, sliceSize, scalars, dims, spacing, gradients[6]);
+					ComputePointGradient(i, j + 1, k + 1, sliceSize, scalars, dims, spacing, gradients[7]);
+				}
+
+				// 等值线数量
+				double svalue = values[0];	//标量值
+				for (int contNum = 0; contNum < numValues; contNum++)
+				{
+					svalue = values[contNum];
+
+					// 根据8个顶点来计算要用256种情况的哪一种
+					int index = 0;
+					for (int vi = 0; vi < 8; vi++)
+					{
+						if (s[vi] >= svalue)
+						{
+							index |= CASE_MASK[vi];
+						}
+					}
+
+					//这两个case是不会生成任何三角形，干脆跳过
+					if (index == 0 || index == 255) //no surface
+					{
+						continue;
+					}
+
+
+					KMarchingCubesTriangleCases* triCase = triCases + index;
+					int* edge = triCase->Edges;
+
+					for (; edge[0] > -1; edge += 3)
+					{
+						// insert triangle
+						for (int tri = 0; tri < 3; tri++)
+						{
+							// 线性插值计算坐标 LERP
+							int* vert = EDGES[edge[tri]];
+							double t = (svalue - s[vert[0]]) / (s[vert[1]] - s[vert[0]]);
+
+							// 计算坐标
+							double* p1 = pts[vert[0]];
+							double* p2 = pts[vert[1]];
+							xyz[0] = p1[0] + t * (p2[0] - p1[0]);
+							xyz[1] = p1[1] + t * (p2[1] - p1[1]);
+							xyz[2] = p1[2] + t * (p2[2] - p1[2]);
+
+							// check for a new point
+							bool bNewPoint = true;
+							if (bNewPoint)
+							{
+								// 靠近中心点
+								double x = xyz[0];
+								double y = xyz[1];
+								double z = xyz[2];
+								x = xyz[0] - BigCubeCX / 2;
+								y = xyz[1] - BigCubeCY / 2;
+								z = xyz[2] - BigCubeCZ / 2;
+
+								// 标准化处理
+								x /= BigCubeCX;
+								y /= BigCubeCY;
+								z /= BigCubeCZ;
+
+								// 顶点
+								m_Vertices.push_back(Vector3(x, y, z));
+
+								// 计算梯度
+								double* n1 = gradients[vert[0]];
+								double* n2 = gradients[vert[1]];
+								n[0] = n1[0] + t * (n2[0] - n1[0]);
+								n[1] = n1[1] + t * (n2[1] - n1[1]);
+								n[2] = n1[2] + t * (n2[2] - n1[2]);
+								// 法线
+								KMaths::Normalize(n);
+								m_Normals.push_back(Vector3(n[0], n[1], n[2]));
+
+								// 顶点标量
+								m_VertexValues.push_back(svalue);
+
+							}// check for a new point
+						}//for tri
+
+						 //
+						 // check for degenerate triangle(检查退化三角形)
+						 //if (ptIds[0] != ptIds[1] &&
+						 //	ptIds[0] != ptIds[2] &&
+						 //	ptIds[1] != ptIds[2])
+						 //{
+						 //	newPolys->InsertNextCell(3, ptIds);
+						 //}
 
 
 					}//for each triangle
@@ -306,11 +575,314 @@ void KMarchingCubes::Building_0(double *scalars, int dims[3], double origin[3], 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
 //---------------------------------------------------------
 //
-//    z
+//    y
 //	  |
-//	  |    y
+//	  |    z
+//	  |   /
+//	  |  /
+//	  | /
+//	  0--------------x
+//
+// 
+// 立方体：8个顶点、6个面、12条边、12个三角形、36个顶点索引
+//
+// scalars		- 点云要素值（dim = dims[0]*dims[1]*dims[2]）
+// dims			- x,y,z方向维度
+// origin[3]	- 中心点坐标
+// spacing[3]	- 小方块跨度
+// values		- 要追踪的等值线值
+// numValues	- 等值线数量
+// 
+void KMarchingCubes::Building_bak(double *scalars, int dims[3], double origin[3], double spacing[3], double *values, int numValues)
+{
+	static int CASE_MASK[8] = { 1,2,4,8,16,32,64,128 };
+	static int EDGES[12][2] =
+	{
+		{ 0,1 },{ 1,2 },{ 3,2 },{ 0,3 },
+	{ 4,5 },{ 5,6 },{ 7,6 },{ 4,7 },
+	{ 0,4 },{ 1,5 },{ 3,7 },{ 2,6 },
+	};
+
+	// 小方块数量
+	int iCubeNX = dims[0];
+	int iCubeNY = dims[1];
+	int iCubeNZ = dims[2];
+
+	// 小方块大小
+	double dCubeCX = spacing[0];
+	double dCubeCY = spacing[1];
+	double dCubeCZ = spacing[2];
+
+	// 大方块大小
+	double BigCubeCX = dCubeCX * iCubeNX;
+	double BigCubeCY = dCubeCY * iCubeNY;
+	double BigCubeCZ = dCubeCZ * iCubeNZ;
+
+	// 
+	double x0 = origin[0];
+	double y0 = origin[1];
+	double z0 = origin[2];
+
+	// 小立方体8个顶点要素值
+	double s[8];
+
+	// 小立方体8个顶点坐标、梯度
+	double pts[8][3];
+
+	// 小立方体8个顶点梯度
+	double gradients[8][3];
+
+	// 切片数量和尺寸
+	int sliceNums = dims[2];
+	int sliceSize = dims[0] * dims[1];
+
+
+	// ?
+	int ptIds[3];	// 顶点id
+	double xyz[3];	// 坐标
+	double n[3];	// 梯度
+
+					// ？
+	int extent[6];
+	//vtkInformation *inInfo = self->GetExecutive()->GetInputInformation(0, 0);
+	//inInfo->Get(vtkStreamingDemandDrivenPipeline::WHOLE_EXTENT(), extent);
+
+	// 
+	KMarchingCubesTriangleCases* triCases = KMarchingCubesTriangleCases::GetCases();
+
+	// 求等高线最大最小值
+	if (numValues < 1)
+		return;
+
+	double min = values[0];
+	double max = values[0];
+	for (int i = 1; i < numValues; i++)
+	{
+		if (values[i] < min)
+		{
+			min = values[i];
+		}
+		if (values[i] > max)
+		{
+			max = values[i];
+		}
+	}
+
+	// 遍历所有的体素细胞，使用MC算法生成三角形和点梯度
+	for (int kk = 0; kk < iCubeNZ - 1; kk++)
+	{
+		int k = kk;
+
+		// 面偏移
+		int kOffset = k * sliceSize;
+
+		// z坐标
+		//pts[0][2] = origin[2] + (k+extent[4]) * spacing[2];
+		pts[0][2] = origin[2] + k * spacing[2];
+		double zp = pts[0][2] + spacing[2];
+
+		for (int j = 0; j < iCubeNY - 1; j++)
+		{
+			// 行偏移
+			int jOffset = j * dims[0];
+
+			// y坐标
+			//pts[0][1] = origin[1] + (j + extent[2]) * spacing[1];
+			pts[0][1] = origin[1] + j * spacing[1];
+			double yp = pts[0][1] + spacing[1];
+
+			for (int i = 0; i < iCubeNX - 1; i++)
+			{
+				// 取得小立方体的8个顶点的标量值
+				int idx = i + jOffset + kOffset;
+
+				s[0] = scalars[idx];
+				s[1] = scalars[idx + 1];
+				s[2] = scalars[idx + dims[0] + 1];
+				s[3] = scalars[idx + dims[0]];
+
+				s[4] = scalars[idx + sliceSize];
+				s[5] = scalars[idx + sliceSize + 1];
+				s[6] = scalars[idx + sliceSize + dims[0] + 1];
+				s[7] = scalars[idx + sliceSize + dims[0]];
+
+				// 要素值不在范围内
+				if ((s[0] < min && s[1] < min && s[2] < min && s[3] < min &&
+					s[4] < min && s[5] < min && s[6] < min && s[7] < min) ||
+					(s[0] > max && s[1] > max && s[2] > max && s[3] > max &&
+						s[4] > max && s[5] > max && s[6] > max && s[7] > max))
+				{
+					continue;
+				}
+
+				//create voxel points
+				//pts[0][0] = origin[0] + (i + extent[0]) * spacing[0];
+				pts[0][0] = origin[0] + i * spacing[0];
+				double xp = pts[0][0] + spacing[0];
+
+				pts[1][0] = xp;
+				pts[1][1] = pts[0][1];
+				pts[1][2] = pts[0][2];
+
+				pts[2][0] = xp;
+				pts[2][1] = yp;
+				pts[2][2] = pts[0][2];
+
+				pts[3][0] = pts[0][0];
+				pts[3][1] = yp;
+				pts[3][2] = pts[0][2];
+
+				pts[4][0] = pts[0][0];
+				pts[4][1] = pts[0][1];
+				pts[4][2] = zp;
+
+				pts[5][0] = xp;
+				pts[5][1] = pts[0][1];
+				pts[5][2] = zp;
+
+				pts[6][0] = xp;
+				pts[6][1] = yp;
+				pts[6][2] = zp;
+
+				pts[7][0] = pts[0][0];
+				pts[7][1] = yp;
+				pts[7][2] = zp;
+
+				// 计算梯度 - gradients[8]
+				bool needGradients = true;
+				if (needGradients)
+				{
+					ComputePointGradient(i, j, k, sliceSize, scalars, dims, spacing, gradients[0]);
+					ComputePointGradient(i + 1, j, k, sliceSize, scalars, dims, spacing, gradients[1]);
+					ComputePointGradient(i + 1, j + 1, k, sliceSize, scalars, dims, spacing, gradients[2]);
+					ComputePointGradient(i, j + 1, k, sliceSize, scalars, dims, spacing, gradients[3]);
+					ComputePointGradient(i, j, k + 1, sliceSize, scalars, dims, spacing, gradients[4]);
+					ComputePointGradient(i + 1, j, k + 1, sliceSize, scalars, dims, spacing, gradients[5]);
+					ComputePointGradient(i + 1, j + 1, k + 1, sliceSize, scalars, dims, spacing, gradients[6]);
+					ComputePointGradient(i, j + 1, k + 1, sliceSize, scalars, dims, spacing, gradients[7]);
+				}
+
+				// 等值线数量
+				double svalue = values[0];	//标量值
+				for (int contNum = 0; contNum < numValues; contNum++)
+				{
+					svalue = values[contNum];
+
+					// 根据8个顶点来计算要用256种情况的哪一种
+					int index = 0;
+					for (int vi = 0; vi < 8; vi++)
+					{
+						if (s[vi] >= svalue)
+						{
+							index |= CASE_MASK[vi];
+						}
+					}
+
+					//这两个case是不会生成任何三角形，干脆跳过
+					if (index == 0 || index == 255) //no surface
+					{
+						continue;
+					}
+
+
+					KMarchingCubesTriangleCases* triCase = triCases + index;
+					int* edge = triCase->Edges;
+
+
+					int itest = 0;
+					for (; edge[0] > -1; edge += 3)
+					{
+						// insert triangle
+						for (int tri = 0; tri < 3; tri++)
+						{
+							// 线性插值计算坐标 LERP
+							int* vert = EDGES[edge[tri]];
+							double t = (svalue - s[vert[0]]) / (s[vert[1]] - s[vert[0]]);
+
+							// 计算坐标
+							double* p1 = pts[vert[0]];
+							double* p2 = pts[vert[1]];
+							xyz[0] = p1[0] + t * (p2[0] - p1[0]);
+							xyz[1] = p1[1] + t * (p2[1] - p1[1]);
+							xyz[2] = p1[2] + t * (p2[2] - p1[2]);
+
+							// 保存顶点
+							// 靠近中心点
+							double x = xyz[0] - BigCubeCX / 2;
+							double y = xyz[1] - BigCubeCY / 2;
+							double z = xyz[2] - BigCubeCZ / 2;
+
+							//double x = xyz[0];
+							//double y = xyz[1];
+							//double z = xyz[2];
+
+
+							// 标准化处理
+							x /= BigCubeCX;
+							y /= BigCubeCY;
+							z /= BigCubeCZ;
+
+							// 顶点
+							m_Vertices.push_back(Vector3(x, y, z));
+
+
+							// 计算梯度
+							double* n1 = gradients[vert[0]];
+							double* n2 = gradients[vert[1]];
+							n[0] = n1[0] + t * (n2[0] - n1[0]);
+							n[1] = n1[1] + t * (n2[1] - n1[1]);
+							n[2] = n1[2] + t * (n2[2] - n1[2]);
+							KMaths::Normalize(n);
+
+							// 法线
+							m_Normals.push_back(Vector3(n[0], n[1], n[2]));
+
+							// 顶点标量
+							m_VertexValues.push_back(svalue);
+
+						}//for tri
+
+						 //
+						 // check for degenerate triangle(检查退化三角形)
+						 //if (ptIds[0] != ptIds[1] &&
+						 //	ptIds[0] != ptIds[2] &&
+						 //	ptIds[1] != ptIds[2])
+						 //{
+						 //	newPolys->InsertNextCell(3, ptIds);
+						 //}
+
+
+					}//for each triangle
+				}//for all contours
+			}//for i
+		}// for j
+	}// for k
+
+
+	return;
+}
+
+
+//---------------------------------------------------------
+//
+//    y
+//	  |
+//	  |    z
 //	  |   /
 //	  |  /
 //	  | /
@@ -325,8 +897,9 @@ void KMarchingCubes::Building_0(double *scalars, int dims[3], double origin[3], 
 // values		- 等值面值
 // numValues	- 等值面数量
 //
+// 计算通过，但没有必要这样
 //---------------------------------------------------------
-void KMarchingCubes::Building(double *scalars, int dims[3], double cubeSize[3], int cubeCount[3], double *values, int numValues)
+void KMarchingCubes::Building_1(double *scalars, int dims[3], double cubeSize[3], int cubeCount[3], double *values, int numValues)
 {
 	// CASE_MASK
 	static int CASE_MASK[8] = { 1,2,4,8,16,32,64,128 };
@@ -370,14 +943,16 @@ void KMarchingCubes::Building(double *scalars, int dims[3], double cubeSize[3], 
 	// 移动立方体8个顶点标量值
 	double s[8];
 
-	// 三角形顶点坐标
-	double xyz[3];
+	// ?
+	int ptIds[3];	// 顶点id
+	double xyz[3];	// 坐标
+	double n[3];	// 梯度
 
 	// 小立方体8个顶点坐标
 	double pts[8][3];
 
 	// 小立方体8个顶点梯度
-	//double gradients[8][3];
+	double gradients[8][3];
 
 	double min = values[0];
 	double max = values[0];
@@ -397,17 +972,17 @@ void KMarchingCubes::Building(double *scalars, int dims[3], double cubeSize[3], 
 	KMarchingCubesTriangleCases* triCases = KMarchingCubesTriangleCases::GetCases();
 
 	// 遍历所有的体素细胞使用MC算法生成三角形和点梯度
-	for (int k = 0; k < iCubeNZ; k++)
+	for (int k = 0; k < iCubeNZ - 1; k++)
 	{
 		pts[0][2] = z0 + k * dCubeCZ;
 		double zp = pts[0][2] + dCubeCZ;
 
-		for (int j = 0; j < iCubeNY; j++)
+		for (int j = 0; j < iCubeNY - 1; j++)
 		{
 			pts[0][1] = y0 + j * dCubeCY;
 			double yp = pts[0][1] + dCubeCY;
 
-			for (int i = 0; i < iCubeNX; i++)
+			for (int i = 0; i < iCubeNX - 1; i++)
 			{
 				// 小立方体8个顶点坐标
 				pts[0][0] = x0 + i * dCubeCX;
@@ -448,8 +1023,7 @@ void KMarchingCubes::Building(double *scalars, int dims[3], double cubeSize[3], 
 				pts[7][1] = yp;
 				pts[7][2] = zp;
 
-
-				double svalue = 50;	// 标量值
+				double svalue = values[0];	// 标量值
 				for (int contNum = 0; contNum < numValues; contNum++)
 				{
 					svalue = values[contNum];
@@ -473,7 +1047,7 @@ void KMarchingCubes::Building(double *scalars, int dims[3], double cubeSize[3], 
 						if (pos >= allSize)
 							continue;
 
-						// 8个顶点标量值(等待计算)
+						// 8个顶点标量值
 						s[vidx] = scalars[pos];
 
 						if (s[vidx] >= svalue)
@@ -497,7 +1071,17 @@ void KMarchingCubes::Building(double *scalars, int dims[3], double cubeSize[3], 
 
 					// 计算8个顶点梯度
 					{
-
+						int ii = xindex;
+						int jj = yindex;
+						int kk = zindex;
+						ComputePointGradient(ii + 0, jj + 0, kk + 0, sliceSize, scalars, dims, cubeSize, gradients[0]);
+						ComputePointGradient(ii + 1, jj + 0, kk + 0, sliceSize, scalars, dims, cubeSize, gradients[1]);
+						ComputePointGradient(ii + 1, jj + 1, kk + 0, sliceSize, scalars, dims, cubeSize, gradients[2]);
+						ComputePointGradient(ii + 0, jj + 1, kk + 0, sliceSize, scalars, dims, cubeSize, gradients[3]);
+						ComputePointGradient(ii + 0, jj + 0, kk + 1, sliceSize, scalars, dims, cubeSize, gradients[4]);
+						ComputePointGradient(ii + 1, jj + 0, kk + 1, sliceSize, scalars, dims, cubeSize, gradients[5]);
+						ComputePointGradient(ii + 1, jj + 1, kk + 1, sliceSize, scalars, dims, cubeSize, gradients[6]);
+						ComputePointGradient(ii + 0, jj + 1, kk + 1, sliceSize, scalars, dims, cubeSize, gradients[7]);
 					}
 
 					// 
@@ -514,12 +1098,12 @@ void KMarchingCubes::Building(double *scalars, int dims[3], double cubeSize[3], 
 							if (KMaths::IsEqual(s[vert[1]], s[vert[0]]))
 								break;
 
-							// 线性插值计算坐标 LERP
+							// 线性插值系数 LERP
 							double t = (svalue - s[vert[0]]) / (s[vert[1]] - s[vert[0]]);
 
+							// 坐标
 							double* pt1 = pts[vert[0]];
 							double* pt2 = pts[vert[1]];
-
 							xyz[0] = pt1[0] + t * (pt2[0] - pt1[0]);
 							xyz[1] = pt1[1] + t * (pt2[1] - pt1[1]);
 							xyz[2] = pt1[2] + t * (pt2[2] - pt1[2]);
@@ -531,12 +1115,25 @@ void KMarchingCubes::Building(double *scalars, int dims[3], double cubeSize[3], 
 							double z = xyz[2] - BigCubeCZ / 2;
 
 							// 标准化处理
-							//x /= dBigCubeCX;
-							//y /= dBigCubeCY;
-							//z /= dBigCubeCZ;
+							x /= BigCubeCX;
+							y /= BigCubeCY;
+							z /= BigCubeCZ;
 
-							Vector3 vec = Vector3(x, z, y);
-							m_Vertices.push_back(vec);
+							// 顶点
+							m_Vertices.push_back(Vector3(x, y, z));
+
+							// 计算梯度
+							double* n1 = gradients[vert[0]];
+							double* n2 = gradients[vert[1]];
+							n[0] = n1[0] + t * (n2[0] - n1[0]);
+							n[1] = n1[1] + t * (n2[1] - n1[1]);
+							n[2] = n1[2] + t * (n2[2] - n1[2]);
+							KMaths::Normalize(n);
+
+							// 法线
+							m_Normals.push_back(Vector3(n[0], n[1], n[2]));
+
+							// 顶点标量
 							m_VertexValues.push_back(svalue);
 
 						}// for one triangle
@@ -549,13 +1146,12 @@ void KMarchingCubes::Building(double *scalars, int dims[3], double cubeSize[3], 
 	return;
 }
 
-
-
-
+// 判断唯一点？
 bool KMarchingCubes::IsUniquePoint(double xyz[3])
 {
 	return true;
 }
+
 
 // 用中心差分法计算点梯度
 // 输出 n[3]
@@ -627,3 +1223,4 @@ void KMarchingCubes::ComputePointGradient(int i, int j, int k, int sliceSize,
 
 	return;
 }
+

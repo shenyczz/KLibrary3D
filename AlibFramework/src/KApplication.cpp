@@ -107,11 +107,15 @@ void KApplication::PerformSample(KSample* pSample)
 	try
 	{
 		m_pSample = pSample;
-		m_pSample->Initialize();
+		m_pSample->Setup();
 	}
-	catch (...)
+	catch (const std::exception& e)
 	{
-		throw KException(S_FALSE, __TFUNCTION__, __TFILE__, __LINE__);
+		throw e;
+	}
+	catch (KException& e)
+	{
+		throw e;
 	}
 }
 

@@ -12,7 +12,7 @@
 #define NUM_POINT_LIGHTS 0	// 点光源
 #define NUM_SPOT_LIGHTS 0	// 聚光灯光源
 
-#include "LitRadarUtil.hlsl" 
+#include "LitRadarUtil.hlsli" 
 
 // Constant data that varies per frame.
 
@@ -81,21 +81,21 @@ VertexOut VS(VertexIn vin)
 	// 颜色
 	vout.Color = vin.Color;
 	
-    // Transform to world space.
+	// 转换到世界空间
     float4 posW = mul(float4(vin.PosL, 1.0f), gWorld);
-
     vout.PosW = posW.xyz;
 
-    // Assumes nonuniform scaling; otherwise, need to use inverse-transpose of world matrix.
+	// 假设不均匀缩放;否则,需要使用世界矩阵的逆转置
     vout.NormalW = mul(vin.NormalL, (float3x3)gWorld);
 
-    // Transform to homogeneous clip space.
+	// 变换到均匀剪辑空间
     vout.PosH = mul(posW, gViewProj);
 
     return vout;
 }
 
-float4 PS(VertexOut pin) : SV_Target
+
+float4 PS_0(VertexOut pin)
 {
     // Interpolating normal can unnormalize it, so renormalize it.
     pin.NormalW = normalize(pin.NormalW);
@@ -103,25 +103,63 @@ float4 PS(VertexOut pin) : SV_Target
     // Vector from point being lit to eye. 
     float3 toEyeW = normalize(gEyePosW - pin.PosW);
 
-	// Indirect lighting.
-	//float4 ambient = gAmbientLight * gDiffuseAlbedo;
-	float4 ambient = gAmbientLight;
+	float4 ambientLight = gAmbientLight;	// 环境灯光
+	float4 diffuseAlbedo = pin.Color;	// 漫反射反照率
+	float3 fresnelR0 = gFresnelR0;			// 
+	float shininess = 1.0f - gRoughness;
 
-    const float shininess = 1.0f - gRoughness;
-	//Material mat = { gDiffuseAlbedo, gFresnelR0, shininess };
-	Material mat = { pin.Color, gFresnelR0, shininess };
+	// Indirect lighting.
+	// 计算间接光 = 环境光 * 漫反射
+	float4 ambient = ambientLight * diffuseAlbedo;
+
+	// 计算灯光
 	float3 shadowFactor = 1.0f;
-    float4 directLight = ComputeLighting(gLights, mat, pin.PosW,
+	Material mat = { diffuseAlbedo, fresnelR0, shininess };
+	float4 directLight = ComputeLighting(gLights, mat, pin.PosW,
         pin.NormalW, toEyeW, shadowFactor);
 
+	// 灯光颜色
 	float4 litColor = ambient + directLight;
-
-    // Common convention to take alpha from diffuse material.
 	litColor.a = gDiffuseAlbedo.a;
 
-	//litColor = pin.Color;
-
-    return litColor;
+	return litColor;
 }
 
+float4 PS_transparent(VertexOut pin)
+{
+    // Interpolating normal can unnormalize it, so renormalize it.
+    pin.NormalW = normalize(pin.NormalW);
 
+    // Vector from point being lit to eye. 
+    float3 toEyeW = normalize(gEyePosW - pin.PosW);
+
+	float4 ambientLight = gAmbientLight;	// 环境灯光
+	float4 diffuseAlbedo = gDiffuseAlbedo;	// 漫反射反照率
+	float3 fresnelR0 = gFresnelR0;			// 
+	float shininess = 1.0f - gRoughness;
+
+	// 计算间接光 = 环境光 * 漫反射
+	float4 ambient = ambientLight * diffuseAlbedo;
+
+	// 计算灯光
+	float3 shadowFactor = 1.0f;
+	Material mat = { diffuseAlbedo, fresnelR0, shininess };
+	float4 directLight = ComputeLighting(gLights, mat, pin.PosW,
+        pin.NormalW, toEyeW, shadowFactor);
+
+	// 灯光颜色
+	float4 litColor = ambient + directLight;
+	litColor.a = gDiffuseAlbedo.a;
+
+	return litColor;
+}
+
+float4 PS(VertexOut pin) : SV_Target
+{
+	float4 ps_color = 0;
+
+	//ps_color = PS_0(pin);
+	ps_color = PS_transparent(pin);
+
+	return ps_color;
+}

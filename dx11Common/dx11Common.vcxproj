@@ -23,7 +23,7 @@
     <ProjectGuid>{241774D9-BD64-40FD-AE24-256006565071}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>dx11Common</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
     <ProjectName>dx11Common</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

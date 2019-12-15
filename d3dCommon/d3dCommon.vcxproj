@@ -23,7 +23,7 @@
     <ProjectGuid>{F455E163-D2B4-4EA6-A853-5592CD8240CC}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>d3dCommon</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
     <ProjectName>d3dCommon</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

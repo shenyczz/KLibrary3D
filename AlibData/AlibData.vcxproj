@@ -23,7 +23,7 @@
     <ProjectGuid>{821FA7BC-B913-41DE-9322-1F78702C940E}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>AlibData</RootNamespace>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

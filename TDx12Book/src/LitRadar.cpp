@@ -477,9 +477,9 @@ void LitRadar::BuildRadarGeometry()
 
 	//vector<double> CONTOUR_VALUES = { 50, 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650 };
 
-	vector<int> _contourValues = { 300, 500 };
+	//vector<int> _contourValues = { 300, 500 };
 	//vector<int> _contourValues = { 50,200,250,300, 450,500,550 };
-	//vector<int> _contourValues = { 150, 300, 350, 450, 500, 550, 600, 650 };
+	vector<int> _contourValues = { 150, 300, 350, 450, 500, 550, 600, 650 };
 	//vector<int> _contourValues = { 100, 150, 200, 250, 300, 350, 400, 450, 500, 550, 600, 650 };
 
 	// 
@@ -883,12 +883,12 @@ void LitRadar::Draw()
 		pCommandList->OMSetRenderTargets(1, &CurrentBackBufferView(), true, &DepthStencilView());
 
 		// 清除渲染背景
-		const float* clearColor = Colors::Black;
-		//const float* clearColor = Colors::White;
+		//const float* clearColor = Colors::Black;
+		const float* clearColor = Colors::White;
 		//const float* clearColor = Colors::DarkGray;
 		//const float* clearColor = Colors::Blue;
 		//const float* clearColor = Colors::LightBlue;
-		//const float* clearColor = Colors::LightSkyBlue;
+		////const float* clearColor = Colors::LightSkyBlue;
 		pCommandList->ClearRenderTargetView(CurrentBackBufferView(), clearColor, 0, nullptr);
 
 		// 清除深度模板视图
